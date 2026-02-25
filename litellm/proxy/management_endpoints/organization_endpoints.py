@@ -155,17 +155,6 @@ async def new_organization(
             detail={"error": CommonProxyErrors.db_not_connected_error.value},
         )
 
-    if (
-        user_api_key_dict.user_role is None
-        or user_api_key_dict.user_role != LitellmUserRoles.PROXY_ADMIN
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail={
-                "error": f"Only admins can create orgs. Your role is = {user_api_key_dict.user_role}"
-            },
-        )
-
     if llm_router is None:
         raise HTTPException(
             status_code=500, detail={"error": CommonProxyErrors.no_llm_router.value}
@@ -552,12 +541,6 @@ async def delete_organization(
         raise HTTPException(
             status_code=500,
             detail={"error": CommonProxyErrors.db_not_connected_error.value},
-        )
-
-    if user_api_key_dict.user_role != LitellmUserRoles.PROXY_ADMIN:
-        raise HTTPException(
-            status_code=401,
-            detail={"error": "Only proxy admins can delete organizations"},
         )
 
     deleted_orgs = []

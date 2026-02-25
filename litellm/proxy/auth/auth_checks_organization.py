@@ -20,8 +20,7 @@ def organization_role_based_access_check(
     Organization Checks:
     ONLY RUN IF user_object.organization_memberships is not None
 
-    1. Only Proxy Admins can access /organization/new
-    2. IF route is a LiteLLMRoutes.org_admin_only_routes, then check if user is an Org Admin for that organization
+    1. IF route is a LiteLLMRoutes.org_admin_only_routes, then check if user is an Org Admin for that organization
 
     """
 
@@ -29,15 +28,6 @@ def organization_role_based_access_check(
         return
 
     passed_organization_id: Optional[str] = request_body.get("organization_id", None)
-
-    if route == "/organization/new":
-        if user_object.user_role != LitellmUserRoles.PROXY_ADMIN.value:
-            raise ProxyException(
-                message=f"Only proxy admins can create new organizations. You are {user_object.user_role}",
-                type=ProxyErrorTypes.auth_error.value,
-                param="user_role",
-                code=status.HTTP_401_UNAUTHORIZED,
-            )
 
     if user_object.user_role == LitellmUserRoles.PROXY_ADMIN.value:
         return

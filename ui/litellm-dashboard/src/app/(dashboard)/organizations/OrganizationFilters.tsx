@@ -32,7 +32,7 @@ const OrganizationFilters = ({
       {/* Search and Filter Controls */}
       <div className="flex flex-wrap items-center gap-3">
         <FilterInput
-          placeholder="Search by Organization Name"
+          placeholder="按组织名称搜索"
           value={filters.org_alias}
           onChange={(value) => onChange("org_alias", value)}
           icon={Search}
@@ -43,16 +43,17 @@ const OrganizationFilters = ({
           onClick={() => onToggleFilters(!showFilters)}
           active={showFilters}
           hasActiveFilters={hasActiveFilters}
+          label="筛选"
         />
 
-        <ResetFiltersButton onClick={onReset} />
+        <ResetFiltersButton onClick={onReset} label="重置筛选" />
       </div>
 
       {/* Additional Filters */}
       {showFilters && (
         <div className="flex flex-wrap items-center gap-3 mt-3">
           <FilterInput
-            placeholder="Search by Organization ID"
+            placeholder="按组织 ID 搜索"
             value={filters.org_id}
             onChange={(value) => onChange("org_id", value)}
             icon={User}

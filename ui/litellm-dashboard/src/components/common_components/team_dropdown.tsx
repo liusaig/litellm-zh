@@ -14,7 +14,7 @@ const TeamDropdown: React.FC<TeamDropdownProps> = ({ teams, value, onChange, dis
   return (
     <Select
       showSearch
-      placeholder="Search or select a team"
+      placeholder="搜索或选择分组"
       value={value}
       onChange={onChange}
       disabled={disabled}

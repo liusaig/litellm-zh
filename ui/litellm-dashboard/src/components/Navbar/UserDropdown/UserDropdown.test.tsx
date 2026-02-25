@@ -96,35 +96,6 @@ describe("UserDropdown", () => {
     });
   });
 
-  it("should display Standard badge for non-premium users", async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<UserDropdown onLogout={mockOnLogout} />);
-
-    await user.click(screen.getByText("User"));
-
-    await waitFor(() => {
-      expect(screen.getByText("Standard")).toBeInTheDocument();
-    });
-  });
-
-  it("should display Premium badge for premium users", async () => {
-    const user = userEvent.setup();
-    mockUseAuthorizedImpl = () => ({
-      userId: "test-user-id",
-      userEmail: "test@example.com",
-      userRole: "Admin",
-      premiumUser: true,
-    });
-
-    renderWithProviders(<UserDropdown onLogout={mockOnLogout} />);
-
-    await user.click(screen.getByText("User"));
-
-    await waitFor(() => {
-      expect(screen.getByText("Premium")).toBeInTheDocument();
-    });
-  });
-
   it("should call onLogout when logout is clicked", async () => {
     const user = userEvent.setup();
     renderWithProviders(<UserDropdown onLogout={mockOnLogout} />);

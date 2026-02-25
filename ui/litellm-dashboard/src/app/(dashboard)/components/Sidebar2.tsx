@@ -33,6 +33,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { all_admin_roles, internalUserRoles, isAdminRole, rolesWithWriteAccess } from "@/utils/roles";
 import UsageIndicator from "@/components/UsageIndicator";
 import { serverRootPath } from "@/components/networking";
+import { shouldHideSidebarPage } from "@/components/sidebar_visibility";
 
 const { Sider } = Layout;
 
@@ -151,78 +152,78 @@ const toHref = (slugOrPath: string) => {
   return `${base}${rel}`;
 };
 
-// ----- Menu config (unchanged labels/icons; same appearance) -----
+// ----- Menu config -----
 const menuItems: MenuItemCfg[] = [
-  { key: "1", page: "api-keys", label: "Virtual Keys", icon: <KeyOutlined style={{ fontSize: 18 }} /> },
+  { key: "1", page: "api-keys", label: "虚拟密钥", icon: <KeyOutlined style={{ fontSize: 18 }} /> },
   {
     key: "3",
     page: "llm-playground",
-    label: "Test Key",
+    label: "密钥调试",
     icon: <PlayCircleOutlined style={{ fontSize: 18 }} />,
     roles: rolesWithWriteAccess,
   },
   {
     key: "2",
     page: "models",
-    label: "Models + Endpoints",
+    label: "模型与端点",
     icon: <BlockOutlined style={{ fontSize: 18 }} />,
     roles: rolesWithWriteAccess,
   },
   {
     key: "12",
     page: "new_usage",
-    label: "Usage",
+    label: "用量分析",
     icon: <BarChartOutlined style={{ fontSize: 18 }} />,
     roles: [...all_admin_roles, ...internalUserRoles],
   },
-  { key: "6", page: "teams", label: "Teams", icon: <TeamOutlined style={{ fontSize: 18 }} /> },
+  { key: "6", page: "teams", label: "分组", icon: <TeamOutlined style={{ fontSize: 18 }} /> },
   {
     key: "17",
     page: "organizations",
-    label: "Organizations",
+    label: "组织",
     icon: <BankOutlined style={{ fontSize: 18 }} />,
     roles: all_admin_roles,
   },
   {
     key: "5",
     page: "users",
-    label: "Internal Users",
+    label: "用户",
     icon: <UserOutlined style={{ fontSize: 18 }} />,
     roles: all_admin_roles,
   },
-  { key: "14", page: "api_ref", label: "API Reference", icon: <ApiOutlined style={{ fontSize: 18 }} /> },
+  { key: "14", page: "api_ref", label: "API 文档", icon: <ApiOutlined style={{ fontSize: 18 }} /> },
   {
     key: "16",
     page: "model-hub-table",
-    label: "Model Hub",
+    label: "模型中心",
     icon: <AppstoreOutlined style={{ fontSize: 18 }} />,
   },
-  { key: "15", page: "logs", label: "Logs", icon: <LineChartOutlined style={{ fontSize: 18 }} /> },
+  { key: "15", page: "logs", label: "请求日志", icon: <LineChartOutlined style={{ fontSize: 18 }} /> },
   {
     key: "11",
     page: "guardrails",
-    label: "Guardrails",
+    label: "安全护栏",
     icon: <SafetyOutlined style={{ fontSize: 18 }} />,
     roles: all_admin_roles,
   },
   {
     key: "28",
     page: "policies",
-    label: "Policies",
+    label: "策略中心",
     icon: <AuditOutlined style={{ fontSize: 18 }} />,
     roles: all_admin_roles,
   },
   {
     key: "26",
     page: "tools",
-    label: "Tools",
+    label: "工具集",
     icon: <ToolOutlined style={{ fontSize: 18 }} />,
     children: [
-      { key: "18", page: "mcp-servers", label: "MCP Servers", icon: <ToolOutlined style={{ fontSize: 18 }} /> },
+      { key: "18", page: "mcp-servers", label: "MCP 服务", icon: <ToolOutlined style={{ fontSize: 18 }} /> },
       {
         key: "21",
         page: "vector-stores",
-        label: "Vector Stores",
+        label: "向量库",
         icon: <DatabaseOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
@@ -231,86 +232,86 @@ const menuItems: MenuItemCfg[] = [
   {
     key: "experimental",
     page: "experimental",
-    label: "Experimental",
+    label: "实验功能",
     icon: <ExperimentOutlined style={{ fontSize: 18 }} />,
     children: [
       {
         key: "9",
         page: "caching",
-        label: "Caching",
+        label: "缓存",
         icon: <DatabaseOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "25",
         page: "prompts",
-        label: "Prompts",
+        label: "提示词",
         icon: <FileTextOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "10",
         page: "budgets",
-        label: "Budgets",
+        label: "预算",
         icon: <BankOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "20",
         page: "transform-request",
-        label: "API Playground",
+        label: "API 调试台",
         icon: <ApiOutlined style={{ fontSize: 18 }} />,
         roles: [...all_admin_roles, ...internalUserRoles],
       },
       {
         key: "19",
         page: "tag-management",
-        label: "Tag Management",
+        label: "标签管理",
         icon: <TagsOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "27",
         page: "claude-code-plugins",
-        label: "Claude Code Plugins",
+        label: "Claude Code 插件",
         icon: <ToolOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
-      { key: "4", page: "usage", label: "Old Usage", icon: <BarChartOutlined style={{ fontSize: 18 }} /> },
+      { key: "4", page: "usage", label: "旧版用量", icon: <BarChartOutlined style={{ fontSize: 18 }} /> },
     ],
   },
   {
     key: "settings",
     page: "settings",
-    label: "Settings",
+    label: "系统设置",
     icon: <SettingOutlined style={{ fontSize: 18 }} />,
     roles: all_admin_roles,
     children: [
       {
         key: "11",
         page: "general-settings",
-        label: "Router Settings",
+        label: "路由设置",
         icon: <SettingOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "8",
         page: "settings",
-        label: "Logging & Alerts",
+        label: "日志与告警",
         icon: <SettingOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "13",
         page: "admin-panel",
-        label: "Admin Settings",
+        label: "管理设置",
         icon: <SettingOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
       {
         key: "14",
         page: "ui-theme",
-        label: "UI Theme",
+        label: "界面主题",
         icon: <SettingOutlined style={{ fontSize: 18 }} />,
         roles: all_admin_roles,
       },
@@ -325,6 +326,7 @@ const Sidebar2: React.FC<SidebarProps> = ({ accessToken, userRole, defaultSelect
   // ----- Filter by role without mutating originals -----
   const filteredMenuItems = React.useMemo<MenuItemCfg[]>(() => {
     return menuItems
+      .filter((item) => !shouldHideSidebarPage(item.page))
       .filter((item) => !item.roles || item.roles.includes(userRole))
       .map((item) => ({
         ...item,

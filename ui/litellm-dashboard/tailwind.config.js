@@ -17,7 +17,7 @@ module.exports = {
             muted: userColors.brand.muted,
             subtle: userColors.brand.subtle,
             DEFAULT: userColors.brand.DEFAULT,
-            emphasis: colors.indigo[700],
+            emphasis: userColors.brand.emphasis,
             inverted: colors.white,
           },
           background: {
@@ -44,11 +44,11 @@ module.exports = {
         "dark-tremor": {
           brand: {
             faint: "#0B1229",
-            muted: colors.indigo[950],
-            subtle: colors.indigo[800],
-            DEFAULT: colors.indigo[500],
-            emphasis: colors.indigo[400],
-            inverted: colors.indigo[950],
+            muted: "#2B1760",
+            subtle: "#4C2F94",
+            DEFAULT: userColors.brand.DEFAULT,
+            emphasis: userColors.brand.muted,
+            inverted: "#1B103B",
           },
           background: {
             muted: "#131A2B",

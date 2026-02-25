@@ -137,16 +137,16 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
   const handleResetPassword = async (userId: string) => {
     if (!accessToken) {
-      NotificationsManager.fromBackend("Access token not found");
+      NotificationsManager.fromBackend("未找到访问令牌");
       return;
     }
     try {
-      NotificationsManager.success("Generating password reset link...");
+      NotificationsManager.success("正在生成重置密码链接...");
       const data = await invitationCreateCall(accessToken, userId);
       setInvitationLinkData(data);
       setIsInvitationLinkModalVisible(true);
     } catch (error) {
-      NotificationsManager.fromBackend("Failed to generate password reset link");
+      NotificationsManager.fromBackend("生成重置密码链接失败");
     }
   };
 
@@ -163,10 +163,10 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
           return { ...previousData, users: updatedUsers };
         });
 
-        NotificationsManager.success("User deleted successfully");
+        NotificationsManager.success("用户删除成功");
       } catch (error) {
         console.error("Error deleting user:", error);
-        NotificationsManager.fromBackend("Failed to delete user");
+        NotificationsManager.fromBackend("删除用户失败");
       } finally {
         setIsDeleteModalOpen(false);
         setUserToDelete(null);
@@ -206,7 +206,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
         return { ...previousData, users: updatedUsers };
       });
 
-      NotificationsManager.success(`User ${editedUser.user_id} updated successfully`);
+      NotificationsManager.success(`用户 ${editedUser.user_id} 更新成功`);
     } catch (error) {
       console.error("There was an error updating the user", error);
     }
@@ -230,7 +230,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
   const handleBulkEdit = () => {
     if (selectedUsers.length === 0) {
-      NotificationsManager.fromBackend("Please select users to edit");
+      NotificationsManager.fromBackend("请先选择要编辑的用户");
       return;
     }
 
@@ -247,7 +247,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
   const userListQuery = useQuery({
     queryKey: ["userList", { debouncedFilter: debouncedFilters, currentPage }],
     queryFn: async () => {
-      if (!accessToken) throw new Error("Access token required");
+      if (!accessToken) throw new Error("需要访问令牌");
 
       return await userListCall(
         accessToken,
@@ -271,7 +271,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
     queryKey: ["userRoles"],
     initialData: () => ({}),
     queryFn: async () => {
-      if (!accessToken) throw new Error("Access token required");
+      if (!accessToken) throw new Error("需要访问令牌");
       return await getPossibleUserRoles(accessToken);
     },
     enabled: Boolean(accessToken && token && userRole && userID),
@@ -308,12 +308,12 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
                 variant={selectionMode ? "primary" : "secondary"}
                 className="flex items-center"
               >
-                {selectionMode ? "Cancel Selection" : "Select Users"}
+                {selectionMode ? "取消选择" : "选择用户"}
               </Button>
 
               {selectionMode && (
                 <Button onClick={handleBulkEdit} disabled={selectedUsers.length === 0} className="flex items-center">
-                  Bulk Edit ({selectedUsers.length} selected)
+                  批量编辑（已选 {selectedUsers.length}）
                 </Button>
               )}
             </>
@@ -323,8 +323,8 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
       <TabGroup defaultIndex={0} onIndexChange={(index) => setActiveTab(index === 0 ? "users" : "settings")}>
         <TabList className="mb-4">
-          <Tab>Users</Tab>
-          <Tab>Default User Settings</Tab>
+          <Tab>用户</Tab>
+          <Tab>默认用户设置</Tab>
         </TabList>
 
         <TabPanels>
@@ -388,18 +388,18 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
-        title="Delete User?"
-        message="Are you sure you want to delete this user? This action cannot be undone."
-        resourceInformationTitle="User Information"
+        title="删除用户？"
+        message="确认删除该用户吗？此操作不可撤销。"
+        resourceInformationTitle="用户信息"
         resourceInformation={[
-          { label: "Email", value: userToDelete?.user_email },
-          { label: "User ID", value: userToDelete?.user_id, code: true },
+          { label: "邮箱", value: userToDelete?.user_email },
+          { label: "用户 ID", value: userToDelete?.user_id, code: true },
           {
-            label: "Global Proxy Role",
+            label: "全局代理角色",
             value:
               (userToDelete && possibleUIRoles?.[userToDelete.user_role]?.ui_label) || userToDelete?.user_role || "-",
           },
-          { label: "Total Spend (USD)", value: userToDelete?.spend?.toFixed(2) },
+          { label: "总花费", value: userToDelete?.spend?.toFixed(2) },
         ]}
         onCancel={cancelDelete}
         onOk={confirmDelete}

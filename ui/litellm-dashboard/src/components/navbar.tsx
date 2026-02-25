@@ -1,14 +1,17 @@
-import { useHealthReadiness } from "@/app/(dashboard)/hooks/healthReadiness/useHealthReadiness";
 import { getProxyBaseUrl } from "@/components/networking";
+import {
+  DEFAULT_BRAND_LOGO_URL,
+  isLegacyDefaultLogoUrl,
+  isSvgLogoUrl,
+  LEGACY_LOGO_ENDPOINT_PATH,
+} from "@/constants/branding";
 import { useTheme } from "@/contexts/ThemeContext";
 import { clearTokenCookies } from "@/utils/cookieUtils";
 import { fetchProxySettings } from "@/utils/proxyUtils";
 import { MenuFoldOutlined, MenuUnfoldOutlined, MoonOutlined, SunOutlined } from "@ant-design/icons";
-import { Button, Switch, Tag } from "antd";
+import { Switch } from "antd";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { BlogDropdown } from "./Navbar/BlogDropdown/BlogDropdown";
-import { CommunityEngagementButtons } from "./Navbar/CommunityEngagementButtons/CommunityEngagementButtons";
 import UserDropdown from "./Navbar/UserDropdown/UserDropdown";
 
 interface NavbarProps {
@@ -43,11 +46,16 @@ const Navbar: React.FC<NavbarProps> = ({
   const baseUrl = getProxyBaseUrl();
   const [logoutUrl, setLogoutUrl] = useState("");
   const { logoUrl } = useTheme();
-  const { data: healthData } = useHealthReadiness();
-  const version = healthData?.litellm_version;
 
-  // Simple logo URL: use custom logo if available, otherwise default
-  const imageUrl = logoUrl || `${baseUrl}/get_image`;
+  // Some deployments prefill logo_url with the legacy /get_image endpoint.
+  // Treat legacy defaults and non-SVG logos as "no custom logo" so we always use SVG branding.
+  const hasCustomLogo = Boolean(
+    logoUrl &&
+      isSvgLogoUrl(logoUrl) &&
+      !logoUrl.includes(LEGACY_LOGO_ENDPOINT_PATH) &&
+      !isLegacyDefaultLogoUrl(logoUrl)
+  );
+  const imageUrl: string = hasCustomLogo ? logoUrl ?? DEFAULT_BRAND_LOGO_URL : DEFAULT_BRAND_LOGO_URL;
 
   useEffect(() => {
     const initializeProxySettings = async () => {
@@ -99,32 +107,10 @@ const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 </div>
               </Link>
-              {version && (
-                <div className="relative">
-                  <span
-                    className="absolute -top-1 -left-2 text-lg animate-bounce"
-                    style={{ animationDuration: "2s" }}
-                    title="Thanks for using LiteLLM!"
-                  >
-                    🌑
-                  </span>
-                  <Tag className="relative text-xs font-medium cursor-pointer z-10">
-                    <a
-                      href="https://docs.litellm.ai/release_notes"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-shrink-0"
-                    >
-                      v{version}
-                    </a>
-                  </Tag>
-                </div>
-              )}
             </div>
           </div>
           {/* Right side nav items */}
           <div className="flex items-center space-x-5 ml-auto">
-            <CommunityEngagementButtons />
             {/* Dark mode is currently a work in progress. To test, you can change 'false' to 'true' below.
             Do not set this to true by default until all components are confirmed to support dark mode styles. */}
             {false && (
@@ -136,11 +122,6 @@ const Navbar: React.FC<NavbarProps> = ({
                 unCheckedChildren={<SunOutlined />}
               />
             )}
-            <Button type="text" href="https://docs.litellm.ai/docs/" target="_blank" rel="noopener noreferrer">
-              Docs
-            </Button>
-            <BlogDropdown />
-
             {!isPublicPage && <UserDropdown onLogout={handleLogout} />}
           </div>
         </div>

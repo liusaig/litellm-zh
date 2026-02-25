@@ -23,6 +23,6 @@ vi.mock("./molecules/notifications_manager", () => ({
 describe("BulkCreateUsersButton", () => {
   it("should render", () => {
     const { getByText } = render(<BulkCreateUsersButton accessToken="test-token" teams={[]} possibleUIRoles={null} />);
-    expect(getByText("+ Bulk Invite Users")).toBeInTheDocument();
+    expect(getByText("+ 批量创建")).toBeInTheDocument();
   });
 });

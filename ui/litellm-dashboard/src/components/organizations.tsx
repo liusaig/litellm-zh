@@ -138,7 +138,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     try {
       setIsDeleting(true);
       await organizationDeleteCall(accessToken, orgToDelete);
-      NotificationsManager.success("Organization deleted successfully");
+      NotificationsManager.success("组织删除成功");
 
       setIsDeleteModalOpen(false);
       setOrgToDelete(null);
@@ -186,7 +186,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
       }
 
       await organizationCreateCall(accessToken, values);
-      NotificationsManager.success("Organization created successfully");
+      NotificationsManager.success("组织创建成功");
       setIsOrgModalVisible(false);
       form.resetFields();
       // Refresh organizations list
@@ -201,29 +201,13 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     form.resetFields();
   };
 
-  if (!premiumUser) {
-    return (
-      <div>
-        <Text>
-          This is a LiteLLM Enterprise feature, and requires a valid key to use. Get a trial key{" "}
-          <a href="https://www.litellm.ai/#pricing" target="_blank" rel="noopener noreferrer">
-            here
-          </a>
-          .
-        </Text>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full mx-4 h-[75vh]">
       <Grid numItems={1} className="gap-2 p-8 w-full mt-2">
         <Col numColSpan={1} className="flex flex-col gap-2">
-          {(userRole === "Admin" || userRole === "Org Admin") && (
-            <Button className="w-fit" onClick={() => setIsOrgModalVisible(true)}>
-              + Create New Organization
-            </Button>
-          )}
+          <Button className="w-fit" onClick={() => setIsOrgModalVisible(true)}>
+            + 创建新组织
+          </Button>
           {selectedOrgId ? (
             <OrganizationInfoView
               organizationId={selectedOrgId}
@@ -241,10 +225,10 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
             <TabGroup className="gap-2 h-[75vh] w-full">
               <TabList className="flex justify-between mt-2 w-full items-center">
                 <div className="flex">
-                  <Tab>Your Organizations</Tab>
+                  <Tab>我的组织</Tab>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {lastRefreshed && <Text>Last Refreshed: {lastRefreshed}</Text>}
+                  {lastRefreshed && <Text>最近刷新：{lastRefreshed}</Text>}
                   <Icon
                     icon={RefreshIcon}
                     variant="shadow"
@@ -256,7 +240,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  <Text>Click on &ldquo;Organization ID&rdquo; to view organization details.</Text>
+                  <Text>点击 &ldquo;组织 ID&rdquo; 查看组织详情。</Text>
                   <Grid numItems={1} className="gap-2 pt-2 pb-2 h-[75vh] w-full mt-2">
                     <Col numColSpan={1}>
                       <Card className="w-full mx-auto flex-auto overflow-hidden overflow-y-auto max-h-[50vh]">
@@ -274,15 +258,15 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                         <Table>
                           <TableHead>
                             <TableRow>
-                              <TableHeaderCell>Organization ID</TableHeaderCell>
-                              <TableHeaderCell>Organization Name</TableHeaderCell>
-                              <TableHeaderCell>Created</TableHeaderCell>
-                              <TableHeaderCell>Spend (USD)</TableHeaderCell>
-                              <TableHeaderCell>Budget (USD)</TableHeaderCell>
-                              <TableHeaderCell>Models</TableHeaderCell>
-                              <TableHeaderCell>TPM / RPM Limits</TableHeaderCell>
-                              <TableHeaderCell>Info</TableHeaderCell>
-                              <TableHeaderCell>Actions</TableHeaderCell>
+                              <TableHeaderCell>组织 ID</TableHeaderCell>
+                              <TableHeaderCell>组织名称</TableHeaderCell>
+                              <TableHeaderCell>创建时间</TableHeaderCell>
+                              <TableHeaderCell>花费</TableHeaderCell>
+                              <TableHeaderCell>预算</TableHeaderCell>
+                              <TableHeaderCell>模型</TableHeaderCell>
+                              <TableHeaderCell>TPM / RPM 限制</TableHeaderCell>
+                              <TableHeaderCell>信息</TableHeaderCell>
+                              <TableHeaderCell>操作</TableHeaderCell>
                             </TableRow>
                           </TableHead>
 
@@ -298,7 +282,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                             <Button
                                               size="xs"
                                               variant="light"
-                                              className="font-mono text-blue-500 bg-blue-50 hover:bg-blue-100 text-xs font-normal px-2 py-0.5 text-left overflow-hidden truncate max-w-[200px]"
+                                              className="font-mono text-[#6E29F6] bg-[#F1EAFE] hover:bg-[#E6D9FE] text-xs font-normal px-2 py-0.5 text-left overflow-hidden truncate max-w-[200px]"
                                               onClick={() => setSelectedOrgId(org.organization_id)}
                                             >
                                               {org.organization_id?.slice(0, 7)}
@@ -309,14 +293,14 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                       </TableCell>
                                       <TableCell>{org.organization_alias}</TableCell>
                                       <TableCell>
-                                        {org.created_at ? new Date(org.created_at).toLocaleDateString() : "N/A"}
+                                        {org.created_at ? new Date(org.created_at).toLocaleDateString() : "无"}
                                       </TableCell>
                                       <TableCell>{formatNumberWithCommas(org.spend, 4)}</TableCell>
                                       <TableCell>
                                         {org.litellm_budget_table?.max_budget !== null &&
                                         org.litellm_budget_table?.max_budget !== undefined
                                           ? org.litellm_budget_table?.max_budget
-                                          : "No limit"}
+                                          : "不限制"}
                                       </TableCell>
                                       <TableCell
                                         style={{
@@ -331,7 +315,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                             <div className="flex flex-col">
                                               {org.models.length === 0 ? (
                                                 <Badge size={"xs"} className="mb-1" color="red">
-                                                  <Text>All Proxy Models</Text>
+                                                  <Text>全部模型</Text>
                                                 </Badge>
                                               ) : (
                                                 <>
@@ -360,7 +344,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                                       {org.models.slice(0, 3).map((model, index) =>
                                                         model === "all-proxy-models" ? (
                                                           <Badge key={index} size={"xs"} color="red">
-                                                            <Text>All Proxy Models</Text>
+                                                            <Text>全部模型</Text>
                                                           </Badge>
                                                         ) : (
                                                           <Badge key={index} size={"xs"} color="blue">
@@ -378,8 +362,8 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                                             <Text>
                                                               +{org.models.length - 3}{" "}
                                                               {org.models.length - 3 === 1
-                                                                ? "more model"
-                                                                : "more models"}
+                                                                ? "个更多模型"
+                                                                : "个更多模型"}
                                                             </Text>
                                                           </Badge>
                                                         )}
@@ -388,7 +372,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                                           {org.models.slice(3).map((model, index) =>
                                                             model === "all-proxy-models" ? (
                                                               <Badge key={index + 3} size={"xs"} color="red">
-                                                                <Text>All Proxy Models</Text>
+                                                                <Text>全部模型</Text>
                                                               </Badge>
                                                             ) : (
                                                               <Badge key={index + 3} size={"xs"} color="blue">
@@ -415,35 +399,33 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                           TPM:{" "}
                                           {org.litellm_budget_table?.tpm_limit
                                             ? org.litellm_budget_table?.tpm_limit
-                                            : "Unlimited"}
+                                            : "不限制"}
                                           <br />
                                           RPM:{" "}
                                           {org.litellm_budget_table?.rpm_limit
                                             ? org.litellm_budget_table?.rpm_limit
-                                            : "Unlimited"}
+                                            : "不限制"}
                                         </Text>
                                       </TableCell>
                                       <TableCell>
-                                        <Text>{org.members?.length || 0} Members</Text>
+                                        <Text>{org.members?.length || 0} 位成员</Text>
                                       </TableCell>
                                       <TableCell>
-                                        {userRole === "Admin" && (
-                                          <>
-                                            <TableIconActionButton
-                                              variant="Edit"
-                                              tooltipText="Edit organization"
-                                              onClick={() => {
-                                                setSelectedOrgId(org.organization_id);
-                                                setEditOrg(true);
-                                              }}
-                                            />
-                                            <TableIconActionButton
-                                              variant="Delete"
-                                              tooltipText="Delete organization"
-                                              onClick={() => handleDelete(org.organization_id)}
-                                            />
-                                          </>
-                                        )}
+                                        <>
+                                          <TableIconActionButton
+                                            variant="Edit"
+                                            tooltipText="编辑组织"
+                                            onClick={() => {
+                                              setSelectedOrgId(org.organization_id);
+                                              setEditOrg(true);
+                                            }}
+                                          />
+                                          <TableIconActionButton
+                                            variant="Delete"
+                                            tooltipText="删除组织"
+                                            onClick={() => handleDelete(org.organization_id)}
+                                          />
+                                        </>
                                       </TableCell>
                                     </TableRow>
                                   ))
@@ -459,104 +441,105 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
           )}
         </Col>
       </Grid>
-      <Modal title="Create Organization" visible={isOrgModalVisible} width={800} footer={null} onCancel={handleCancel}>
+      <Modal title="创建组织" visible={isOrgModalVisible} width={800} footer={null} onCancel={handleCancel}>
         <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
           <Form.Item
-            label="Organization Name"
+            label="组织名称"
             name="organization_alias"
             rules={[
               {
                 required: true,
-                message: "Please input an organization name",
+                message: "请输入组织名称",
               },
             ]}
           >
-            <TextInput placeholder="" />
+            <TextInput placeholder="请输入名称" />
           </Form.Item>
-          <Form.Item label="Models" name="models">
+          <Form.Item label="模型" name="models" style={{ marginTop: 16 }}>
             <ModelSelect
               options={{ showAllProxyModelsOverride: true, includeSpecialOptions: true }}
               value={form.getFieldValue("models")}
               onChange={(values) => form.setFieldValue("models", values)}
               context="organization"
+              placeholder="选择模型"
             />
           </Form.Item>
 
-          <Form.Item label="Max Budget (USD)" name="max_budget">
-            <NumericalInput step={0.01} precision={2} width={200} />
+          <Form.Item label="最大预算" name="max_budget" style={{ marginTop: 16 }}>
+            <NumericalInput step={0.01} precision={2} width={200} placeholder="请输入数值" />
           </Form.Item>
-          <Form.Item label="Reset Budget" name="budget_duration">
-            <Select2 defaultValue={null} placeholder="n/a">
-              <Select2.Option value="24h">daily</Select2.Option>
-              <Select2.Option value="7d">weekly</Select2.Option>
-              <Select2.Option value="30d">monthly</Select2.Option>
+          <Form.Item label="预算重置周期" name="budget_duration" style={{ marginTop: 16 }}>
+            <Select2 defaultValue={null} placeholder="不适用">
+              <Select2.Option value="24h">每天</Select2.Option>
+              <Select2.Option value="7d">每周</Select2.Option>
+              <Select2.Option value="30d">每月</Select2.Option>
             </Select2>
           </Form.Item>
-          <Form.Item label="Tokens per minute Limit (TPM)" name="tpm_limit">
-            <NumericalInput step={1} width={400} />
+          <Form.Item label="每分钟 Token 限制 (TPM)" name="tpm_limit" style={{ marginTop: 16 }}>
+            <NumericalInput step={1} width={400} placeholder="请输入数值" />
           </Form.Item>
-          <Form.Item label="Requests per minute Limit (RPM)" name="rpm_limit">
-            <NumericalInput step={1} width={400} />
+          <Form.Item label="每分钟请求限制 (RPM)" name="rpm_limit" style={{ marginTop: 16 }}>
+            <NumericalInput step={1} width={400} placeholder="请输入数值" />
           </Form.Item>
 
           <Form.Item
             label={
               <span>
-                Allowed Vector Stores{" "}
-                <Tooltip title="Select which vector stores this organization can access by default. Leave empty for access to all vector stores">
+                可用向量库{" "}
+                <Tooltip title="选择该组织默认可访问的向量库。留空表示可访问所有向量库">
                   <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                 </Tooltip>
               </span>
             }
             name="allowed_vector_store_ids"
-            className="mt-4"
-            help="Select vector stores this organization can access. Leave empty for access to all vector stores"
+            style={{ marginTop: 16, marginBottom: 32 }}
+            help="选择该组织可访问的向量库，留空表示可访问所有向量库"
           >
             <VectorStoreSelector
               onChange={(values) => form.setFieldValue("allowed_vector_store_ids", values)}
               value={form.getFieldValue("allowed_vector_store_ids")}
               accessToken={accessToken || ""}
-              placeholder="Select vector stores (optional)"
+              placeholder="选择向量库（可选）"
             />
           </Form.Item>
 
           <Form.Item
             label={
               <span>
-                Allowed MCP Servers{" "}
-                <Tooltip title="Select which MCP servers and access groups this organization can access by default.">
+                可用 MCP 服务{" "}
+                <Tooltip title="选择该组织默认可访问的 MCP 服务和访问组。">
                   <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                 </Tooltip>
               </span>
             }
             name="allowed_mcp_servers_and_groups"
-            className="mt-4"
-            help="Select MCP servers and access groups this organization can access."
+            style={{ marginTop: 20, marginBottom: 32 }}
+            help="选择该组织可访问的 MCP 服务和访问组。"
           >
             <MCPServerSelector
               onChange={(values) => form.setFieldValue("allowed_mcp_servers_and_groups", values)}
               value={form.getFieldValue("allowed_mcp_servers_and_groups")}
               accessToken={accessToken || ""}
-              placeholder="Select MCP servers and access groups (optional)"
+              placeholder="选择 MCP 服务和访问组（可选）"
             />
           </Form.Item>
 
-          <Form.Item label="Metadata" name="metadata">
+          <Form.Item label="元数据" name="metadata" style={{ marginTop: 16 }}>
             <Input.TextArea rows={4} />
           </Form.Item>
 
           <div style={{ textAlign: "right", marginTop: "10px" }}>
-            <Button type="submit">Create Organization</Button>
+            <Button type="submit">创建组织</Button>
           </div>
         </Form>
       </Modal>
 
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
-        title="Delete Organization?"
-        message="Are you sure you want to delete this organization? This action cannot be undone."
-        resourceInformationTitle="Organization Information"
-        resourceInformation={[{ label: "Organization ID", value: orgToDelete, code: true }]}
+        title="删除组织？"
+        message="确认删除该组织吗？此操作不可撤销。"
+        resourceInformationTitle="组织信息"
+        resourceInformation={[{ label: "组织 ID", value: orgToDelete, code: true }]}
         onCancel={cancelDelete}
         onOk={confirmDelete}
         confirmLoading={isDeleting}

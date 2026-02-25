@@ -90,7 +90,7 @@ export default function UserInfoView({
         setUserModels(availableModels);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        NotificationsManager.fromBackend("Failed to fetch user data");
+        NotificationsManager.fromBackend("获取用户数据失败");
       } finally {
         setIsLoading(false);
       }
@@ -101,16 +101,16 @@ export default function UserInfoView({
 
   const handleResetPassword = async () => {
     if (!accessToken) {
-      NotificationsManager.fromBackend("Access token not found");
+      NotificationsManager.fromBackend("未找到访问令牌");
       return;
     }
     try {
-      NotificationsManager.success("Generating password reset link...");
+      NotificationsManager.success("正在生成重置密码链接...");
       const data = await invitationCreateCall(accessToken, userId);
       setInvitationLinkData(data);
       setIsInvitationLinkModalVisible(true);
     } catch (error) {
-      NotificationsManager.fromBackend("Failed to generate password reset link");
+      NotificationsManager.fromBackend("生成重置密码链接失败");
     }
   };
 
@@ -119,14 +119,14 @@ export default function UserInfoView({
       if (!accessToken) return;
       setIsDeletingUser(true);
       await userDeleteCall(accessToken, [userId]);
-      NotificationsManager.success("User deleted successfully");
+      NotificationsManager.success("用户删除成功");
       if (onDelete) {
         onDelete();
       }
       onClose();
     } catch (error) {
       console.error("Error deleting user:", error);
-      NotificationsManager.fromBackend("Failed to delete user");
+      NotificationsManager.fromBackend("删除用户失败");
     } finally {
       setIsDeleteModalOpen(false);
       setIsDeletingUser(false);
@@ -157,11 +157,11 @@ export default function UserInfoView({
         },
       });
 
-      NotificationsManager.success("User updated successfully");
+      NotificationsManager.success("用户更新成功");
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating user:", error);
-      NotificationsManager.fromBackend("Failed to update user");
+      NotificationsManager.fromBackend("更新用户失败");
     }
   };
 
@@ -169,9 +169,9 @@ export default function UserInfoView({
     return (
       <div className="p-4">
         <Button icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-          Back to Users
+          返回用户列表
         </Button>
-        <Text>Loading user data...</Text>
+        <Text>正在加载用户数据...</Text>
       </div>
     );
   }
@@ -180,9 +180,9 @@ export default function UserInfoView({
     return (
       <div className="p-4">
         <Button icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-          Back to Users
+          返回用户列表
         </Button>
-        <Text>User not found</Text>
+        <Text>未找到用户</Text>
       </div>
     );
   }
@@ -202,9 +202,9 @@ export default function UserInfoView({
       <div className="flex justify-between items-center mb-6">
         <div>
           <Button icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-            Back to Users
+            返回用户列表
           </Button>
-          <Title>{userData.user_info?.user_email || "User"}</Title>
+          <Title>{userData.user_info?.user_email || "用户"}</Title>
           <div className="flex items-center cursor-pointer">
             <Text className="text-gray-500 font-mono">{userData.user_id}</Text>
             <AntdButton
@@ -223,7 +223,7 @@ export default function UserInfoView({
         {userRole && rolesWithWriteAccess.includes(userRole) && (
           <div className="flex items-center space-x-2">
             <Button icon={RefreshIcon} variant="secondary" onClick={handleResetPassword} className="flex items-center">
-              Reset Password
+              重置密码
             </Button>
             <Button
               icon={TrashIcon}
@@ -231,7 +231,7 @@ export default function UserInfoView({
               onClick={() => setIsDeleteModalOpen(true)}
               className="flex items-center text-red-500 border-red-500 hover:text-red-600 hover:border-red-600"
             >
-              Delete User
+              删除用户
             </Button>
           </div>
         )}
@@ -239,21 +239,21 @@ export default function UserInfoView({
 
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
-        title="Delete User?"
-        message="Are you sure you want to delete this user? This action cannot be undone."
-        resourceInformationTitle="User Information"
+        title="删除用户？"
+        message="确认删除该用户吗？此操作不可撤销。"
+        resourceInformationTitle="用户信息"
         resourceInformation={[
-          { label: "Email", value: userData.user_info?.user_email },
-          { label: "User ID", value: userData.user_id, code: true },
+          { label: "邮箱", value: userData.user_info?.user_email },
+          { label: "用户 ID", value: userData.user_id, code: true },
           {
-            label: "Global Proxy Role",
+            label: "全局代理角色",
             value:
               (userData.user_info?.user_role && possibleUIRoles?.[userData.user_info.user_role]?.ui_label) ||
               userData.user_info?.user_role ||
               "-",
           },
           {
-            label: "Total Spend (USD)",
+            label: "总花费",
             value:
               userData.user_info?.spend !== null && userData.user_info?.spend !== undefined
                 ? userData.user_info.spend.toFixed(2)
@@ -267,8 +267,8 @@ export default function UserInfoView({
 
       <TabGroup defaultIndex={activeTab} onIndexChange={setActiveTab}>
         <TabList className="mb-4">
-          <Tab>Overview</Tab>
-          <Tab>Details</Tab>
+          <Tab>概览</Tab>
+          <Tab>详情</Tab>
         </TabList>
 
         <TabPanels>
@@ -276,20 +276,20 @@ export default function UserInfoView({
           <TabPanel>
             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6">
               <Card>
-                <Text>Spend</Text>
+                <Text>花费</Text>
                 <div className="mt-2">
                   <Title>${formatNumberWithCommas(userData.user_info?.spend || 0, 4)}</Title>
                   <Text>
                     of{" "}
                     {userData.user_info?.max_budget !== null
                       ? `$${formatNumberWithCommas(userData.user_info.max_budget, 4)}`
-                      : "Unlimited"}
+                      : "不限制"}
                   </Text>
                 </div>
               </Card>
 
               <Card>
-                <Text>Teams</Text>
+                <Text>分组</Text>
                 <div className="mt-2">
                   {userData.teams?.length && userData.teams?.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
@@ -304,7 +304,7 @@ export default function UserInfoView({
                           className="cursor-pointer hover:bg-gray-200 transition-colors"
                           onClick={() => setIsTeamsExpanded(true)}
                         >
-                          +{userData.teams.length - 20} more
+                          +{userData.teams.length - 20} 更多
                         </Badge>
                       )}
                       {isTeamsExpanded && userData.teams?.length > 20 && (
@@ -313,32 +313,32 @@ export default function UserInfoView({
                           className="cursor-pointer hover:bg-gray-200 transition-colors"
                           onClick={() => setIsTeamsExpanded(false)}
                         >
-                          Show Less
+                          收起
                         </Badge>
                       )}
                     </div>
                   ) : (
-                    <Text>No teams</Text>
+                    <Text>无分组</Text>
                   )}
                 </div>
               </Card>
 
               <Card>
-                <Text>Virtual Keys</Text>
+                <Text>虚拟密钥</Text>
                 <div className="mt-2">
                   <Text>
-                    {userData.keys?.length || 0} {userData.keys?.length === 1 ? "Key" : "Keys"}
+                    {userData.keys?.length || 0} {userData.keys?.length === 1 ? "个密钥" : "个密钥"}
                   </Text>
                 </div>
               </Card>
 
               <Card>
-                <Text>Personal Models</Text>
+                <Text>个人模型</Text>
                 <div className="mt-2">
                   {userData.user_info?.models?.length && userData.user_info?.models?.length > 0 ? (
                     userData.user_info?.models?.map((model, index) => <Text key={index}>{model}</Text>)
                   ) : (
-                    <Text>All proxy models</Text>
+                    <Text>全部模型</Text>
                   )}
                 </div>
               </Card>
@@ -349,9 +349,9 @@ export default function UserInfoView({
           <TabPanel>
             <Card>
               <div className="flex justify-between items-center mb-4">
-                <Title>User Settings</Title>
+                <Title>用户设置</Title>
                 {!isEditing && userRole && rolesWithWriteAccess.includes(userRole) && (
-                  <Button onClick={() => setIsEditing(true)}>Edit Settings</Button>
+                  <Button onClick={() => setIsEditing(true)}>编辑设置</Button>
                 )}
               </div>
 
@@ -370,7 +370,7 @@ export default function UserInfoView({
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <Text className="font-medium">User ID</Text>
+                    <Text className="font-medium">用户 ID</Text>
                     <div className="flex items-center cursor-pointer">
                       <Text className="font-mono">{userData.user_id}</Text>
                       <AntdButton
@@ -388,40 +388,40 @@ export default function UserInfoView({
                   </div>
 
                   <div>
-                    <Text className="font-medium">Email</Text>
-                    <Text>{userData.user_info?.user_email || "Not Set"}</Text>
+                    <Text className="font-medium">邮箱</Text>
+                    <Text>{userData.user_info?.user_email || "未设置"}</Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">User Alias</Text>
-                    <Text>{userData.user_info?.user_alias || "Not Set"}</Text>
+                    <Text className="font-medium">用户别名</Text>
+                    <Text>{userData.user_info?.user_alias || "未设置"}</Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Global Proxy Role</Text>
-                    <Text>{userData.user_info?.user_role || "Not Set"}</Text>
+                    <Text className="font-medium">全局代理角色</Text>
+                    <Text>{userData.user_info?.user_role || "未设置"}</Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Created</Text>
+                    <Text className="font-medium">创建时间</Text>
                     <Text>
                       {userData.user_info?.created_at
                         ? new Date(userData.user_info.created_at).toLocaleString()
-                        : "Unknown"}
+                        : "未知"}
                     </Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Last Updated</Text>
+                    <Text className="font-medium">最近更新时间</Text>
                     <Text>
                       {userData.user_info?.updated_at
                         ? new Date(userData.user_info.updated_at).toLocaleString()
-                        : "Unknown"}
+                        : "未知"}
                     </Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Teams</Text>
+                    <Text className="font-medium">分组</Text>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {userData.teams?.length && userData.teams?.length > 0 ? (
                         <>
@@ -439,7 +439,7 @@ export default function UserInfoView({
                               className="px-2 py-1 bg-gray-100 rounded text-xs cursor-pointer hover:bg-gray-200 transition-colors"
                               onClick={() => setIsTeamsExpanded(true)}
                             >
-                              +{userData.teams.length - 20} more
+                              +{userData.teams.length - 20} 更多
                             </span>
                           )}
                           {isTeamsExpanded && userData.teams?.length > 20 && (
@@ -447,18 +447,18 @@ export default function UserInfoView({
                               className="px-2 py-1 bg-gray-100 rounded text-xs cursor-pointer hover:bg-gray-200 transition-colors"
                               onClick={() => setIsTeamsExpanded(false)}
                             >
-                              Show Less
+                              收起
                             </span>
                           )}
                         </>
                       ) : (
-                        <Text>No teams</Text>
+                        <Text>无分组</Text>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Personal Models</Text>
+                    <Text className="font-medium">个人模型</Text>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {userData.user_info?.models?.length && userData.user_info?.models?.length > 0 ? (
                         userData.user_info?.models?.map((model, index) => (
@@ -467,13 +467,13 @@ export default function UserInfoView({
                           </span>
                         ))
                       ) : (
-                        <Text>All proxy models</Text>
+                        <Text>全部模型</Text>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Virtual Keys</Text>
+                    <Text className="font-medium">虚拟密钥</Text>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {userData.keys?.length && userData.keys?.length > 0 ? (
                         userData.keys.map((key, index) => (
@@ -482,27 +482,27 @@ export default function UserInfoView({
                           </span>
                         ))
                       ) : (
-                        <Text>No Virtual Keys</Text>
+                        <Text>无虚拟密钥</Text>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Max Budget</Text>
+                    <Text className="font-medium">最大预算</Text>
                     <Text>
                       {userData.user_info?.max_budget !== null && userData.user_info?.max_budget !== undefined
                         ? `$${formatNumberWithCommas(userData.user_info.max_budget, 4)}`
-                        : "Unlimited"}
+                        : "不限制"}
                     </Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Budget Reset</Text>
+                    <Text className="font-medium">预算重置周期</Text>
                     <Text>{getBudgetDurationLabel(userData.user_info?.budget_duration ?? null)}</Text>
                   </div>
 
                   <div>
-                    <Text className="font-medium">Metadata</Text>
+                    <Text className="font-medium">元数据</Text>
                     <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto mt-1">
                       {JSON.stringify(userData.user_info?.metadata || {}, null, 2)}
                     </pre>

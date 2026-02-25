@@ -25,7 +25,7 @@ export const columns = (
   // Backend sortable columns: user_id, user_email, created_at, spend, user_alias, user_role
   const baseColumns: ColumnDef<UserInfo>[] = [
     {
-      header: "User ID",
+      header: "用户 ID",
       accessorKey: "user_id",
       enableSorting: true,
       cell: ({ row }) => (
@@ -35,25 +35,25 @@ export const columns = (
       ),
     },
     {
-      header: "Email",
+      header: "邮箱",
       accessorKey: "user_email",
       enableSorting: true,
       cell: ({ row }) => <span className="text-xs">{row.original.user_email || "-"}</span>,
     },
     {
-      header: "Global Proxy Role",
+      header: "全局代理角色",
       accessorKey: "user_role",
       enableSorting: true,
       cell: ({ row }) => <span className="text-xs">{possibleUIRoles?.[row.original.user_role]?.ui_label || "-"}</span>,
     },
     {
-      header: "User Alias",
+      header: "用户别名",
       accessorKey: "user_alias",
       enableSorting: false,
       cell: ({ row }) => <span className="text-xs">{row.original.user_alias || "-"}</span>,
     },
     {
-      header: "Spend (USD)",
+      header: "花费",
       accessorKey: "spend",
       enableSorting: true,
       cell: ({ row }) => (
@@ -61,18 +61,18 @@ export const columns = (
       ),
     },
     {
-      header: "Budget (USD)",
+      header: "预算",
       accessorKey: "max_budget",
       enableSorting: false,
       cell: ({ row }) => (
-        <span className="text-xs">{row.original.max_budget !== null ? row.original.max_budget : "Unlimited"}</span>
+        <span className="text-xs">{row.original.max_budget !== null ? row.original.max_budget : "不限制"}</span>
       ),
     },
     {
       header: () => (
         <div className="flex items-center gap-2">
           <span>SSO ID</span>
-          <Tooltip title="SSO ID is the ID of the user in the SSO provider. If the user is not using SSO, this will be null.">
+          <Tooltip title="SSO ID 是用户在 SSO 提供方中的标识。若用户未使用 SSO，则为空。">
             <InformationCircleIcon className="w-4 h-4" />
           </Tooltip>
         </div>
@@ -84,25 +84,25 @@ export const columns = (
       ),
     },
     {
-      header: "Virtual Keys",
+      header: "虚拟密钥",
       accessorKey: "key_count",
       enableSorting: false,
       cell: ({ row }) => (
         <Grid numItems={2}>
           {row.original.key_count > 0 ? (
             <Badge size="xs" color="indigo">
-              {row.original.key_count} {row.original.key_count === 1 ? "Key" : "Keys"}
+              {row.original.key_count} {row.original.key_count === 1 ? "个密钥" : "个密钥"}
             </Badge>
           ) : (
             <Badge size="xs" color="gray">
-              No Keys
+              无密钥
             </Badge>
           )}
         </Grid>
       ),
     },
     {
-      header: "Created At",
+      header: "创建时间",
       accessorKey: "created_at",
       enableSorting: true,
       cell: ({ row }) => (
@@ -112,7 +112,7 @@ export const columns = (
       ),
     },
     {
-      header: "Updated At",
+      header: "更新时间",
       accessorKey: "updated_at",
       enableSorting: false,
       cell: ({ row }) => (
@@ -123,11 +123,11 @@ export const columns = (
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "操作",
       enableSorting: false,
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Tooltip title="Edit user details">
+          <Tooltip title="编辑用户详情">
             <Icon
               icon={PencilAltIcon}
               size="sm"
@@ -135,7 +135,7 @@ export const columns = (
               className="cursor-pointer hover:text-blue-600"
             />
           </Tooltip>
-          <Tooltip title="Delete user">
+          <Tooltip title="删除用户">
             <Icon
               icon={TrashIcon}
               size="sm"
@@ -143,7 +143,7 @@ export const columns = (
               className="cursor-pointer hover:text-red-600"
             />
           </Tooltip>
-          <Tooltip title="Reset Password">
+          <Tooltip title="重置密码">
             <Icon
               icon={RefreshIcon}
               size="sm"

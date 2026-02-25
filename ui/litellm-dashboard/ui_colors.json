@@ -1,9 +1,10 @@
 {
   "brand": {
-    "DEFAULT": "#6366f1",
-    "muted": "#8688ef",
-    "subtle": "#8e91eb",
-    "emphasis": "#5558eb",
+    "faint": "#F1EAFE",
+    "DEFAULT": "#6E29F6",
+    "muted": "#8A57F8",
+    "subtle": "#A17CF9",
+    "emphasis": "#5B1EE0",
     "inverted": "indigo"
   }
 }

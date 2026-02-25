@@ -129,7 +129,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "token",
       accessorKey: "token",
-      header: "Key ID",
+      header: "密钥 ID",
       size: 100,
       enableSorting: true,
       cell: (info) => {
@@ -153,7 +153,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "key_alias",
       accessorKey: "key_alias",
-      header: "Key Alias",
+      header: "密钥别名",
       size: 150,
       enableSorting: true,
       cell: (info) => {
@@ -171,7 +171,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "key_name",
       accessorKey: "key_name",
-      header: "Secret Key",
+      header: "密钥",
       size: 120,
       enableSorting: false,
       cell: (info) => <span className="font-mono text-xs">{info.getValue() as string}</span>,
@@ -179,7 +179,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "team_alias",
       accessorKey: "team_id",
-      header: "Team Alias",
+      header: "团队别名",
       size: 120,
       enableSorting: false,
       cell: ({ row, getValue }) => {
@@ -191,7 +191,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "team_id",
       accessorKey: "team_id",
-      header: "Team ID",
+      header: "团队 ID",
       size: 80,
       enableSorting: false,
       cell: (info) => {
@@ -209,7 +209,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "organization_id",
       accessorKey: "organization_id",
-      header: "Organization ID",
+      header: "组织 ID",
       size: 140,
       enableSorting: false,
       cell: (info) => (info.getValue() ? info.renderValue() : "-"),
@@ -217,7 +217,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "user_email",
       accessorKey: "user",
-      header: "User Email",
+      header: "用户邮箱",
       size: 160,
       enableSorting: false,
       cell: (info) => {
@@ -236,7 +236,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "user_id",
       accessorKey: "user_id",
-      header: "User ID",
+      header: "用户 ID",
       size: 70,
       enableSorting: false,
       cell: (info) => {
@@ -255,7 +255,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "created_at",
       accessorKey: "created_at",
-      header: "Created At",
+      header: "创建时间",
       size: 120,
       enableSorting: true,
       cell: (info) => {
@@ -266,7 +266,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "created_by",
       accessorKey: "created_by",
-      header: "Created By",
+      header: "创建者",
       size: 70,
       enableSorting: false,
       cell: (info) => {
@@ -285,7 +285,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "updated_at",
       accessorKey: "updated_at",
-      header: "Updated At",
+      header: "更新时间",
       size: 120,
       enableSorting: true,
       cell: (info) => {
@@ -298,9 +298,9 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
       accessorKey: "last_active",
       header: () => (
         <span className="flex items-center gap-1">
-          Last Active
+          最后活跃
           <Popover
-            content="This is a new field and is not backfilled. Only new key usage will update this value."
+            content="这是一个新字段，不会回填历史数据。只有新的密钥使用记录会更新此值。"
             trigger="hover"
           >
             <InfoCircleOutlined className="text-gray-400 text-xs cursor-help" />
@@ -311,7 +311,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
       enableSorting: false,
       cell: (info) => {
         const value = info.getValue();
-        if (!value) return "Unknown";
+        if (!value) return "未知";
         const date = new Date(value as string);
         return (
           <Tooltip title={date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "long" })}>
@@ -323,18 +323,18 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "expires",
       accessorKey: "expires",
-      header: "Expires",
+      header: "过期时间",
       size: 120,
       enableSorting: false,
       cell: (info) => {
         const value = info.getValue();
-        return value ? new Date(value as string).toLocaleDateString() : "Never";
+        return value ? new Date(value as string).toLocaleDateString() : "永不过期";
       },
     },
     {
       id: "spend",
       accessorKey: "spend",
-      header: "Spend (USD)",
+      header: "消费 (美元)",
       size: 100,
       enableSorting: true,
       cell: (info) => formatNumberWithCommas(info.getValue() as number, 4),
@@ -342,13 +342,13 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "max_budget",
       accessorKey: "max_budget",
-      header: "Budget (USD)",
+      header: "预算 (美元)",
       size: 110,
       enableSorting: true,
       cell: (info) => {
         const maxBudget = info.getValue() as number | null;
         if (maxBudget === null) {
-          return "Unlimited";
+          return "无限制";
         }
         return `$${formatNumberWithCommas(maxBudget)}`;
       },
@@ -356,18 +356,18 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "budget_reset_at",
       accessorKey: "budget_reset_at",
-      header: "Budget Reset",
+      header: "预算重置时间",
       size: 130,
       enableSorting: false,
       cell: (info) => {
         const value = info.getValue();
-        return value ? new Date(value as string).toLocaleString() : "Never";
+        return value ? new Date(value as string).toLocaleString() : "永不重置";
       },
     },
     {
       id: "models",
       accessorKey: "models",
-      header: "Models",
+      header: "模型",
       size: 200,
       enableSorting: false,
       cell: (info) => {
@@ -378,7 +378,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
               <div className="flex flex-col">
                 {models.length === 0 ? (
                   <Badge size={"xs"} className="mb-1" color="red">
-                    <Text>All Proxy Models</Text>
+                    <Text>所有代理模型</Text>
                   </Badge>
                 ) : (
                   <>
@@ -402,7 +402,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                         {models.slice(0, 3).map((model, index) =>
                           model === "all-proxy-models" ? (
                             <Badge key={index} size={"xs"} color="red">
-                              <Text>All Proxy Models</Text>
+                              <Text>所有代理模型</Text>
                             </Badge>
                           ) : (
                             <Badge key={index} size={"xs"} color="blue">
@@ -417,7 +417,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                         {models.length > 3 && !expandedAccordions[info.row.id] && (
                           <Badge size={"xs"} color="gray" className="cursor-pointer">
                             <Text>
-                              +{models.length - 3} {models.length - 3 === 1 ? "more model" : "more models"}
+                              +{models.length - 3} {models.length - 3 === 1 ? "个模型" : "个模型"}
                             </Text>
                           </Badge>
                         )}
@@ -426,7 +426,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                             {models.slice(3).map((model, index) =>
                               model === "all-proxy-models" ? (
                                 <Badge key={index + 3} size={"xs"} color="red">
-                                  <Text>All Proxy Models</Text>
+                                  <Text>所有代理模型</Text>
                                 </Badge>
                               ) : (
                                 <Badge key={index + 3} size={"xs"} color="blue">
@@ -452,15 +452,15 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     },
     {
       id: "rate_limits",
-      header: "Rate Limits",
+      header: "速率限制",
       size: 140,
       enableSorting: false,
       cell: ({ row }) => {
         const key = row.original;
         return (
           <div>
-            <div>TPM: {key.tpm_limit !== null ? key.tpm_limit : "Unlimited"}</div>
-            <div>RPM: {key.rpm_limit !== null ? key.rpm_limit : "Unlimited"}</div>
+            <div>TPM: {key.tpm_limit !== null ? key.tpm_limit : "无限制"}</div>
+            <div>RPM: {key.rpm_limit !== null ? key.rpm_limit : "无限制"}</div>
           </div>
         );
       },
@@ -470,7 +470,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
   const filterOptions: FilterOption[] = [
     {
       name: "Team ID",
-      label: "Team ID",
+      label: "团队 ID",
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!allTeams || allTeams.length === 0) return [];
@@ -489,7 +489,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     },
     {
       name: "Organization ID",
-      label: "Organization ID",
+      label: "组织 ID",
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!allOrganizations || allOrganizations.length === 0) return [];
@@ -508,7 +508,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     },
     {
       name: "Key Alias",
-      label: "Key Alias",
+      label: "密钥别名",
       isSearchable: true,
       searchFn: async (searchText) => {
         const filteredKeyAliases = allKeyAliases.filter((key) => {
@@ -525,12 +525,12 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     },
     {
       name: "User ID",
-      label: "User ID",
+      label: "用户 ID",
       isSearchable: false,
     },
     {
       name: "Key Hash",
-      label: "Key Hash",
+      label: "密钥哈希",
       isSearchable: false,
     },
   ];
@@ -620,7 +620,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
               <Skeleton.Node active style={{ width: 200, height: 20 }} />
             ) : (
               <span className="inline-flex text-sm text-gray-700">
-                Showing {rangeLabel} of {totalCount} results
+                显示 {rangeLabel}，共 {totalCount} 条结果
               </span>
             )}
 
@@ -629,7 +629,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                 <Skeleton.Node active style={{ width: 74, height: 20 }} />
               ) : (
                 <span className="text-sm text-gray-700">
-                  Page {pageIndex + 1} of {table.getPageCount()}
+                  第 {pageIndex + 1} 页，共 {table.getPageCount()} 页
                 </span>
               )}
 
@@ -641,7 +641,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                   disabled={isLoading || isFetching || !table.getCanPreviousPage()}
                   className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Previous
+                  上一页
                 </button>
               )}
 
@@ -653,7 +653,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                   disabled={isLoading || isFetching || !table.getCanNextPage()}
                   className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next
+                  下一页
                 </button>
               )}
             </div>

@@ -7,12 +7,12 @@ import { Organization, Team } from "../networking";
 import { splitWildcardModels } from "./modelUtils";
 
 const MODEL_SELECT_ALL_PROXY_MODELS_SPECIAL_VALUE = {
-  label: "All Proxy Models",
+  label: "全部模型",
   value: "all-proxy-models",
 } as const;
 
 const MODEL_SELECT_NO_DEFAULT_MODELS_SPECIAL_VALUE = {
-  label: "No Default Models",
+  label: "无默认模型",
   value: "no-default-models",
 } as const;
 
@@ -35,6 +35,7 @@ export interface ModelSelectProps {
   value?: string[];
   onChange: (values: string[]) => void;
   style?: React.CSSProperties;
+  placeholder?: string;
 }
 
 type FilterContextArgs = {
@@ -89,7 +90,7 @@ const filterModels = (
 };
 
 export const ModelSelect = (props: ModelSelectProps) => {
-  const { teamID, organizationID, options, context, dataTestId, value = [], onChange, style } = props;
+  const { teamID, organizationID, options, context, dataTestId, value = [], onChange, style, placeholder } = props;
   const { includeUserModels, showAllTeamModelsOption, showAllProxyModelsOverride, includeSpecialOptions } =
     options || {};
   const { data: allProxyModels, isLoading: isLoadingAllProxyModels } = useAllProxyModels();
@@ -149,7 +150,7 @@ export const ModelSelect = (props: ModelSelectProps) => {
               ...(shouldShowAllProxyModels
                 ? [
                   {
-                    label: <span>All Proxy Models</span>,
+                    label: <span>全部模型</span>,
                     value: MODEL_SELECT_ALL_PROXY_MODELS_SPECIAL_VALUE.value,
                     disabled:
                       value.length > 0 &&
@@ -161,7 +162,7 @@ export const ModelSelect = (props: ModelSelectProps) => {
                 ]
                 : []),
               {
-                label: <span>No Default Models</span>,
+                label: <span>无默认模型</span>,
                 value: MODEL_SELECT_NO_DEFAULT_MODELS_SPECIAL_VALUE.value,
                 disabled:
                   value.length > 0 &&
@@ -200,7 +201,7 @@ export const ModelSelect = (props: ModelSelectProps) => {
         },
       ]}
       mode="multiple"
-      placeholder="Select Models"
+      placeholder={placeholder ?? "Select Models"}
       allowClear
       maxTagCount="responsive"
       maxTagPlaceholder={(omittedValues) => (

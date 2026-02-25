@@ -61,38 +61,40 @@ describe("Sidebar (leftnav)", () => {
     renderWithProviders(<Sidebar {...defaultProps} />);
 
     const topLevelLabels = [
-      "Virtual Keys",
-      "Playground",
-      "Models + Endpoints",
-      "Usage",
-      "Teams",
-      "Organizations",
-      "Internal Users",
-      "Budgets",
-      "API Reference",
-      "AI Hub",
-      "Logs",
-      "Guardrails",
-      "MCP Servers",
-      "Tools",
-      "Experimental",
-      "Settings",
+      "虚拟密钥",
+      "模型调试",
+      "模型与端点",
+      "用量分析",
+      "团队",
+      "组织",
+      "内部用户",
+      "预算",
+      "请求日志",
+      "安全护栏",
+      "MCP 服务",
+      "工具集",
+      "系统设置",
     ];
 
     topLevelLabels.forEach((label) => {
-      expect(screen.getByText(label)).toBeInTheDocument();
+      expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     });
+
+    expect(screen.queryByText("开发者工具")).not.toBeInTheDocument();
+    expect(screen.queryByText("API 文档")).not.toBeInTheDocument();
+    expect(screen.queryByText("AI 资源中心")).not.toBeInTheDocument();
+    expect(screen.queryByText("实验功能")).not.toBeInTheDocument();
   });
 
-  it("expands a nested tab to reveal its children (Tools > Search Tools)", async () => {
+  it("expands a nested tab to reveal its children (工具集 > 搜索工具)", async () => {
     renderWithProviders(<Sidebar {...defaultProps} />);
 
-    expect(screen.queryByText("Search Tools")).not.toBeInTheDocument();
+    expect(screen.queryByText("搜索工具")).not.toBeInTheDocument();
     act(() => {
-      fireEvent.click(screen.getByText("Tools"));
+      fireEvent.click(screen.getByText("工具集"));
     });
     await waitFor(() => {
-      expect(screen.getByText("Search Tools")).toBeInTheDocument();
+      expect(screen.getByText("搜索工具")).toBeInTheDocument();
     });
   });
   it("has no duplicate keys among all menu items and their children", () => {
@@ -161,6 +163,6 @@ describe("Sidebar (leftnav)", () => {
 
     renderWithProviders(<Sidebar {...defaultProps} />);
 
-    expect(screen.getByText("Organizations")).toBeInTheDocument();
+    expect(screen.getByText("组织")).toBeInTheDocument();
   });
 });

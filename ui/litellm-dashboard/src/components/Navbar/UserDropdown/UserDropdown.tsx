@@ -9,7 +9,6 @@ import {
   setLocalStorageItem,
 } from "@/utils/localStorageUtils";
 import {
-  CrownOutlined,
   DownOutlined,
   LogoutOutlined,
   MailOutlined,
@@ -17,7 +16,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Button, Divider, Dropdown, Space, Switch, Tag, Tooltip, Typography } from "antd";
+import { Button, Divider, Dropdown, Space, Switch, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 
 const { Text } = Typography;
@@ -27,7 +26,7 @@ interface UserDropdownProps {
 }
 
 const UserDropdown: React.FC<UserDropdownProps> = ({ onLogout }) => {
-  const { userId, userEmail, userRole, premiumUser } = useAuthorized();
+  const { userId, userEmail, userRole } = useAuthorized();
   const disableShowPrompts = useDisableShowPrompts();
   const disableUsageIndicator = useDisableUsageIndicator();
   const disableBlogPosts = useDisableBlogPosts();
@@ -58,22 +57,6 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onLogout }) => {
           <MailOutlined />
           <Text type="secondary">{userEmail || "-"}</Text>
         </Space>
-        {premiumUser ? (
-          <Tag
-            icon={<CrownOutlined />}
-            color="gold"
-          >
-            Premium
-          </Tag>
-        ) : (
-          <Tooltip title="Upgrade to Premium for advanced features" placement="left">
-            <Tag
-              icon={<CrownOutlined />}
-            >
-              Standard
-            </Tag>
-          </Tooltip>
-        )}
       </Space>
       <Divider style={{ margin: "8px 0" }} />
       <Space style={{ width: "100%", justifyContent: "space-between" }}>

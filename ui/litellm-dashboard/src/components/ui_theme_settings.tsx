@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Title, Text, TextInput, Button } from "@tremor/react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { DEFAULT_BRAND_LOGO_URL } from "@/constants/branding";
 import { getProxyBaseUrl, getGlobalLitellmHeaderName } from "@/components/networking";
 import NotificationsManager from "./molecules/notifications_manager";
 
@@ -105,7 +106,7 @@ const UIThemeSettings: React.FC<UIThemeSettingsProps> = ({ userID, userRole, acc
         <div className="space-y-6">
           <div>
             <Text className="text-sm font-medium text-gray-700 mb-2 block">Custom Logo URL</Text>
-            <TextInput placeholder="https://example.com/logo.png" value={logoUrlInput}
+            <TextInput placeholder={`https://example.com/logo.svg (default: ${DEFAULT_BRAND_LOGO_URL})`} value={logoUrlInput}
               onValueChange={(v) => { setLogoUrlInput(v); setLogoUrl(v || null); }} className="w-full" />
             <Text className="text-xs text-gray-500 mt-1">Enter a URL for your custom logo or leave empty for default</Text>
           </div>

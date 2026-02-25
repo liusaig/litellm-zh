@@ -1,13 +1,6 @@
 import { InfoCircleOutlined, UserAddOutlined } from "@ant-design/icons";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  Accordion,
-  AccordionBody,
-  AccordionHeader,
-  Button as Button2,
-  SelectItem,
-  TextInput,
-} from "@tremor/react";
+import { Button as Button2, SelectItem, TextInput } from "@tremor/react";
 import { Alert, Button, Form, Input, Modal, Select, Select as Select2, Space, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import BulkCreateUsers from "./bulk_create_users_button";
@@ -98,9 +91,17 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
     form.resetFields();
   };
 
-  const handleCreate = async (formValues: { user_id: string; models?: string[]; user_role: string }) => {
+  const handleCreate = async (
+    formValues: {
+      user_id?: string;
+      user_alias?: string;
+      user_email?: string;
+      models?: string[];
+      user_role: string;
+    },
+  ) => {
     try {
-      NotificationsManager.info("Making API Call");
+      NotificationsManager.info("正在发起请求");
       if (!isEmbedded) {
         setIsModalVisible(true);
       }
@@ -143,11 +144,11 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
         setIsInvitationLinkModalVisible(true);
       }
 
-      NotificationsManager.success("API user Created");
+      NotificationsManager.success("用户创建成功");
       form.resetFields();
       localStorage.removeItem("userData" + userID);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || error?.message || "Error creating the user";
+      const errorMessage = error.response?.data?.detail || error?.message || "创建用户失败";
       NotificationsManager.fromBackend(errorMessage);
       console.error("Error creating the user:", error);
     }
@@ -158,13 +159,13 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
     return (
       <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
         <Alert
-          message="Email invitations"
+          message="邮件邀请"
           description={
             <>
-              New users receive an email invite only when an email integration (SMTP, Resend, or SendGrid) is configured.
+              仅当配置了邮件集成（SMTP、Resend 或 SendGrid）时，新用户才会收到邮件邀请。
               {" "}
               <Link href="https://docs.litellm.ai/docs/proxy/email" target="_blank">
-                Learn how to set up email notifications
+                查看邮件通知配置方法
               </Link>
             </>
           }
@@ -172,11 +173,14 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           showIcon
           className="mb-4"
         />
-        <Form.Item label="User Email" name="user_email">
-          <TextInput placeholder="" />
+        <Form.Item label="用户名" name="user_alias">
+          <TextInput placeholder="请输入用户名" />
         </Form.Item>
-        <Form.Item label="User Role" name="user_role">
-          <Select2>
+        <Form.Item label="用户邮箱" name="user_email">
+          <TextInput placeholder="请输入邮箱" />
+        </Form.Item>
+        <Form.Item label="用户角色" name="user_role">
+          <Select2 placeholder="请选择角色">
             {possibleUIRoles &&
               Object.entries(possibleUIRoles).map(([role, { ui_label, description }]) => (
                 <SelectItem key={role} value={role} title={ui_label}>
@@ -190,18 +194,18 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
               ))}
           </Select2>
         </Form.Item>
-        <Form.Item label="Team" name="team_id">
-          <Select placeholder="Select Team" style={{ width: "100%" }}>
+        <Form.Item label="分组" name="team_id">
+          <Select placeholder="选择分组" style={{ width: "100%" }}>
             <TeamDropdown teams={teams} />
           </Select>
         </Form.Item>
 
-        <Form.Item label="Metadata" name="metadata">
-          <Input.TextArea rows={4} placeholder="Enter metadata as JSON" />
+        <Form.Item label="元数据" name="metadata">
+          <Input.TextArea rows={4} placeholder="请输入 JSON 格式元数据" />
         </Form.Item>
 
         <div style={{ textAlign: "right", marginTop: "10px" }}>
-          <Button htmlType="submit">Create User</Button>
+          <Button htmlType="submit">创建用户</Button>
         </div>
       </Form>
     );
@@ -211,51 +215,39 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
   return (
     <div className="flex gap-2">
       <Button2 className="mb-0" onClick={() => setIsModalVisible(true)}>
-        + Invite User
+        + 创建用户
       </Button2>
       <BulkCreateUsers accessToken={accessToken} teams={teams} possibleUIRoles={possibleUIRoles} />
       <Modal
-        title="Invite User"
+        title="创建用户"
         open={isModalVisible}
         width={800}
         footer={null}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Space direction="vertical" size="middle">
-          <Text className="mb-1">Create a User who can own keys</Text>
-          <Alert
-            message="Email invitations"
-            description={
-              <>
-                New users receive an email invite only when an email integration (SMTP, Resend, or SendGrid) is configured.
-                {" "}
-                <Link href="https://docs.litellm.ai/docs/proxy/email" target="_blank">
-                  Learn how to set up email notifications
-                </Link>
-              </>
-            }
-            type="info"
-            showIcon
-            className="mb-4"
-          />
+        <Space direction="vertical" size="middle" style={{ marginBottom: 28 }}>
+          <Text>创建可管理密钥的用户</Text>
         </Space>
         <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
-          <Form.Item label="User Email" name="user_email">
-            <Input />
+          <Form.Item label="用户名" name="user_alias">
+            <Input placeholder="请输入用户名" />
+          </Form.Item>
+          <Form.Item label="用户邮箱" name="user_email">
+            <Input placeholder="请输入邮箱" />
           </Form.Item>
           <Form.Item
             label={
               <span>
-                Global Proxy Role{" "}
-                <Tooltip title="This role is independent of any team/org specific roles. Configure Team / Organization Admins in the Settings">
+                角色{" "}
+                <Tooltip title="该角色独立于任何分组/组织角色。分组/组织管理员请在设置中配置。">
                   <InfoCircleOutlined />
                 </Tooltip>
               </span>
             }
             name="user_role"
           >
-            <Select2>
+            <Select2 placeholder="请选择角色">
               {possibleUIRoles &&
                 Object.entries(possibleUIRoles).map(([role, { ui_label, description }]) => (
                   <SelectItem key={role} value={role} title={ui_label}>
@@ -271,53 +263,42 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           </Form.Item>
 
           <Form.Item
-            label="Team"
-            className="gap-2"
+            label="分组"
+            style={{ marginBottom: 40 }}
             name="team_id"
-            help="If selected, user will be added as a 'user' role to the team."
+            help="选择后，用户会以“user”角色加入该分组。"
           >
             <TeamDropdown teams={teams} />
           </Form.Item>
-
-          <Form.Item label="Metadata" name="metadata">
-            <Input.TextArea rows={4} placeholder="Enter metadata as JSON" />
+          <Form.Item
+            style={{ marginTop: 28, marginBottom: 40 }}
+            label={
+              <span>
+                模型{" "}
+                <Tooltip title="用户在分组范围外可访问的模型。">
+                  <InfoCircleOutlined style={{ marginLeft: "4px" }} />
+                </Tooltip>
+              </span>
+            }
+            name="models"
+            help="用户在分组范围外可访问的模型。"
+          >
+            <Select2 mode="multiple" placeholder="选择模型" style={{ width: "100%" }}>
+              <Select2.Option key="all-proxy-models" value="all-proxy-models">
+                全部模型
+              </Select2.Option>
+              <Select2.Option key="no-default-models" value="no-default-models">
+                无默认模型
+              </Select2.Option>
+              {userModels.map((model) => (
+                <Select2.Option key={model} value={model}>
+                  {getModelDisplayName(model)}
+                </Select2.Option>
+              ))}
+            </Select2>
           </Form.Item>
-          <Accordion>
-            <AccordionHeader>
-              <Text strong>Personal Key Creation</Text>
-            </AccordionHeader>
-            <AccordionBody>
-              <Form.Item
-                className="gap-2"
-                label={
-                  <span>
-                    Models{" "}
-                    <Tooltip title="Models user has access to, outside of team scope.">
-                      <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                    </Tooltip>
-                  </span>
-                }
-                name="models"
-                help="Models user has access to, outside of team scope."
-              >
-                <Select2 mode="multiple" placeholder="Select models" style={{ width: "100%" }}>
-                  <Select2.Option key="all-proxy-models" value="all-proxy-models">
-                    All Proxy Models
-                  </Select2.Option>
-                  <Select2.Option key="no-default-models" value="no-default-models">
-                    No Default Models
-                  </Select2.Option>
-                  {userModels.map((model) => (
-                    <Select2.Option key={model} value={model}>
-                      {getModelDisplayName(model)}
-                    </Select2.Option>
-                  ))}
-                </Select2>
-              </Form.Item>
-            </AccordionBody>
-          </Accordion>
           <div style={{ textAlign: "right", marginTop: "10px" }}>
-            <Button type="primary" icon={<UserAddOutlined />} htmlType="submit">Invite User</Button>
+            <Button type="primary" icon={<UserAddOutlined />} htmlType="submit">创建用户</Button>
           </div>
         </Form>
       </Modal>

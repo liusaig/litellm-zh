@@ -6,6 +6,6 @@ test.describe("Authentication Checks", () => {
     const expectedRedirectUrl = "http://localhost:4000/ui/login/";
     await page.goto(protectedPageUrl, { waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(expectedRedirectUrl);
-    await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "登录" })).toBeVisible();
   });
 });

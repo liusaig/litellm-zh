@@ -6,7 +6,6 @@ import LoadingScreen from "@/components/common_components/LoadingScreen";
 import { getProxyBaseUrl } from "@/components/networking";
 import { getCookie } from "@/utils/cookieUtils";
 import { isJwtExpired } from "@/utils/jwtUtils";
-import { InfoCircleOutlined } from "@ant-design/icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input, Popover, Space, Typography } from "antd";
 import { useRouter } from "next/navigation";
@@ -71,17 +70,12 @@ function LoginPageContent() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-lg shadow-md">
           <Space direction="vertical" size="middle" className="w-full">
-            <div className="text-center">
-              <Title level={2}>🚅 LiteLLM</Title>
-            </div>
-
             <Alert
-              message="Admin UI Disabled"
+              message="管理后台已禁用"
               description={
                 <>
                   <Paragraph className="text-sm">
-                    The Admin UI has been disabled by the administrator. To re-enable it, please update the following
-                    environment variable:
+                    管理员已禁用管理后台。若需重新启用，请更新以下环境变量：
                   </Paragraph>
                   <Paragraph className="text-sm">
                     <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">DISABLE_ADMIN_UI=False</code>
@@ -102,47 +96,20 @@ function LoginPageContent() {
       <Card className="w-full max-w-lg shadow-md">
         <Space direction="vertical" size="middle" className="w-full">
           <div className="text-center">
-            <Title level={2}>🚅 LiteLLM</Title>
+            <Title level={3}>登录</Title>
+            <Text type="secondary">访问网关管理后台。</Text>
           </div>
-
-          <div className="text-center">
-            <Title level={3}>Login</Title>
-            <Text type="secondary">Access your LiteLLM Admin UI.</Text>
-          </div>
-
-          <Alert
-            message="Default Credentials"
-            description={
-              <>
-                <Paragraph className="text-sm">
-                  By default, Username is <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">admin</code> and
-                  Password is your set LiteLLM Proxy
-                  <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">MASTER_KEY</code>.
-                </Paragraph>
-                <Paragraph className="text-sm">
-                  Need to set UI credentials or SSO?{" "}
-                  <a href="https://docs.litellm.ai/docs/proxy/ui" target="_blank" rel="noopener noreferrer">
-                    Check the documentation
-                  </a>
-                  .
-                </Paragraph>
-              </>
-            }
-            type="info"
-            icon={<InfoCircleOutlined />}
-            showIcon
-          />
 
           {error && <Alert message={error} type="error" showIcon />}
 
           <Form onFinish={handleSubmit} layout="vertical" requiredMark={true}>
             <Form.Item
-              label="Username"
+              label="用户名"
               name="username"
-              rules={[{ required: true, message: "Please enter your username" }]}
+              rules={[{ required: true, message: "请输入用户名" }]}
             >
               <Input
-                placeholder="Enter your username"
+                placeholder="请输入用户名"
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -153,12 +120,12 @@ function LoginPageContent() {
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label="密码"
               name="password"
-              rules={[{ required: true, message: "Please enter your password" }]}
+              rules={[{ required: true, message: "请输入密码" }]}
             >
               <Input.Password
-                placeholder="Enter your password"
+                placeholder="请输入密码"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -176,17 +143,17 @@ function LoginPageContent() {
                 block
                 size="large"
               >
-                {isLoginLoading ? "Logging in..." : "Login"}
+                {isLoginLoading ? "登录中..." : "登录"}
               </Button>
             </Form.Item>
             <Form.Item>
               {!uiConfig?.sso_configured ? (
                 <Popover
-                  content="Please configure SSO to log in with SSO."
+                  content="请先配置 SSO 后再使用 SSO 登录。"
                   trigger="hover"
                 >
                   <Button disabled block size="large">
-                    Login with SSO
+                    使用 SSO 登录
                   </Button>
                 </Popover>
               ) : (
@@ -198,7 +165,7 @@ function LoginPageContent() {
                   block
                   size="large"
                 >
-                  Login with SSO
+                  使用 SSO 登录
                 </Button>
               )}
             </Form.Item>
@@ -209,7 +176,12 @@ function LoginPageContent() {
             type="info"
             showIcon
             closable
-            message={<Text>Single Sign-On (SSO) is enabled. LiteLLM no longer automatically redirects to the SSO login flow upon loading this page. To re-enable auto-redirect-to-SSO, set <Text code>AUTO_REDIRECT_UI_LOGIN_TO_SSO=true</Text> in your environment configuration.</Text>}
+            message={
+              <Text>
+                已启用单点登录（SSO）。LiteLLM 现在在加载此页面时不再自动跳转到 SSO 登录流程。若要恢复自动跳转，请在环境配置中设置
+                <Text code>AUTO_REDIRECT_UI_LOGIN_TO_SSO=true</Text>。
+              </Text>
+            }
           />
         )}
       </Card>

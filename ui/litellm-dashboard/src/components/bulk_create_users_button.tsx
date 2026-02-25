@@ -541,11 +541,11 @@ const BulkCreateUsersButton: React.FC<BulkCreateUsersProps> = ({
   return (
     <>
       <TremorButton className="mb-0" onClick={() => setIsModalVisible(true)}>
-        + Bulk Invite Users
+        + 批量创建
       </TremorButton>
 
       <Modal
-        title="Bulk Invite Users"
+        title="批量创建"
         open={isModalVisible}
         width={800}
         onCancel={() => setIsModalVisible(false)}

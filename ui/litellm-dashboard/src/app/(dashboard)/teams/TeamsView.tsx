@@ -247,7 +247,7 @@ const TeamsView: React.FC<TeamProps> = ({
         <Col numColSpan={1} className="flex flex-col gap-2">
           {(userRole == "Admin" || userRole == "Org Admin") && (
             <Button className="w-fit" onClick={() => setIsTeamModalVisible(true)}>
-              + Create New Team
+              + 创建新分组
             </Button>
           )}
           {selectedTeamId ? (
@@ -286,7 +286,7 @@ const TeamsView: React.FC<TeamProps> = ({
             <TeamsHeaderTabs lastRefreshed={lastRefreshed} onRefresh={handleRefreshClick} userRole={userRole}>
               <TabPanel>
                 <Text>
-                  Click on &ldquo;Team ID&rdquo; to view team details <b>and</b> manage team members.
+                  点击 &ldquo;分组 ID&rdquo; 可查看分组详情并管理分组成员。
                 </Text>
                 <Grid numItems={1} className="gap-2 pt-2 pb-2 h-[75vh] w-full mt-2">
                   <Col numColSpan={1}>

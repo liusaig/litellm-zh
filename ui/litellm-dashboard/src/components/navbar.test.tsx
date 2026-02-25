@@ -1,5 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { DEFAULT_BRAND_LOGO_URL } from "@/constants/branding";
 import { renderWithProviders, screen, waitFor } from "../../tests/test-utils";
 import Navbar from "./navbar";
 
@@ -157,12 +158,60 @@ describe("Navbar", () => {
   });
 
   it("should use custom logo from theme context", () => {
+    mockUseThemeImpl = () => ({ logoUrl: "https://example.com/custom-logo.svg" });
+
+    renderWithProviders(<Navbar {...defaultProps} />);
+
+    const logoImg = screen.getByAltText("LiteLLM Brand");
+    expect(logoImg).toHaveAttribute("src", "https://example.com/custom-logo.svg");
+
+    // Reset mock
+    mockUseThemeImpl = () => ({ logoUrl: null });
+  });
+
+  it("should use default svg logo when no custom logo is set", () => {
+    mockUseThemeImpl = () => ({ logoUrl: null });
+
+    renderWithProviders(<Navbar {...defaultProps} />);
+
+    const logoImg = screen.getByAltText("LiteLLM Brand");
+    expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
+  });
+
+  it("should use default svg logo when logo_url points to legacy get_image endpoint", () => {
+    mockUseThemeImpl = () => ({ logoUrl: "/get_image?image_id=abc123" });
+
+    renderWithProviders(<Navbar {...defaultProps} />);
+
+    const logoImg = screen.getByAltText("LiteLLM Brand");
+    expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
+
+    // Reset mock
+    mockUseThemeImpl = () => ({ logoUrl: null });
+  });
+
+  it("should use default svg logo when logo_url points to legacy siliconcloud default", () => {
+    mockUseThemeImpl = () => ({
+      logoUrl:
+        "https://registry.npmmirror.com/@lobehub/icons-static-png/1.75.0/files/light/siliconcloud-color.png",
+    });
+
+    renderWithProviders(<Navbar {...defaultProps} />);
+
+    const logoImg = screen.getByAltText("LiteLLM Brand");
+    expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
+
+    // Reset mock
+    mockUseThemeImpl = () => ({ logoUrl: null });
+  });
+
+  it("should use default svg logo when custom logo is non-svg", () => {
     mockUseThemeImpl = () => ({ logoUrl: "https://example.com/custom-logo.png" });
 
     renderWithProviders(<Navbar {...defaultProps} />);
 
     const logoImg = screen.getByAltText("LiteLLM Brand");
-    expect(logoImg).toHaveAttribute("src", "https://example.com/custom-logo.png");
+    expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
 
     // Reset mock
     mockUseThemeImpl = () => ({ logoUrl: null });

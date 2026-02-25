@@ -35,7 +35,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   onApplyFilters,
   onResetFilters,
   initialValues = {},
-  buttonLabel = "Filters",
+  buttonLabel = "筛选",
 }) => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [tempValues, setTempValues] = useState<FilterValues>(initialValues);
@@ -152,7 +152,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
         >
           {buttonLabel}
         </Button>
-        <Button onClick={resetFilters}>Reset Filters</Button>
+        <Button onClick={resetFilters}>重置筛选</Button>
       </div>
 
       {showFilters && (
@@ -168,7 +168,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
                   <Select
                     showSearch
                     className="w-full"
-                    placeholder={`Search ${option.label || option.name}...`}
+                    placeholder={`搜索 ${option.label || option.name}...`}
                     value={tempValues[option.name] || undefined}
                     onChange={(value) => handleFilterChange(option.name, value)}
                     onOpenChange={(open) => handleDropdownVisibleChange(open, option)}
@@ -185,12 +185,12 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
                     loading={searchLoadingMap[option.name]}
                     options={searchOptionsMap[option.name] || []}
                     allowClear
-                    notFoundContent={searchLoadingMap[option.name] ? "Loading..." : "No results found"}
+                    notFoundContent={searchLoadingMap[option.name] ? "加载中..." : "未找到结果"}
                   />
                 ) : option.options ? (
                   <Select
                     className="w-full"
-                    placeholder={`Select ${option.label || option.name}...`}
+                    placeholder={`选择 ${option.label || option.name}...`}
                     value={tempValues[option.name] || undefined}
                     onChange={(value) => handleFilterChange(option.name, value)}
                     allowClear

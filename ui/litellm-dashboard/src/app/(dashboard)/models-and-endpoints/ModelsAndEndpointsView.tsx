@@ -275,11 +275,11 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
           {/* Model Management Header */}
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-lg font-semibold">Model Management</h2>
+              <h2 className="text-lg font-semibold">模型管理</h2>
               {!all_admin_roles.includes(userRole) ? (
-                <p className="text-sm text-gray-600">Add models for teams you are an admin for.</p>
+                <p className="text-sm text-gray-600">为您管理的团队添加模型。</p>
               ) : (
-                <p className="text-sm text-gray-600">Add and manage models for the proxy</p>
+                <p className="text-sm text-gray-600">为代理添加和管理模型</p>
               )}
             </div>
           </div>
@@ -290,9 +290,9 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
               <PlusCircleOutlined style={{ fontSize: "18px", color: "#6366f1" }} />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-gray-900 font-semibold text-sm m-0">Missing a provider?</h4>
+              <h4 className="text-gray-900 font-semibold text-sm m-0">缺少某个提供商？</h4>
               <p className="text-gray-500 text-xs m-0 mt-0.5">
-                The LiteLLM engineering team is constantly adding support for new LLM models, providers, endpoints. If
+                LiteLLM 工程团队正在不断添加对新 LLM 模型、提供商和端点的支持。如果您没有找到所需的，请告诉我们，我们将优先处理。
                 you don&apos;t see the one you need, let us know and we&apos;ll prioritize it.
               </p>
             </div>
@@ -302,7 +302,7 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
               rel="noopener noreferrer"
               className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-[#6366f1] hover:bg-[#5558e3] text-white text-sm font-medium rounded-lg transition-colors"
             >
-              Request Provider
+              请求提供商
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
@@ -338,18 +338,18 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
             <TabGroup index={selectedTabIndex} onIndexChange={setSelectedTabIndex} className="gap-2 h-[75vh] w-full ">
               <TabList className="flex justify-between mt-2 w-full items-center">
                 <div className="flex">
-                  {all_admin_roles.includes(userRole) ? <Tab>All Models</Tab> : <Tab>Your Models</Tab>}
-                  {!shouldHideAddModelTab && <Tab>Add Model</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>LLM Credentials</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Pass-Through Endpoints</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Health Status</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Model Retry Settings</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Model Group Alias</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Price Data Reload</Tab>}
+                  {all_admin_roles.includes(userRole) ? <Tab>所有模型</Tab> : <Tab>您的模型</Tab>}
+                  {!shouldHideAddModelTab && <Tab>添加模型</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>LLM 凭据</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>透传端点</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>健康状态</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>模型重试设置</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>模型组别名</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>价格数据重载</Tab>}
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  {lastRefreshed && <Text>Last Refreshed: {lastRefreshed}</Text>}
+                  {lastRefreshed && <Text>最后刷新：{lastRefreshed}</Text>}
                   <Icon
                     icon={RefreshIcon} // Modify as necessary for correct icon name
                     variant="shadow"

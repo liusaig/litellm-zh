@@ -32,6 +32,7 @@ import { all_admin_roles, internalUserRoles, isAdminRole, rolesWithWriteAccess }
 import NewBadge from "./common_components/NewBadge";
 import type { Organization } from "./networking";
 import UsageIndicator from "./UsageIndicator";
+import { shouldHideSidebarGroupLabel, shouldHideSidebarPage } from "./sidebar_visibility";
 const { Sider } = Layout;
 
 // Define the props type
@@ -63,45 +64,45 @@ interface MenuGroup {
 // Menu groups organized by category - defined outside component for export
 const menuGroups: MenuGroup[] = [
   {
-    groupLabel: "AI GATEWAY",
+    groupLabel: "AI 网关",
     items: [
       {
         key: "api-keys",
         page: "api-keys",
-        label: "Virtual Keys",
+        label: "虚拟密钥",
         icon: <KeyOutlined />,
       },
       {
         key: "llm-playground",
         page: "llm-playground",
-        label: "Playground",
+        label: "模型调试",
         icon: <PlayCircleOutlined />,
         roles: rolesWithWriteAccess,
       },
       {
         key: "models",
         page: "models",
-        label: "Models + Endpoints",
+        label: "模型与端点",
         icon: <BlockOutlined />,
         roles: rolesWithWriteAccess,
       },
       {
         key: "agents",
         page: "agents",
-        label: "Agents",
+        label: "智能体",
         icon: <RobotOutlined />,
         roles: rolesWithWriteAccess,
       },
       {
         key: "mcp-servers",
         page: "mcp-servers",
-        label: "MCP Servers",
+        label: "MCP 服务",
         icon: <ToolOutlined />,
       },
       {
         key: "guardrails",
         page: "guardrails",
-        label: "Guardrails",
+        label: "安全护栏",
         icon: <SafetyOutlined />,
         roles: all_admin_roles,
       },
@@ -110,7 +111,7 @@ const menuGroups: MenuGroup[] = [
         page: "policies",
         label: (
           <span className="flex items-center gap-4">
-            Policies
+            策略中心
           </span>
         ),
         icon: <AuditOutlined />,
@@ -119,25 +120,25 @@ const menuGroups: MenuGroup[] = [
       {
         key: "tools",
         page: "tools",
-        label: "Tools",
+        label: "工具集",
         icon: <ToolOutlined />,
         children: [
           {
             key: "search-tools",
             page: "search-tools",
-            label: "Search Tools",
+            label: "搜索工具",
             icon: <SearchOutlined />,
           },
           {
             key: "vector-stores",
             page: "vector-stores",
-            label: "Vector Stores",
+            label: "向量库",
             icon: <DatabaseOutlined />,
           },
           {
             key: "tool-policies",
             page: "tool-policies",
-            label: "Tool Policies",
+            label: "工具策略",
             icon: <SafetyOutlined />,
           },
         ],
@@ -145,50 +146,50 @@ const menuGroups: MenuGroup[] = [
     ],
   },
   {
-    groupLabel: "OBSERVABILITY",
+    groupLabel: "可观测性",
     items: [
       {
         key: "new_usage",
         page: "new_usage",
         icon: <BarChartOutlined />,
         roles: [...all_admin_roles, ...internalUserRoles],
-        label: "Usage",
+        label: "用量分析",
       },
       {
         key: "logs",
         page: "logs",
-        label: "Logs",
+        label: "请求日志",
         icon: <LineChartOutlined />,
       },
       {
         key: "guardrails-monitor",
         page: "guardrails-monitor",
-        label: "Guardrails Monitor",
+        label: "护栏监控",
         icon: <SafetyOutlined />,
         roles: [...all_admin_roles, ...internalUserRoles],
       },
     ],
   },
   {
-    groupLabel: "ACCESS CONTROL",
+    groupLabel: "权限与访问",
     items: [
       {
         key: "users",
         page: "users",
-        label: "Internal Users",
+        label: "用户",
         icon: <UserOutlined />,
         roles: all_admin_roles,
       },
       {
         key: "teams",
         page: "teams",
-        label: "Teams",
+        label: "分组",
         icon: <TeamOutlined />,
       },
       {
         key: "organizations",
         page: "organizations",
-        label: "Organizations",
+        label: "组织",
         icon: <BankOutlined />,
         roles: all_admin_roles,
       },
@@ -197,7 +198,7 @@ const menuGroups: MenuGroup[] = [
         page: "access-groups",
         label: (
           <span className="flex items-center gap-2">
-            Access Groups <NewBadge />
+            资源访问组 <NewBadge />
           </span>
         ),
         icon: <BlockOutlined />,
@@ -206,79 +207,79 @@ const menuGroups: MenuGroup[] = [
       {
         key: "budgets",
         page: "budgets",
-        label: "Budgets",
+        label: "预算",
         icon: <CreditCardOutlined />,
         roles: all_admin_roles,
       },
     ],
   },
   {
-    groupLabel: "DEVELOPER TOOLS",
+    groupLabel: "开发者工具",
     items: [
       {
         key: "api_ref",
         page: "api_ref",
-        label: "API Reference",
+        label: "API 文档",
         icon: <ApiOutlined />,
       },
       {
         key: "model-hub-table",
         page: "model-hub-table",
-        label: "AI Hub",
+        label: "AI 资源中心",
         icon: <AppstoreOutlined />,
       },
       {
         key: "learning-resources",
         page: "learning-resources",
-        label: "Learning Resources",
+        label: "学习资源",
         icon: <BookOutlined />,
         external_url: "https://models.litellm.ai/cookbook",
       },
       {
         key: "experimental",
         page: "experimental",
-        label: "Experimental",
+        label: "实验功能",
         icon: <ExperimentOutlined />,
         children: [
           {
             key: "caching",
             page: "caching",
-            label: "Caching",
+            label: "缓存",
             icon: <DatabaseOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "prompts",
             page: "prompts",
-            label: "Prompts",
+            label: "提示词",
             icon: <FileTextOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "transform-request",
             page: "transform-request",
-            label: "API Playground",
+            label: "API 调试台",
             icon: <ApiOutlined />,
             roles: [...all_admin_roles, ...internalUserRoles],
           },
           {
             key: "tag-management",
             page: "tag-management",
-            label: "Tag Management",
+            label: "标签管理",
             icon: <TagsOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "claude-code-plugins",
             page: "claude-code-plugins",
-            label: "Claude Code Plugins",
+            label: "Claude Code 插件",
             icon: <ToolOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "4",
             page: "usage",
-            label: "Old Usage",
+            label: "旧版用量",
             icon: <BarChartOutlined />,
           }
         ],
@@ -286,48 +287,48 @@ const menuGroups: MenuGroup[] = [
     ],
   },
   {
-    groupLabel: "SETTINGS",
+    groupLabel: "系统设置",
     roles: all_admin_roles,
     items: [
       {
         key: "settings",
         page: "settings",
-        label: <span className="flex items-center gap-4">Settings</span>,
+        label: <span className="flex items-center gap-4">系统设置</span>,
         icon: <SettingOutlined />,
         roles: all_admin_roles,
         children: [
           {
             key: "router-settings",
             page: "router-settings",
-            label: "Router Settings",
+            label: "路由设置",
             icon: <SettingOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "logging-and-alerts",
             page: "logging-and-alerts",
-            label: "Logging & Alerts",
+            label: "日志与告警",
             icon: <SettingOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "admin-panel",
             page: "admin-panel",
-            label: "Admin Settings",
+            label: "管理设置",
             icon: <SettingOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "cost-tracking",
             page: "cost-tracking",
-            label: "Cost Tracking",
+            label: "成本追踪",
             icon: <BarChartOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "ui-theme",
             page: "ui-theme",
-            label: "UI Theme",
+            label: "界面主题",
             icon: <BgColorsOutlined />,
             roles: all_admin_roles,
           },
@@ -376,6 +377,8 @@ const Sidebar: React.FC<SidebarProps> = ({ setPage, defaultSelectedKey, collapse
         children: item.children ? filterItemsByRole(item.children) : undefined,
       }))
       .filter((item) => {
+        if (shouldHideSidebarPage(item.page)) return false;
+
         // Special handling for organizations menu item - allow org_admins
         if (item.key === "organizations") {
           const hasRoleAccess = !item.roles || item.roles.includes(userRole) || isOrgAdmin;
@@ -420,6 +423,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setPage, defaultSelectedKey, collapse
     const items: MenuProps["items"] = [];
 
     menuGroups.forEach((group) => {
+      if (shouldHideSidebarGroupLabel(group.groupLabel)) {
+        return;
+      }
+
       // Check if group has role restriction
       if (group.roles && !group.roles.includes(userRole)) {
         return;

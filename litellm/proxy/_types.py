@@ -652,9 +652,6 @@ class LiteLLMRoutes(enum.Enum):
     # Routes only an Org Admin Can Access
     org_admin_only_routes = [
         "/organization/info",
-        "/organization/delete",
-        "/organization/member_add",
-        "/organization/member_update",
     ]
 
     # Routes accessible by Admin Viewer (read-only admin access)
