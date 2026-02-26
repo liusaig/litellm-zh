@@ -284,16 +284,15 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
             </div>
           </div>
 
-          {/* Missing Provider Banner */}
-          <div className="mb-4 px-4 py-3 bg-blue-50 rounded-lg border border-blue-100 flex items-center gap-4">
+          {/* Missing Provider Banner - Hidden */}
+          {/* <div className="mb-4 px-4 py-3 bg-blue-50 rounded-lg border border-blue-100 flex items-center gap-4">
             <div className="flex-shrink-0 w-10 h-10 bg-white rounded-full flex items-center justify-center border border-blue-200">
               <PlusCircleOutlined style={{ fontSize: "18px", color: "#6366f1" }} />
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="text-gray-900 font-semibold text-sm m-0">缺少某个提供商？</h4>
               <p className="text-gray-500 text-xs m-0 mt-0.5">
-                LiteLLM 工程团队正在不断添加对新 LLM 模型、提供商和端点的支持。如果您没有找到所需的，请告诉我们，我们将优先处理。
-                you don&apos;t see the one you need, let us know and we&apos;ll prioritize it.
+                Silinex 工程团队正在不断添加对新 LLM 模型、提供商和端点的支持。如果您没有找到所需的，请告诉我们，我们将优先处理。
               </p>
             </div>
             <a
@@ -318,7 +317,7 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
                 />
               </svg>
             </a>
-          </div>
+          </div> */}
           {selectedModelId && !isLoading ? (
             <ModelInfoView
               modelId={selectedModelId}

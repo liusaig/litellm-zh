@@ -179,7 +179,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "team_alias",
       accessorKey: "team_id",
-      header: "团队别名",
+      header: "分组别名",
       size: 120,
       enableSorting: false,
       cell: ({ row, getValue }) => {
@@ -191,7 +191,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "team_id",
       accessorKey: "team_id",
-      header: "团队 ID",
+      header: "分组 ID",
       size: 80,
       enableSorting: false,
       cell: (info) => {
@@ -334,7 +334,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "spend",
       accessorKey: "spend",
-      header: "消费 (美元)",
+      header: "消费",
       size: 100,
       enableSorting: true,
       cell: (info) => formatNumberWithCommas(info.getValue() as number, 4),
@@ -342,7 +342,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
     {
       id: "max_budget",
       accessorKey: "max_budget",
-      header: "预算 (美元)",
+      header: "预算",
       size: 110,
       enableSorting: true,
       cell: (info) => {
@@ -470,7 +470,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
   const filterOptions: FilterOption[] = [
     {
       name: "Team ID",
-      label: "团队 ID",
+      label: "分组 ID",
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!allTeams || allTeams.length === 0) return [];

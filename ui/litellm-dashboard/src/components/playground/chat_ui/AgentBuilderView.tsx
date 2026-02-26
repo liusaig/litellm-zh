@@ -506,7 +506,7 @@ export default function AgentBuilderView({
                           <div className="mx-auto max-w-xl space-y-4">
                             {!selectedAgentModelId && selectedAgent && (
                               <div className="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                                This agent cannot be updated or deleted here (missing model id). Manage it from Models &amp; Endpoints.
+                                此智能体无法在此处更新或删除（缺少模型 ID）。请从模型管理页面管理。
                               </div>
                             )}
                             <div>

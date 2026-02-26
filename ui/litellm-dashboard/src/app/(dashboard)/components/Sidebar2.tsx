@@ -165,7 +165,7 @@ const menuItems: MenuItemCfg[] = [
   {
     key: "2",
     page: "models",
-    label: "模型与端点",
+    label: "模型管理",
     icon: <BlockOutlined style={{ fontSize: 18 }} />,
     roles: rolesWithWriteAccess,
   },

@@ -63,7 +63,7 @@ describe("Sidebar (leftnav)", () => {
     const topLevelLabels = [
       "虚拟密钥",
       "模型调试",
-      "模型与端点",
+      "模型管理",
       "用量分析",
       "团队",
       "组织",

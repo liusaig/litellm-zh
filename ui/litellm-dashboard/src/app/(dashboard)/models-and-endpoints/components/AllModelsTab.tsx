@@ -303,7 +303,7 @@ const AllModelsTab = ({
                           href="/public?login=success&page=api-keys"
                           className="text-gray-600 hover:text-gray-800 underline"
                         >
-                          Virtual Keys page
+                          虚拟密钥页面
                         </a>
                       </span>
                     ) : (

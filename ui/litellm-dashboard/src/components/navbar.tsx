@@ -13,6 +13,7 @@ import { Switch } from "antd";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import UserDropdown from "./Navbar/UserDropdown/UserDropdown";
+import LanguageSelector from "@/components/common_components/LanguageSelector";
 
 interface NavbarProps {
   userID: string | null;
@@ -101,7 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   <div className="h-10 max-w-48 flex items-center justify-center overflow-hidden">
                     <img
                       src={imageUrl}
-                      alt="LiteLLM Brand"
+                      alt="Silinex Brand"
                       className="max-w-full max-h-full w-auto h-auto object-contain"
                     />
                   </div>
@@ -122,7 +123,12 @@ const Navbar: React.FC<NavbarProps> = ({
                 unCheckedChildren={<SunOutlined />}
               />
             )}
-            {!isPublicPage && <UserDropdown onLogout={handleLogout} />}
+            {!isPublicPage && (
+              <>
+                <LanguageSelector />
+                <UserDropdown onLogout={handleLogout} />
+              </>
+            )}
           </div>
         </div>
       </div>

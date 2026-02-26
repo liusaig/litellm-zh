@@ -1,10 +1,12 @@
 "use client";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Organizations, { fetchOrganizations } from "@/components/organizations";
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
 import { useEffect, useState } from "react";
 import { Organization } from "@/components/networking";
 import { fetchUserModels } from "@/components/organisms/create_key_button";
+
+const queryClient = new QueryClient();
 
 const OrganizationsPage = () => {
   const { userId: userID, accessToken, userRole, premiumUser } = useAuthorized();
@@ -20,14 +22,16 @@ const OrganizationsPage = () => {
   }, [userID, userRole, accessToken]);
 
   return (
-    <Organizations
-      organizations={organizations}
-      userRole={userRole}
-      userModels={userModels}
-      accessToken={accessToken}
-      setOrganizations={setOrganizations}
-      premiumUser={premiumUser}
-    />
+    <QueryClientProvider client={queryClient}>
+      <Organizations
+        organizations={organizations}
+        userRole={userRole}
+        userModels={userModels}
+        accessToken={accessToken}
+        setOrganizations={setOrganizations}
+        premiumUser={premiumUser}
+      />
+    </QueryClientProvider>
   );
 };
 

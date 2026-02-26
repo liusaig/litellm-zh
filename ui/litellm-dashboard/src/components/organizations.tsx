@@ -24,6 +24,7 @@ import {
 } from "@tremor/react";
 import { Form, Input, Modal, Select as Select2, Tooltip } from "antd";
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { formatNumberWithCommas } from "../utils/dataUtils";
 import DeleteResourceModal from "./common_components/DeleteResourceModal";
 import TableIconActionButton from "./common_components/IconActionButton/TableIconActionButtons/TableIconActionButton";
@@ -71,6 +72,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   setOrganizations,
   premiumUser,
 }) => {
+  const { t } = useLanguage();
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
   const [editOrg, setEditOrg] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -138,7 +140,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     try {
       setIsDeleting(true);
       await organizationDeleteCall(accessToken, orgToDelete);
-      NotificationsManager.success("组织删除成功");
+      NotificationsManager.success(t("organizations.notifications.deleteSuccess"));
 
       setIsDeleteModalOpen(false);
       setOrgToDelete(null);
@@ -186,7 +188,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
       }
 
       await organizationCreateCall(accessToken, values);
-      NotificationsManager.success("组织创建成功");
+      NotificationsManager.success(t("organizations.notifications.createSuccess"));
       setIsOrgModalVisible(false);
       form.resetFields();
       // Refresh organizations list
@@ -206,7 +208,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
       <Grid numItems={1} className="gap-2 p-8 w-full mt-2">
         <Col numColSpan={1} className="flex flex-col gap-2">
           <Button className="w-fit" onClick={() => setIsOrgModalVisible(true)}>
-            + 创建新组织
+            + {t("organizations.createButton")}
           </Button>
           {selectedOrgId ? (
             <OrganizationInfoView
@@ -225,10 +227,10 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
             <TabGroup className="gap-2 h-[75vh] w-full">
               <TabList className="flex justify-between mt-2 w-full items-center">
                 <div className="flex">
-                  <Tab>我的组织</Tab>
+                  <Tab>{t("organizations.myOrganizations")}</Tab>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {lastRefreshed && <Text>最近刷新：{lastRefreshed}</Text>}
+                  {lastRefreshed && <Text>{t("organizations.lastRefreshed")}{lastRefreshed}</Text>}
                   <Icon
                     icon={RefreshIcon}
                     variant="shadow"
@@ -240,7 +242,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  <Text>点击 &ldquo;组织 ID&rdquo; 查看组织详情。</Text>
+                  <Text>{t("organizations.clickToView")}</Text>
                   <Grid numItems={1} className="gap-2 pt-2 pb-2 h-[75vh] w-full mt-2">
                     <Col numColSpan={1}>
                       <Card className="w-full mx-auto flex-auto overflow-hidden overflow-y-auto max-h-[50vh]">
@@ -258,15 +260,15 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                         <Table>
                           <TableHead>
                             <TableRow>
-                              <TableHeaderCell>组织 ID</TableHeaderCell>
-                              <TableHeaderCell>组织名称</TableHeaderCell>
-                              <TableHeaderCell>创建时间</TableHeaderCell>
-                              <TableHeaderCell>花费</TableHeaderCell>
-                              <TableHeaderCell>预算</TableHeaderCell>
-                              <TableHeaderCell>模型</TableHeaderCell>
-                              <TableHeaderCell>TPM / RPM 限制</TableHeaderCell>
-                              <TableHeaderCell>信息</TableHeaderCell>
-                              <TableHeaderCell>操作</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.orgId")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.orgName")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.createdAt")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.spend")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.budget")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.models")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.tpmRpmLimit")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.info")}</TableHeaderCell>
+                              <TableHeaderCell>{t("organizations.table.actions")}</TableHeaderCell>
                             </TableRow>
                           </TableHead>
 
@@ -293,14 +295,14 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                       </TableCell>
                                       <TableCell>{org.organization_alias}</TableCell>
                                       <TableCell>
-                                        {org.created_at ? new Date(org.created_at).toLocaleDateString() : "无"}
+                                        {org.created_at ? new Date(org.created_at).toLocaleDateString() : t("organizations.table.noDate")}
                                       </TableCell>
                                       <TableCell>{formatNumberWithCommas(org.spend, 4)}</TableCell>
                                       <TableCell>
                                         {org.litellm_budget_table?.max_budget !== null &&
                                         org.litellm_budget_table?.max_budget !== undefined
                                           ? org.litellm_budget_table?.max_budget
-                                          : "不限制"}
+                                          : t("organizations.table.unlimited")}
                                       </TableCell>
                                       <TableCell
                                         style={{
@@ -315,7 +317,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                             <div className="flex flex-col">
                                               {org.models.length === 0 ? (
                                                 <Badge size={"xs"} className="mb-1" color="red">
-                                                  <Text>全部模型</Text>
+                                                  <Text>{t("organizations.table.allModels")}</Text>
                                                 </Badge>
                                               ) : (
                                                 <>
@@ -344,7 +346,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                                       {org.models.slice(0, 3).map((model, index) =>
                                                         model === "all-proxy-models" ? (
                                                           <Badge key={index} size={"xs"} color="red">
-                                                            <Text>全部模型</Text>
+                                                            <Text>{t("organizations.table.allModels")}</Text>
                                                           </Badge>
                                                         ) : (
                                                           <Badge key={index} size={"xs"} color="blue">
@@ -360,10 +362,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                                         !expandedAccordions[org.organization_id || ""] && (
                                                           <Badge size={"xs"} color="gray" className="cursor-pointer">
                                                             <Text>
-                                                              +{org.models.length - 3}{" "}
-                                                              {org.models.length - 3 === 1
-                                                                ? "个更多模型"
-                                                                : "个更多模型"}
+                                                              +{org.models.length - 3}{t("organizations.table.moreModels")}
                                                             </Text>
                                                           </Badge>
                                                         )}
@@ -372,7 +371,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                                           {org.models.slice(3).map((model, index) =>
                                                             model === "all-proxy-models" ? (
                                                               <Badge key={index + 3} size={"xs"} color="red">
-                                                                <Text>全部模型</Text>
+                                                                <Text>{t("organizations.table.allModels")}</Text>
                                                               </Badge>
                                                             ) : (
                                                               <Badge key={index + 3} size={"xs"} color="blue">
@@ -396,25 +395,25 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                       </TableCell>
                                       <TableCell>
                                         <Text>
-                                          TPM:{" "}
+                                          {t("organizations.table.tpm")}
                                           {org.litellm_budget_table?.tpm_limit
                                             ? org.litellm_budget_table?.tpm_limit
-                                            : "不限制"}
+                                            : t("organizations.table.unlimited")}
                                           <br />
-                                          RPM:{" "}
+                                          {t("organizations.table.rpm")}
                                           {org.litellm_budget_table?.rpm_limit
                                             ? org.litellm_budget_table?.rpm_limit
-                                            : "不限制"}
+                                            : t("organizations.table.unlimited")}
                                         </Text>
                                       </TableCell>
                                       <TableCell>
-                                        <Text>{org.members?.length || 0} 位成员</Text>
+                                        <Text>{org.members?.length || 0}{t("organizations.table.members")}</Text>
                                       </TableCell>
                                       <TableCell>
                                         <>
                                           <TableIconActionButton
                                             variant="Edit"
-                                            tooltipText="编辑组织"
+                                            tooltipText={t("organizations.actions.edit")}
                                             onClick={() => {
                                               setSelectedOrgId(org.organization_id);
                                               setEditOrg(true);
@@ -422,7 +421,7 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                                           />
                                           <TableIconActionButton
                                             variant="Delete"
-                                            tooltipText="删除组织"
+                                            tooltipText={t("organizations.actions.delete")}
                                             onClick={() => handleDelete(org.organization_id)}
                                           />
                                         </>
@@ -441,105 +440,105 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
           )}
         </Col>
       </Grid>
-      <Modal title="创建组织" visible={isOrgModalVisible} width={800} footer={null} onCancel={handleCancel}>
+      <Modal title={t("organizations.modal.createTitle")} visible={isOrgModalVisible} width={800} footer={null} onCancel={handleCancel}>
         <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
           <Form.Item
-            label="组织名称"
+            label={t("organizations.modal.orgName")}
             name="organization_alias"
             rules={[
               {
                 required: true,
-                message: "请输入组织名称",
+                message: t("organizations.modal.orgNameRequired"),
               },
             ]}
           >
-            <TextInput placeholder="请输入名称" />
+            <TextInput placeholder={t("organizations.modal.orgNamePlaceholder")} />
           </Form.Item>
-          <Form.Item label="模型" name="models" style={{ marginTop: 16 }}>
+          <Form.Item label={t("organizations.modal.models")} name="models" style={{ marginTop: 16 }}>
             <ModelSelect
               options={{ showAllProxyModelsOverride: true, includeSpecialOptions: true }}
               value={form.getFieldValue("models")}
               onChange={(values) => form.setFieldValue("models", values)}
               context="organization"
-              placeholder="选择模型"
+              placeholder={t("organizations.modal.modelsPlaceholder")}
             />
           </Form.Item>
 
-          <Form.Item label="最大预算" name="max_budget" style={{ marginTop: 16 }}>
-            <NumericalInput step={0.01} precision={2} width={200} placeholder="请输入数值" />
+          <Form.Item label={t("organizations.modal.maxBudget")} name="max_budget" style={{ marginTop: 16 }}>
+            <NumericalInput step={0.01} precision={2} width={200} placeholder={t("organizations.modal.maxBudgetPlaceholder")} />
           </Form.Item>
-          <Form.Item label="预算重置周期" name="budget_duration" style={{ marginTop: 16 }}>
-            <Select2 defaultValue={null} placeholder="不适用">
-              <Select2.Option value="24h">每天</Select2.Option>
-              <Select2.Option value="7d">每周</Select2.Option>
-              <Select2.Option value="30d">每月</Select2.Option>
+          <Form.Item label={t("organizations.modal.budgetDuration")} name="budget_duration" style={{ marginTop: 16 }}>
+            <Select2 defaultValue={null} placeholder={t("organizations.modal.budgetDurationPlaceholder")}>
+              <Select2.Option value="24h">{t("organizations.modal.budgetDaily")}</Select2.Option>
+              <Select2.Option value="7d">{t("organizations.modal.budgetWeekly")}</Select2.Option>
+              <Select2.Option value="30d">{t("organizations.modal.budgetMonthly")}</Select2.Option>
             </Select2>
           </Form.Item>
-          <Form.Item label="每分钟 Token 限制 (TPM)" name="tpm_limit" style={{ marginTop: 16 }}>
-            <NumericalInput step={1} width={400} placeholder="请输入数值" />
+          <Form.Item label={t("organizations.modal.tpmLimit")} name="tpm_limit" style={{ marginTop: 16 }}>
+            <NumericalInput step={1} width={400} placeholder={t("organizations.modal.tpmLimitPlaceholder")} />
           </Form.Item>
-          <Form.Item label="每分钟请求限制 (RPM)" name="rpm_limit" style={{ marginTop: 16 }}>
-            <NumericalInput step={1} width={400} placeholder="请输入数值" />
+          <Form.Item label={t("organizations.modal.rpmLimit")} name="rpm_limit" style={{ marginTop: 16 }}>
+            <NumericalInput step={1} width={400} placeholder={t("organizations.modal.rpmLimitPlaceholder")} />
           </Form.Item>
 
           <Form.Item
             label={
               <span>
-                可用向量库{" "}
-                <Tooltip title="选择该组织默认可访问的向量库。留空表示可访问所有向量库">
+                {t("organizations.modal.vectorStores")}{" "}
+                <Tooltip title={t("organizations.modal.vectorStoresTooltip")}>
                   <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                 </Tooltip>
               </span>
             }
             name="allowed_vector_store_ids"
             style={{ marginTop: 16, marginBottom: 32 }}
-            help="选择该组织可访问的向量库，留空表示可访问所有向量库"
+            help={t("organizations.modal.vectorStoresHelp")}
           >
             <VectorStoreSelector
               onChange={(values) => form.setFieldValue("allowed_vector_store_ids", values)}
               value={form.getFieldValue("allowed_vector_store_ids")}
               accessToken={accessToken || ""}
-              placeholder="选择向量库（可选）"
+              placeholder={t("organizations.modal.vectorStoresPlaceholder")}
             />
           </Form.Item>
 
           <Form.Item
             label={
               <span>
-                可用 MCP 服务{" "}
-                <Tooltip title="选择该组织默认可访问的 MCP 服务和访问组。">
+                {t("organizations.modal.mcpServers")}{" "}
+                <Tooltip title={t("organizations.modal.mcpServersTooltip")}>
                   <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                 </Tooltip>
               </span>
             }
             name="allowed_mcp_servers_and_groups"
             style={{ marginTop: 20, marginBottom: 32 }}
-            help="选择该组织可访问的 MCP 服务和访问组。"
+            help={t("organizations.modal.mcpServersHelp")}
           >
             <MCPServerSelector
               onChange={(values) => form.setFieldValue("allowed_mcp_servers_and_groups", values)}
               value={form.getFieldValue("allowed_mcp_servers_and_groups")}
               accessToken={accessToken || ""}
-              placeholder="选择 MCP 服务和访问组（可选）"
+              placeholder={t("organizations.modal.mcpServersPlaceholder")}
             />
           </Form.Item>
 
-          <Form.Item label="元数据" name="metadata" style={{ marginTop: 16 }}>
+          <Form.Item label={t("organizations.modal.metadata")} name="metadata" style={{ marginTop: 16 }}>
             <Input.TextArea rows={4} />
           </Form.Item>
 
           <div style={{ textAlign: "right", marginTop: "10px" }}>
-            <Button type="submit">创建组织</Button>
+            <Button type="submit">{t("organizations.modal.createSubmit")}</Button>
           </div>
         </Form>
       </Modal>
 
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
-        title="删除组织？"
-        message="确认删除该组织吗？此操作不可撤销。"
-        resourceInformationTitle="组织信息"
-        resourceInformation={[{ label: "组织 ID", value: orgToDelete, code: true }]}
+        title={t("organizations.delete.title")}
+        message={t("organizations.delete.message")}
+        resourceInformationTitle={t("organizations.delete.resourceTitle")}
+        resourceInformation={[{ label: t("organizations.delete.resourceLabel"), value: orgToDelete, code: true }]}
         onCancel={cancelDelete}
         onOk={confirmDelete}
         confirmLoading={isDeleting}

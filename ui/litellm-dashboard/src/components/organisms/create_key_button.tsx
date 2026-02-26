@@ -812,8 +812,8 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     className="mt-4"
                     label={
                       <span>
-                        最大预算 (美元){" "}
-                        <Tooltip title="此密钥可以消费的最大美元金额。达到后，密钥将被阻止发起进一步请求">
+                        最大预算{" "}
+                        <Tooltip title="此密钥可以消费的最大金额。达到后，密钥将被阻止发起进一步请求">
                           <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                         </Tooltip>
                       </span>

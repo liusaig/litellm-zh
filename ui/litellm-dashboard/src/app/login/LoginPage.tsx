@@ -178,7 +178,7 @@ function LoginPageContent() {
             closable
             message={
               <Text>
-                已启用单点登录（SSO）。LiteLLM 现在在加载此页面时不再自动跳转到 SSO 登录流程。若要恢复自动跳转，请在环境配置中设置
+                已启用单点登录（SSO）。Silinex 现在在加载此页面时不再自动跳转到 SSO 登录流程。若要恢复自动跳转，请在环境配置中设置
                 <Text code>AUTO_REDIRECT_UI_LOGIN_TO_SSO=true</Text>。
               </Text>
             }
