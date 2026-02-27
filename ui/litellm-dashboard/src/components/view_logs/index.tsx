@@ -8,6 +8,7 @@ import { SettingOutlined, SyncOutlined } from "@ant-design/icons";
 import { Row } from "@tanstack/react-table";
 import { Switch, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import { Button, Tag, Tooltip } from "antd";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { internalUserRoles } from "../../utils/roles";
 import DeletedKeysPage from "../DeletedKeysPage/DeletedKeysPage";
 import DeletedTeamsPage from "../DeletedTeamsPage/DeletedTeamsPage";
@@ -56,6 +57,7 @@ export default function SpendLogsTable({
   allTeams,
   premiumUser,
 }: SpendLogsTableProps) {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [showColumnDropdown, setShowColumnDropdown] = useState(false);
@@ -156,7 +158,7 @@ export default function SpendLogsTable({
   const LiveTailControls = () => {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-900">Live Tail</span>
+        <span className="text-sm font-medium text-gray-900">{t("logs.liveTail")}</span>
         <Switch color="green" checked={isLiveTail} defaultChecked={true} onChange={setIsLiveTail} />
       </div>
     );
@@ -390,8 +392,8 @@ export default function SpendLogsTable({
 
   const logFilterOptions: FilterOption[] = [
     {
-      name: "Team ID",
-      label: "Team ID",
+      name: "teamId",
+      label: t("logs.filters.teamId"),
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!allTeams || allTeams.length === 0) return [];
@@ -408,22 +410,22 @@ export default function SpendLogsTable({
       },
     },
     {
-      name: "Status",
-      label: "Status",
+      name: "status",
+      label: t("logs.filters.status"),
       isSearchable: false,
       options: [
-        { label: "Success", value: "success" },
-        { label: "Failure", value: "failure" },
+        { label: t("logs.filters.success"), value: "success" },
+        { label: t("logs.filters.failure"), value: "failure" },
       ],
     },
     {
-      name: "Model",
-      label: "Model",
+      name: "model",
+      label: t("logs.filters.model"),
       customComponent: PaginatedModelSelect,
     },
     {
-      name: "Key Alias",
-      label: "Key Alias",
+      name: "keyAlias",
+      label: t("logs.filters.keyAlias"),
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!accessToken) return [];
@@ -436,8 +438,8 @@ export default function SpendLogsTable({
       },
     },
     {
-      name: "End User",
-      label: "End User",
+      name: "endUser",
+      label: t("logs.filters.endUser"),
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!accessToken) return [];
@@ -449,8 +451,8 @@ export default function SpendLogsTable({
       },
     },
     {
-      name: "Error Code",
-      label: "Error Code",
+      name: "errorCode",
+      label: t("logs.filters.errorCode"),
       isSearchable: true,
       searchFn: async (searchText: string) => {
         if (!searchText) return ERROR_CODE_OPTIONS;
@@ -464,8 +466,8 @@ export default function SpendLogsTable({
       },
     },
     {
-      name: "Key Hash",
-      label: "Key Hash",
+      name: "keyHash",
+      label: t("logs.filters.keyHash"),
       isSearchable: false,
     },
     {
@@ -488,25 +490,40 @@ export default function SpendLogsTable({
     (option) => option.value === selectedTimeInterval.value && option.unit === selectedTimeInterval.unit,
   );
 
-  const displayLabel = isCustomDate ? getTimeRangeDisplay(isCustomDate, startTime, endTime) : selectedOption?.label;
+  // Translation key map for quick select options
+  const getQuickSelectLabel = (option: typeof QUICK_SELECT_OPTIONS[0]) => {
+    if (option.value === 15 && option.unit === "minutes") return t("logs.quickSelect.last15Minutes");
+    if (option.value === 1 && option.unit === "hours") return t("logs.quickSelect.lastHour");
+    if (option.value === 4 && option.unit === "hours") return t("logs.quickSelect.last4Hours");
+    if (option.value === 24 && option.unit === "hours") return t("logs.quickSelect.last24Hours");
+    if (option.value === 7 && option.unit === "days") return t("logs.quickSelect.last7Days");
+    return option.label;
+  };
+
+  const translatedQuickSelectOptions = QUICK_SELECT_OPTIONS.map((option) => ({
+    ...option,
+    label: getQuickSelectLabel(option),
+  }));
+
+  const displayLabel = isCustomDate ? getTimeRangeDisplay(isCustomDate, startTime, endTime) : selectedOption ? getQuickSelectLabel(selectedOption) : "";
 
   return (
     <div className="w-full max-w-screen p-6 overflow-x-hidden box-border">
-      <TabGroup defaultIndex={0} onIndexChange={(index) => setActiveTab(index === 0 ? "request logs" : "audit logs")}>
+      <TabGroup defaultIndex={0} onIndexChange={(index) => setActiveTab(index === 0 ? "request logs" : index === 1 ? "deleted keys" : "deleted teams")}>
         <TabList>
-          <Tab>Request Logs</Tab>
-          <Tab>Audit Logs</Tab>
-          <Tab>Deleted Keys</Tab>
-          <Tab>Deleted Teams</Tab>
+          <Tab>{t("logs.tabs.requestLogs")}</Tab>
+          {/* <Tab>{t("logs.tabs.auditLogs")}</Tab> */}
+          <Tab>{t("logs.tabs.deletedKeys")}</Tab>
+          <Tab>{t("logs.tabs.deletedTeams")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold">Request Logs</h1>
+              <h1 className="text-xl font-semibold">{t("logs.title")}</h1>
               <Button
                 icon={<SettingOutlined />}
                 onClick={() => setIsSpendLogsSettingsModalVisible(true)}
-                title="Spend Logs Settings"
+                title={t("logs.settingsButton")}
               />
             </div>
             {selectedKeyInfo && selectedKeyIdInfoView && selectedKeyInfo.api_key === selectedKeyIdInfoView ? (
@@ -515,7 +532,7 @@ export default function SpendLogsTable({
                 keyData={selectedKeyInfo}
                 teams={allTeams}
                 onClose={() => setSelectedKeyIdInfoView(null)}
-                backButtonText="Back to Logs"
+                backButtonText={t("logs.backToLogs")}
               />
             ) : (
               <>
@@ -536,7 +553,7 @@ export default function SpendLogsTable({
                         <div className="relative w-64 min-w-0 flex-shrink-0">
                           <input
                             type="text"
-                            placeholder="Search by Request ID"
+                            placeholder={t("logs.searchByRequestId")}
                             className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -576,7 +593,7 @@ export default function SpendLogsTable({
                             {quickSelectOpen && (
                               <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border p-2 z-50">
                                 <div className="space-y-1">
-                                  {QUICK_SELECT_OPTIONS.map((option) => (
+                                  {translatedQuickSelectOptions.map((option) => (
                                     <button
                                       key={option.label}
                                       className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 rounded-md ${displayLabel === option.label ? "bg-blue-50 text-blue-600" : ""
@@ -603,7 +620,7 @@ export default function SpendLogsTable({
                                       }`}
                                     onClick={() => setIsCustomDate(!isCustomDate)}
                                   >
-                                    Custom Range
+                                    {t("logs.customRange")}
                                   </button>
                                 </div>
                               </div>
@@ -617,9 +634,9 @@ export default function SpendLogsTable({
                             icon={<SyncOutlined spin={isButtonLoading} />}
                             onClick={handleRefresh}
                             disabled={isButtonLoading}
-                            title="Fetch data"
+                            title={t("logs.fetch")}
                           >
-                            {isButtonLoading ? "Fetching" : "Fetch"}
+                            {isButtonLoading ? t("logs.fetching") : t("logs.fetch")}
                           </Button>
                         </div>
 
@@ -636,7 +653,7 @@ export default function SpendLogsTable({
                                 className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                               />
                             </div>
-                            <span className="text-gray-500">to</span>
+                            <span className="text-gray-500">{t("logs.dateTo")}</span>
                             <div>
                               <input
                                 type="datetime-local"
@@ -653,33 +670,38 @@ export default function SpendLogsTable({
                       </div>
 
                       <div className="flex items-center space-x-4">
-                        <span className="text-sm text-gray-700 whitespace-nowrap">
-                          Showing {logs.isLoading ? "..." : filteredLogs ? (currentPage - 1) * pageSize + 1 : 0} -{" "}
-                          {logs.isLoading
-                            ? "..."
-                            : filteredLogs
-                              ? Math.min(currentPage * pageSize, filteredLogs.total)
-                              : 0}{" "}
-                          of {logs.isLoading ? "..." : filteredLogs ? filteredLogs.total : 0} results
-                        </span>
+                        {!logs.isLoading && filteredLogs?.total > 0 && (
+                          <span className="text-sm text-gray-700 whitespace-nowrap"
+                            dangerouslySetInnerHTML={{
+                              __html: t("logs.showingResults")
+                                .replace("{start}", String((currentPage - 1) * pageSize + 1))
+                                .replace("{end}", String(Math.min(currentPage * pageSize, filteredLogs.total)))
+                                .replace("{total}", String(filteredLogs.total))
+                            }}
+                          />
+                        )}
+
                         <div className="flex items-center space-x-2">
-                          <span className="text-sm text-gray-700 min-w-[90px]">
-                            Page {logs.isLoading ? "..." : currentPage} of{" "}
-                            {logs.isLoading ? "..." : filteredLogs ? filteredLogs.total_pages : 1}
-                          </span>
+                          {!logs.isLoading && filteredLogs?.total > 0 && (
+                            <span className="text-sm text-gray-700 min-w-[90px]">
+                              {t("logs.pageOf")
+                                    .replace("{current}", String(currentPage))
+                                  .replace("{total}", String(filteredLogs.total_pages))}
+                            </span>
+                          )}
                           <button
                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                             disabled={logs.isLoading || currentPage === 1}
                             className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Previous
+                            {t("logs.previous")}
                           </button>
                           <button
                             onClick={() => setCurrentPage((p) => Math.min(filteredLogs.total_pages || 1, p + 1))}
                             disabled={logs.isLoading || currentPage === (filteredLogs.total_pages || 1)}
                             className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Next
+                            {t("logs.next")}
                           </button>
                         </div>
                       </div>
@@ -700,23 +722,28 @@ export default function SpendLogsTable({
                   )}
                   <DataTable
                     columns={createColumns({
-                      sortBy,
-                      sortOrder,
-                      onSortChange: (newSortBy, newSortOrder) => {
-                        setSortBy(newSortBy);
-                        setSortOrder(newSortOrder);
-                        setCurrentPage(1);
+                      sortProps: {
+                        sortBy,
+                        sortOrder,
+                        onSortChange: (newSortBy, newSortOrder) => {
+                          setSortBy(newSortBy);
+                          setSortOrder(newSortOrder);
+                          setCurrentPage(1);
+                        },
                       },
+                      t,
                     })}
                     data={filteredData}
                     onRowClick={handleRowClick}
                     isLoading={logs.isLoading}
+                    loadingMessage={t("logs.loadingMessage")}
+                    noDataMessage={t("logs.noDataMessage")}
                   />
                 </div>
               </>
             )}
           </TabPanel>
-          <TabPanel>
+          {/* <TabPanel>
             <AuditLogs
               userID={userID}
               userRole={userRole}
@@ -726,7 +753,7 @@ export default function SpendLogsTable({
               premiumUser={premiumUser}
               allTeams={allTeams}
             />
-          </TabPanel>
+          </TabPanel> */}
           <TabPanel><DeletedKeysPage /></TabPanel>
           <TabPanel><DeletedTeamsPage /></TabPanel>
         </TabPanels>

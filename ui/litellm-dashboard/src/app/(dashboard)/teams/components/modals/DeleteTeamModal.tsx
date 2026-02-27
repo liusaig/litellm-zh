@@ -1,6 +1,7 @@
 import { AlertTriangleIcon, XIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Team } from "@/components/key_team_helpers/key_list";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DeleteTeamModalProps {
   teams: Team[] | null;
@@ -10,6 +11,7 @@ interface DeleteTeamModalProps {
 }
 
 const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTeamModalProps) => {
+  const { t } = useLanguage();
   const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
 
   const team = teams?.find((t) => t.team_id === teamToDelete);
@@ -22,9 +24,9 @@ const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTea
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl min-h-[380px] py-6 overflow-hidden transform transition-all flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">删除分组</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t("teams.deleteModal.title")}</h3>
             <button
-              aria-label="关闭"
+              aria-label={t("teams.deleteModal.close")}
               onClick={() => {
                 onCancel();
                 setDeleteConfirmInput("");
@@ -42,28 +44,28 @@ const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTea
                 </div>
                 <div>
                   <p className="text-base font-medium text-red-600">
-                    警告：该分组关联了 {keyCount} 个密钥。
+                    {t("teams.deleteModal.warningKeys").replace("{keyCount}", String(keyCount))}
                   </p>
                   <p className="text-base text-red-600 mt-2">
-                    删除分组将同时删除所有关联密钥，此操作不可恢复。
+                    {t("teams.deleteModal.warningDeleteAll")}
                   </p>
                 </div>
               </div>
             )}
             <p className="text-base text-gray-600 mb-5">
-              确认要强制删除该分组及其所有密钥吗？
+              {t("teams.deleteModal.confirmInfo")}
             </p>
             <div className="mb-5">
               <label className="block text-base font-medium text-gray-700 mb-2">
-                {`请输入 `}
+                {t("teams.deleteModal.enterName")}
                 <span className="underline">{teamName}</span>
-                {` 以确认删除：`}
+                {t("teams.deleteModal.confirmLabel")}
               </label>
               <input
                 type="text"
                 value={deleteConfirmInput}
                 onChange={(e) => setDeleteConfirmInput(e.target.value)}
-                placeholder="请准确输入分组名称"
+                placeholder={t("teams.deleteModal.placeholder")}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
                 autoFocus
               />
@@ -78,14 +80,14 @@ const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTea
             }}
             className="px-5 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            取消
+            {t("teams.deleteModal.cancel")}
           </button>
           <button
             onClick={onConfirm}
             disabled={!isValid}
             className={`px-5 py-3 rounded-md text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${isValid ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
           >
-            强制删除
+            {t("teams.deleteModal.forceDelete")}
           </button>
         </div>
       </div>

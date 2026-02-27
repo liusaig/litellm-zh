@@ -3,6 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
 import { BarChart, Button } from "@tremor/react";
 import { Segmented, Tooltip } from "antd";
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { formatNumberWithCommas } from "../../../../utils/dataUtils";
 import { transformKeyInfo } from "../../../key_team_helpers/transform_key_info";
 import { keyInfoV1Call } from "../../../networking";
@@ -20,6 +21,7 @@ interface TopKeyViewProps {
 
 const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = false, topKeysLimit, setTopKeysLimit }) => {
   const { accessToken, userRole, userId: userID, premiumUser } = useAuthorized();
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [keyData, setKeyData] = useState<any | undefined>(undefined);
@@ -81,7 +83,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
   // Define columns for the table view
   const baseColumns = [
     {
-      header: "Key ID",
+      header: t("usagePage.topKeyView.keyId"),
       accessorKey: "api_key",
       cell: (info: any) => (
         <div className="overflow-hidden">
@@ -99,14 +101,14 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
       ),
     },
     {
-      header: "Key Alias",
+      header: t("usagePage.topKeyView.keyAlias"),
       accessorKey: "key_alias",
       cell: (info: any) => info.getValue() || "-",
     },
   ];
 
   const tagsColumn = {
-    header: "Tags",
+    header: t("usagePage.topKeyView.tags"),
     accessorKey: "tags",
     cell: (info: any) => {
       const tags = info.getValue() as TagUsage[] | undefined;
@@ -134,7 +136,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
                     </div>
                     <div>
                       <span className="text-gray-300">Spend:</span>{" "}
-                      {tag.usage > 0 && tag.usage < 0.01 ? "<$0.01" : `$${formatNumberWithCommas(tag.usage, 2)}`}
+                      {tag.usage > 0 && tag.usage < 0.01 ? "<¥0.01" : `¥${formatNumberWithCommas(tag.usage, 2)}`}
                     </div>
                   </div>
                 }
@@ -162,11 +164,11 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
   };
 
   const spendColumn = {
-    header: "Spend (USD)",
+    header: t("usagePage.topKeyView.spend"),
     accessorKey: "spend",
     cell: (info: any) => {
       const value = info.getValue();
-      return value > 0 && value < 0.01 ? "<$0.01" : `$${formatNumberWithCommas(value, 2)}`;
+      return value > 0 && value < 0.01 ? "<¥0.01" : `¥${formatNumberWithCommas(value, 2)}`;
     },
   };
 
@@ -195,7 +197,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
             onClick={() => setViewMode("table")}
             className={`px-3 py-1 text-sm rounded-md ${viewMode === "table" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
           >
-            Table View
+            {t("usagePage.topKeyView.tableView")}
           </button>
           <button
             onClick={() => setViewMode("chart")}
@@ -219,7 +221,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
             tickGap={5}
             layout="vertical"
             showLegend={false}
-            valueFormatter={(value) => `$${formatNumberWithCommas(value, 2)}`}
+            valueFormatter={(value) => `¥${formatNumberWithCommas(value)}`}
             onValueChange={(item) => handleKeyClick(item)}
             showTooltip={true}
             customTooltip={(props) => {

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 import { Text } from "@tremor/react";
 import VectorStorePermissions from "./permissions/VectorStorePermissions";
@@ -27,6 +28,7 @@ export function ObjectPermissionsView({
   className = "",
   accessToken,
 }: ObjectPermissionsViewProps) {
+  const { t } = useLanguage();
   const vectorStores = objectPermission?.vector_stores || [];
   const mcpServers = objectPermission?.mcp_servers || [];
   const mcpAccessGroups = objectPermission?.mcp_access_groups || [];
@@ -56,8 +58,8 @@ export function ObjectPermissionsView({
       <div className={`bg-white border border-gray-200 rounded-lg p-6 ${className}`}>
         <div className="flex items-center gap-2 mb-6">
           <div>
-            <Text className="font-semibold text-gray-900">Object Permissions</Text>
-            <Text className="text-xs text-gray-500">Access control for Vector Stores and MCP Servers</Text>
+            <Text className="font-semibold text-gray-900">{t("keyDetail.objectPermissions.title")}</Text>
+            <Text className="text-xs text-gray-500">{t("keyDetail.objectPermissions.description")}</Text>
           </div>
         </div>
         {content}
@@ -67,7 +69,7 @@ export function ObjectPermissionsView({
 
   return (
     <div className={`${className}`}>
-      <Text className="font-medium text-gray-900 mb-3">Object Permissions</Text>
+      <Text className="font-medium text-gray-900 mb-3">{t("keyDetail.objectPermissions.title")}</Text>
       {content}
     </div>
   );

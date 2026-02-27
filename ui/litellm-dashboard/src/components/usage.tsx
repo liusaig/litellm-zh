@@ -97,7 +97,7 @@ const customTooltip = (props: CustomTooltipTypeBar) => {
               {":"}
               <span className="text-xs text-tremor-content-emphasis">
                 {" "}
-                {value ? `$${formatNumberWithCommas(value, 2)}` : ""}
+                {value ? `¥${formatNumberWithCommas(value)}` : ""}
               </span>
             </p>
           </div>
@@ -625,7 +625,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ accessToken, token, userRole, use
                           layout="vertical"
                           showXAxis={false}
                           showLegend={false}
-                          valueFormatter={(value) => `$${formatNumberWithCommas(value, 2)}`}
+                          valueFormatter={(value) => `¥${formatNumberWithCommas(value)}`}
                         />
                       </Card>
                     </Col>
@@ -643,7 +643,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ accessToken, token, userRole, use
                                 index="provider"
                                 category="spend"
                                 colors={["cyan"]}
-                                valueFormatter={(value) => `$${formatNumberWithCommas(value, 2)}`}
+                                valueFormatter={(value) => `¥${formatNumberWithCommas(value)}`}
                               />
                             </Col>
                             <Col numColSpan={1}>

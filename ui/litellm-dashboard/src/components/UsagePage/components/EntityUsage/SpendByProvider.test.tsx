@@ -91,14 +91,14 @@ describe("SpendByProvider", () => {
     render(<SpendByProvider loading={false} isDateChanging={false} providerSpend={mockProviderSpend} />);
     expect(screen.getAllByText("openai").length).toBeGreaterThan(0);
     expect(screen.getAllByText("anthropic").length).toBeGreaterThan(0);
-    expect(screen.getByText("$150.50")).toBeInTheDocument();
-    expect(screen.getByText("$200.75")).toBeInTheDocument();
+    expect(screen.getByText("¥150.50")).toBeInTheDocument();
+    expect(screen.getByText("¥200.75")).toBeInTheDocument();
   });
 
   it("should display formatted spend values with two decimal places", () => {
     render(<SpendByProvider loading={false} isDateChanging={false} providerSpend={mockProviderSpend} />);
-    expect(screen.getByText("$150.50")).toBeInTheDocument();
-    expect(screen.getByText("$200.75")).toBeInTheDocument();
+    expect(screen.getByText("¥150.50")).toBeInTheDocument();
+    expect(screen.getByText("¥200.75")).toBeInTheDocument();
   });
 
   it("should display successful requests with locale formatting", () => {
@@ -171,7 +171,7 @@ describe("SpendByProvider", () => {
       },
     ];
     render(<SpendByProvider loading={false} isDateChanging={false} providerSpend={providerSpendWithNull} />);
-    expect(screen.getByText("$100.00")).toBeInTheDocument();
+    expect(screen.getByText("¥100.00")).toBeInTheDocument();
   });
 
   it("should handle provider with empty string provider name", () => {
@@ -186,7 +186,7 @@ describe("SpendByProvider", () => {
       },
     ];
     render(<SpendByProvider loading={false} isDateChanging={false} providerSpend={providerSpendWithEmpty} />);
-    expect(screen.getByText("$100.00")).toBeInTheDocument();
+    expect(screen.getByText("¥100.00")).toBeInTheDocument();
   });
 
   it("should display large token numbers with comma formatting", () => {

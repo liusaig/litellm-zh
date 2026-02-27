@@ -1,0 +1,69 @@
+{
+  "organizations": {
+    "createButton": "Create New Organization",
+    "myOrganizations": "My Organizations",
+    "lastRefreshed": "Last Refreshed: ",
+    "clickToView": "Click \"Organization ID\" to view organization details.",
+    "table": {
+      "orgId": "Organization ID",
+      "orgName": "Organization Name",
+      "createdAt": "Created At",
+      "spend": "Spend",
+      "budget": "Budget",
+      "models": "Models",
+      "tpmRpmLimit": "TPM / RPM Limit",
+      "info": "Info",
+      "actions": "Actions",
+      "noDate": "N/A",
+      "unlimited": "Unlimited",
+      "allModels": "All Models",
+      "moreModels": " more model(s)",
+      "members": " member(s)",
+      "tpm": "TPM: ",
+      "rpm": "RPM: "
+    },
+    "actions": {
+      "edit": "Edit Organization",
+      "delete": "Delete Organization"
+    },
+    "modal": {
+      "createTitle": "Create Organization",
+      "orgName": "Organization Name",
+      "orgNamePlaceholder": "Enter name",
+      "orgNameRequired": "Please enter organization name",
+      "models": "Models",
+      "modelsPlaceholder": "Select models",
+      "maxBudget": "Max Budget",
+      "maxBudgetPlaceholder": "Enter value",
+      "budgetDuration": "Budget Reset Period",
+      "budgetDurationPlaceholder": "Not applicable",
+      "budgetDaily": "Daily",
+      "budgetWeekly": "Weekly",
+      "budgetMonthly": "Monthly",
+      "tpmLimit": "Tokens Per Minute Limit (TPM)",
+      "tpmLimitPlaceholder": "Enter value",
+      "rpmLimit": "Requests Per Minute Limit (RPM)",
+      "rpmLimitPlaceholder": "Enter value",
+      "vectorStores": "Available Vector Stores",
+      "vectorStoresTooltip": "Select vector stores this organization can access by default. Leave empty to allow access to all vector stores",
+      "vectorStoresHelp": "Select vector stores this organization can access. Leave empty to allow access to all vector stores",
+      "vectorStoresPlaceholder": "Select vector stores (optional)",
+      "mcpServers": "Available MCP Services",
+      "mcpServersTooltip": "Select MCP services and access groups this organization can access by default.",
+      "mcpServersHelp": "Select MCP services and access groups this organization can access.",
+      "mcpServersPlaceholder": "Select MCP services and access groups (optional)",
+      "metadata": "Metadata",
+      "createSubmit": "Create Organization"
+    },
+    "delete": {
+      "title": "Delete Organization?",
+      "message": "Are you sure you want to delete this organization? This action cannot be undone.",
+      "resourceTitle": "Organization Information",
+      "resourceLabel": "Organization ID"
+    },
+    "notifications": {
+      "deleteSuccess": "Organization deleted successfully",
+      "createSuccess": "Organization created successfully"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 import { formatNumberWithCommas } from "@/utils/dataUtils";
 import { ChevronDownIcon, ChevronUpIcon, SwitchVerticalIcon } from "@heroicons/react/outline";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   ColumnDef,
   flexRender,
@@ -42,6 +43,8 @@ export function DeletedKeysTable({
   pageSize,
   onPageChange,
 }: DeletedKeysTableProps) {
+  const { t } = useLanguage();
+
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "deleted_at",
@@ -63,7 +66,7 @@ export function DeletedKeysTable({
     {
       id: "token",
       accessorKey: "token",
-      header: "Key ID",
+      header: t("logs.deletedKeys.columns.keyId"),
       size: 150,
       maxSize: 250,
       cell: (info) => {
@@ -80,7 +83,7 @@ export function DeletedKeysTable({
     {
       id: "key_alias",
       accessorKey: "key_alias",
-      header: "Key Alias",
+      header: t("logs.deletedKeys.columns.keyAlias"),
       size: 150,
       maxSize: 200,
       cell: (info) => {
@@ -97,7 +100,7 @@ export function DeletedKeysTable({
     {
       id: "team_alias",
       accessorKey: "team_alias",
-      header: "Team Alias",
+      header: t("logs.deletedKeys.columns.teamAlias"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -112,7 +115,7 @@ export function DeletedKeysTable({
     {
       id: "spend",
       accessorKey: "spend",
-      header: "Spend (USD)",
+      header: t("logs.deletedKeys.columns.spend"),
       size: 100,
       maxSize: 140,
       cell: (info) => (
@@ -124,14 +127,14 @@ export function DeletedKeysTable({
     {
       id: "max_budget",
       accessorKey: "max_budget",
-      header: "Budget (USD)",
+      header: t("logs.deletedKeys.columns.budget"),
       size: 110,
       maxSize: 150,
       cell: (info) => {
         const maxBudget = info.getValue() as number | null;
         return (
           <span className="block max-w-[150px]">
-            {maxBudget === null ? "Unlimited" : `$${formatNumberWithCommas(maxBudget)}`}
+            {maxBudget === null ? t("logs.deletedKeys.unlimited") : `¥${formatNumberWithCommas(maxBudget)}`}
           </span>
         );
       },
@@ -139,7 +142,7 @@ export function DeletedKeysTable({
     {
       id: "user_email",
       accessorKey: "user_email",
-      header: "User Email",
+      header: t("logs.deletedKeys.columns.userEmail"),
       size: 160,
       maxSize: 250,
       cell: (info) => {
@@ -156,7 +159,7 @@ export function DeletedKeysTable({
     {
       id: "user_id",
       accessorKey: "user_id",
-      header: "User ID",
+      header: t("logs.deletedKeys.columns.userId"),
       size: 120,
       maxSize: 200,
       cell: (info) => {
@@ -173,7 +176,7 @@ export function DeletedKeysTable({
     {
       id: "created_at",
       accessorKey: "created_at",
-      header: "Created At",
+      header: t("logs.deletedKeys.columns.createdAt"),
       size: 120,
       maxSize: 140,
       cell: (info) => {
@@ -188,7 +191,7 @@ export function DeletedKeysTable({
     {
       id: "created_by",
       accessorKey: "created_by",
-      header: "Created By",
+      header: t("logs.deletedKeys.columns.createdBy"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -205,7 +208,7 @@ export function DeletedKeysTable({
     {
       id: "deleted_at",
       accessorKey: "deleted_at",
-      header: "Deleted At",
+      header: t("logs.deletedKeys.columns.deletedAt"),
       size: 120,
       maxSize: 140,
       cell: (info) => {
@@ -220,7 +223,7 @@ export function DeletedKeysTable({
     {
       id: "deleted_by",
       accessorKey: "deleted_by",
-      header: "Deleted By",
+      header: t("logs.deletedKeys.columns.deletedBy"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -270,20 +273,24 @@ export function DeletedKeysTable({
       <div className="border-b py-4 flex-1 overflow-hidden">
         <div className="flex items-center justify-between w-full mb-4">
           {isLoading || isFetching ? (
-            <span className="inline-flex text-sm text-gray-700">Loading...</span>
+            <span className="inline-flex text-sm text-gray-700">{t("logs.deletedKeys.loading")}</span>
           ) : (
-            <span className="inline-flex text-sm text-gray-700">
-              Showing {rangeLabel} of {totalCount} results
-            </span>
+            totalCount > 0 && (
+              <span className="inline-flex text-sm text-gray-700">
+                {t("logs.deletedKeys.showing").replace("{start}", String(start)).replace("{end}", String(end)).replace("{total}", String(totalCount))}
+              </span>
+            )
           )}
 
           <div className="inline-flex items-center gap-2">
             {isLoading || isFetching ? (
-              <span className="text-sm text-gray-700">Loading...</span>
+              <span className="text-sm text-gray-700">{t("logs.deletedKeys.loading")}</span>
             ) : (
-              <span className="text-sm text-gray-700">
-                Page {currentPageIndex + 1} of {table.getPageCount()}
-              </span>
+              totalCount > 0 && (
+                <span className="text-sm text-gray-700">
+                  {t("logs.deletedKeys.pageOf").replace("{current}", String(currentPageIndex + 1)).replace("{total}", String(table.getPageCount()))}
+                </span>
+              )
             )}
 
             <button
@@ -291,7 +298,7 @@ export function DeletedKeysTable({
               disabled={isLoading || isFetching || !table.getCanPreviousPage()}
               className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              {t("logs.deletedKeys.previous")}
             </button>
 
             <button
@@ -299,7 +306,7 @@ export function DeletedKeysTable({
               disabled={isLoading || isFetching || !table.getCanNextPage()}
               className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              {t("logs.deletedKeys.next")}
             </button>
           </div>
         </div>
@@ -379,7 +386,7 @@ export function DeletedKeysTable({
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-8 text-center">
                         <div className="text-center text-gray-500">
-                          <p>🚅 Loading keys...</p>
+                          <p>🚅 {t("logs.deletedKeys.loadingKeys")}</p>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -406,7 +413,7 @@ export function DeletedKeysTable({
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-8 text-center">
                         <div className="text-center text-gray-500">
-                          <p>No deleted keys found</p>
+                          <p>{t("logs.deletedKeys.noResults")}</p>
                         </div>
                       </TableCell>
                     </TableRow>

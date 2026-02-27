@@ -278,11 +278,11 @@ export default function UserInfoView({
               <Card>
                 <Text>花费</Text>
                 <div className="mt-2">
-                  <Title>${formatNumberWithCommas(userData.user_info?.spend || 0, 4)}</Title>
+                  <Title>¥{formatNumberWithCommas(userData.user_info?.spend || 0, 4)}</Title>
                   <Text>
                     of{" "}
                     {userData.user_info?.max_budget !== null
-                      ? `$${formatNumberWithCommas(userData.user_info.max_budget, 4)}`
+                      ? `¥${formatNumberWithCommas(userData.user_info.max_budget, 4)}`
                       : "不限制"}
                   </Text>
                 </div>
@@ -324,7 +324,7 @@ export default function UserInfoView({
               </Card>
 
               <Card>
-                <Text>虚拟密钥</Text>
+                <Text>API密钥</Text>
                 <div className="mt-2">
                   <Text>
                     {userData.keys?.length || 0} {userData.keys?.length === 1 ? "个密钥" : "个密钥"}
@@ -473,7 +473,7 @@ export default function UserInfoView({
                   </div>
 
                   <div>
-                    <Text className="font-medium">虚拟密钥</Text>
+                    <Text className="font-medium">API密钥</Text>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {userData.keys?.length && userData.keys?.length > 0 ? (
                         userData.keys.map((key, index) => (
@@ -482,7 +482,7 @@ export default function UserInfoView({
                           </span>
                         ))
                       ) : (
-                        <Text>无虚拟密钥</Text>
+                        <Text>无API密钥</Text>
                       )}
                     </div>
                   </div>
@@ -491,7 +491,7 @@ export default function UserInfoView({
                     <Text className="font-medium">最大预算</Text>
                     <Text>
                       {userData.user_info?.max_budget !== null && userData.user_info?.max_budget !== undefined
-                        ? `$${formatNumberWithCommas(userData.user_info.max_budget, 4)}`
+                        ? `¥${formatNumberWithCommas(userData.user_info.max_budget, 4)}`
                         : "不限制"}
                     </Text>
                   </div>

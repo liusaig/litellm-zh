@@ -1,4 +1,5 @@
 import { useCredentials } from "@/app/(dashboard)/hooks/credentials/useCredentials";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useModelCostMap } from "@/app/(dashboard)/hooks/models/useModelCostMap";
 import { useModelsInfo } from "@/app/(dashboard)/hooks/models/useModels";
 import { useUISettings } from "@/app/(dashboard)/hooks/uiSettings/useUISettings";
@@ -47,6 +48,7 @@ interface GlobalRetryPolicyObject {
 }
 
 const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, teams }) => {
+  const { t } = useLanguage();
   const { accessToken, token, userRole, userId: userID } = useAuthorized();
   const [addModelForm] = Form.useForm();
   const [lastRefreshed, setLastRefreshed] = useState("");
@@ -151,9 +153,9 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
     },
     onChange(info) {
       if (info.file.status === "done") {
-        NotificationsManager.success(`${info.file.name} file uploaded successfully`);
+        NotificationsManager.success(t("models.notifications.fileUploaded").replace("{fileName}", info.file.name));
       } else if (info.file.status === "error") {
-        NotificationsManager.fromBackend(`${info.file.name} file upload failed.`);
+        NotificationsManager.fromBackend(t("models.notifications.fileUploadFailed").replace("{fileName}", info.file.name));
       }
     },
   };
@@ -179,17 +181,17 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
         if (globalRetryPolicy) {
           payload.router_settings.retry_policy = globalRetryPolicy;
         }
-        NotificationsManager.success("Global retry settings saved successfully");
+        NotificationsManager.success(t("models.notifications.globalRetrySaved"));
       } else {
         if (modelGroupRetryPolicy) {
           payload.router_settings.model_group_retry_policy = modelGroupRetryPolicy;
         }
-        NotificationsManager.success(`Retry settings saved successfully for ${selectedModelGroup}`);
+        NotificationsManager.success(t("models.notifications.retrySaved").replace("{modelGroup}", selectedModelGroup || ""));
       }
 
       await setCallbacksCall(accessToken, payload);
     } catch (error) {
-      NotificationsManager.fromBackend("Failed to save retry settings");
+      NotificationsManager.fromBackend(t("models.notifications.retryFailed"));
     }
   };
 
@@ -227,8 +229,8 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
     const { Title, Paragraph } = Typography;
     return (
       <div>
-        <Title level={1}>Access Denied</Title>
-        <Paragraph>Ask your proxy admin for access to view all models</Paragraph>
+        <Title level={1}>{t("models.accessDenied.title")}</Title>
+        <Paragraph>{t("models.accessDenied.message")}</Paragraph>
       </div>
     );
   }
@@ -244,7 +246,7 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
             return `${field.name.join(".")}: ${field.errors.join(", ")}`;
           })
           .join(" | ") || "Unknown validation error";
-      NotificationsManager.fromBackend(`Please fill in the following required fields: ${errorMessages}`);
+      NotificationsManager.fromBackend(t("models.validation.requiredFields").replace("{error}", errorMessages));
     }
   };
 
@@ -275,11 +277,11 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
           {/* Model Management Header */}
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-lg font-semibold">模型管理</h2>
+              <h2 className="text-lg font-semibold">{t("models.title")}</h2>
               {!all_admin_roles.includes(userRole) ? (
-                <p className="text-sm text-gray-600">为您管理的团队添加模型。</p>
+                <p className="text-sm text-gray-600">{t("models.description.teamAdmin")}</p>
               ) : (
-                <p className="text-sm text-gray-600">为代理添加和管理模型</p>
+                <p className="text-sm text-gray-600">{t("models.description.admin")}</p>
               )}
             </div>
           </div>
@@ -337,18 +339,18 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
             <TabGroup index={selectedTabIndex} onIndexChange={setSelectedTabIndex} className="gap-2 h-[75vh] w-full ">
               <TabList className="flex justify-between mt-2 w-full items-center">
                 <div className="flex">
-                  {all_admin_roles.includes(userRole) ? <Tab>所有模型</Tab> : <Tab>您的模型</Tab>}
-                  {!shouldHideAddModelTab && <Tab>添加模型</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>LLM 凭据</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>透传端点</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>健康状态</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>模型重试设置</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>模型组别名</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>价格数据重载</Tab>}
+                  {all_admin_roles.includes(userRole) ? <Tab>{t("models.tabs.allModels")}</Tab> : <Tab>{t("models.tabs.yourModels")}</Tab>}
+                  {!shouldHideAddModelTab && <Tab>{t("models.tabs.addModel")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.tabs.credentials")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.tabs.passThrough")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.tabs.healthCheck")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.tabs.retrySettings")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.tabs.modelAlias")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.tabs.priceReload")}</Tab>}
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  {lastRefreshed && <Text>最后刷新：{lastRefreshed}</Text>}
+                  {lastRefreshed && <Text>{t("models.lastRefreshed")}{lastRefreshed}</Text>}
                   <Icon
                     icon={RefreshIcon} // Modify as necessary for correct icon name
                     variant="shadow"

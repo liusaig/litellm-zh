@@ -696,7 +696,7 @@ const Teams: React.FC<TeamProps> = ({
               <TabList className="flex justify-between mt-2 w-full items-center">
                 <div className="flex">
                   <Tab>我的分组</Tab>
-                  <Tab>可加入分组</Tab>
+                  {/* <Tab>可加入分组</Tab> */}
                   {isProxyAdminRole(userRole || "") && <Tab>默认分组设置</Tab>}
                 </div>
                 <div className="flex items-center space-x-2">
@@ -1022,9 +1022,9 @@ const Teams: React.FC<TeamProps> = ({
                     </Col>
                   </Grid>
                 </TabPanel>
-                <TabPanel>
-                  <AvailableTeamsPanel accessToken={accessToken} userID={userID} />
-                </TabPanel>
+                {/* <TabPanel>}
+                  {/* <AvailableTeamsPanel accessToken={accessToken} userID={userID} /> */}
+                {/* </TabPanel> */}
                 {isProxyAdminRole(userRole || "") && (
                   <TabPanel>
                     <TeamSSOSettings accessToken={accessToken} userID={userID || ""} userRole={userRole || ""} />

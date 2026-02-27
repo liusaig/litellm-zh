@@ -52,9 +52,10 @@ export const columns = (
   handleRefreshClick: () => void,
   expandedRows: Set<string>,
   setExpandedRows: (expandedRows: Set<string>) => void,
+  t: (key: string) => string,
 ): ColumnDef<ModelData>[] => [
     {
-      header: () => <span className="text-sm font-semibold">Model ID</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.modelId")}</span>,
       accessorKey: "model_info.id",
       enableSorting: false,
       size: 130,
@@ -76,7 +77,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Model Information</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.modelInformation")}</span>,
       accessorKey: "model_name",
       size: 250,
       minSize: 120,
@@ -163,7 +164,7 @@ export const columns = (
     {
       header: () => (
         <span className="flex items-center gap-1">
-          <span className="text-sm font-semibold">Credentials</span>
+          <span className="text-sm font-semibold">{t("models.columns.credentials")}</span>
           <Popover
             content={credentialsInfoPopoverContent}
             placement="bottom"
@@ -205,7 +206,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Created By</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.createdBy")}</span>,
       accessorKey: "model_info.created_by",
       sortingFn: "datetime",
       size: 160,
@@ -237,7 +238,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Updated At</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.updatedAt")}</span>,
       accessorKey: "model_info.updated_at",
       sortingFn: "datetime",
       size: 120,
@@ -252,7 +253,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Costs</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.costs")}</span>,
       accessorKey: "input_cost",
       size: 120,
       minSize: 80,
@@ -283,7 +284,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Team ID</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.teamId")}</span>,
       accessorKey: "model_info.team_id",
       enableSorting: false,
       size: 130,
@@ -309,7 +310,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Model Access Group</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.modelAccessGroup")}</span>,
       accessorKey: "model_info.model_access_group",
       enableSorting: false,
       size: 180,
@@ -370,7 +371,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Status</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.status")}</span>,
       accessorKey: "model_info.db_model",
       size: 120,
       minSize: 80,
@@ -390,7 +391,7 @@ export const columns = (
     },
     {
       id: "actions",
-      header: () => <span className="text-sm font-semibold">Actions</span>,
+      header: () => <span className="text-sm font-semibold">{t("models.columns.actions")}</span>,
       size: 60,
       minSize: 40,
       enableResizing: false,

@@ -110,7 +110,7 @@ describe("LogDetailContent", () => {
     );
 
     expect(screen.getByText("Metrics")).toBeInTheDocument();
-    expect(screen.getAllByText("$0.00200000").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("¥0.00200000").length).toBeGreaterThanOrEqual(1);
   });
 
   it("should display ConfigInfoMessage when no messages, response, or error and not loading", () => {

@@ -84,7 +84,7 @@ export const columns = (
       ),
     },
     {
-      header: "虚拟密钥",
+      header: "API密钥",
       accessorKey: "key_count",
       enableSorting: false,
       cell: ({ row }) => (

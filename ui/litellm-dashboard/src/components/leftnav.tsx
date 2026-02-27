@@ -69,7 +69,7 @@ const menuGroups: MenuGroup[] = [
       {
         key: "api-keys",
         page: "api-keys",
-        label: "虚拟密钥",
+        label: "API密钥",
         icon: <KeyOutlined />,
       },
       {

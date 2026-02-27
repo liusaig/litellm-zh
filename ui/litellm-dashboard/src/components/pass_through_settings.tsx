@@ -3,6 +3,7 @@ import { Text, Button, Icon, Title } from "@tremor/react";
 import { deletePassThroughEndpointsCall, getPassThroughEndpointsCall } from "./networking";
 import { Badge, Tooltip } from "antd";
 import { PencilAltIcon, TrashIcon, InformationCircleIcon } from "@heroicons/react/outline";
+import { useLanguage } from "@/contexts/LanguageContext";
 import AddPassThroughEndpoint from "./add_pass_through";
 import PassThroughInfoView from "./pass_through_info";
 import { DataTable } from "./view_logs/table";
@@ -60,6 +61,7 @@ const PasswordField: React.FC<{ value: object }> = ({ value }) => {
 };
 
 const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, userRole, userID, modelData, premiumUser }) => {
+  const { t } = useLanguage();
   const [generalSettings, setGeneralSettings] = useState<passThroughItem[]>([]);
   const [selectedEndpointId, setSelectedEndpointId] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -102,10 +104,10 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
       const updatedSettings = generalSettings.filter((setting) => setting.id !== endpointToDelete);
       setGeneralSettings(updatedSettings);
 
-      NotificationsManager.success("Endpoint deleted successfully.");
+      NotificationsManager.success(t("models.passThrough.deletedSuccessfully"));
     } catch (error) {
       console.error("Error deleting the endpoint:", error);
-      NotificationsManager.fromBackend("Error deleting the endpoint: " + error);
+      NotificationsManager.fromBackend(t("models.passThrough.deleteError") + String(error));
     }
 
     // Close the confirmation modal and reset the endpointToDelete
@@ -127,7 +129,7 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
   // Define columns for the DataTable
   const columns: ColumnDef<passThroughItem>[] = [
     {
-      header: "ID",
+      header: t("models.passThrough.id"),
       accessorKey: "id",
       cell: (info: any) => (
         <Tooltip title={info.row.original.id}>
@@ -141,11 +143,11 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
       ),
     },
     {
-      header: "Path",
+      header: t("models.passThrough.path"),
       accessorKey: "path",
     },
     {
-      header: "Target",
+      header: t("models.passThrough.target"),
       accessorKey: "target",
       cell: (info: any) => <Text>{info.getValue()}</Text>,
     },
@@ -193,7 +195,7 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
       cell: (info: any) => <PasswordField value={info.getValue() || {}} />,
     },
     {
-      header: "Actions",
+      header: t("models.passThrough.actions"),
       id: "actions",
       cell: ({ row }) => (
         <div className="flex space-x-1">
@@ -226,7 +228,7 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
     const selectedEndpoint = generalSettings.find((endpoint) => endpoint.id === selectedEndpointId);
 
     if (!selectedEndpoint) {
-      return <div>Endpoint not found</div>;
+      return <div>{t("models.passThrough.endpointNotFound")}</div>;
     }
 
     return (
@@ -261,7 +263,7 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
         renderSubComponent={() => <div></div>}
         getRowCanExpand={() => false}
         isLoading={false}
-        noDataMessage="No pass-through endpoints configured"
+        noDataMessage={t("models.passThrough.noEndpointsConfigured")}
       />
 
       {isDeleteModalOpen && (
@@ -292,9 +294,9 @@ const PassThroughSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, 
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <Button onClick={confirmDelete} color="red" className="ml-2">
-                  Delete
+                  {t("models.common.delete")}
                 </Button>
-                <Button onClick={cancelDelete}>Cancel</Button>
+                <Button onClick={cancelDelete}>{t("models.common.cancel")}</Button>
               </div>
             </div>
           </div>

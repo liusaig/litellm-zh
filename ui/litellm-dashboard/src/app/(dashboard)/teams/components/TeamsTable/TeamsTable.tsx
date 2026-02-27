@@ -7,6 +7,7 @@ import { type KeyResponse, Team } from "@/components/key_team_helpers/key_list";
 import { Member, Organization } from "@/components/networking";
 import ModelsCell from "@/app/(dashboard)/teams/components/TeamsTable/ModelsCell";
 import YourRoleCell from "@/app/(dashboard)/teams/components/TeamsTable/YourRoleCell/YourRoleCell";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type TeamsTableProps = {
   teams: Team[] | null;
@@ -38,19 +39,20 @@ const TeamsTable = ({
   setEditTeam,
   onDeleteTeam,
 }: TeamsTableProps) => {
+  const { t } = useLanguage();
   return (
     <Table>
       <TableHead>
         <TableRow>
-          <TableHeaderCell>分组名称</TableHeaderCell>
-          <TableHeaderCell>分组 ID</TableHeaderCell>
-          <TableHeaderCell>创建时间</TableHeaderCell>
-          <TableHeaderCell>花费</TableHeaderCell>
-          <TableHeaderCell>预算</TableHeaderCell>
-          <TableHeaderCell>模型</TableHeaderCell>
-          <TableHeaderCell>组织</TableHeaderCell>
-          <TableHeaderCell>你的角色</TableHeaderCell>
-          <TableHeaderCell>信息</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.teamName")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.teamId")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.createdAt")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.spend")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.budget")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.models")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.organization")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.yourRole")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.table.info")}</TableHeaderCell>
         </TableRow>
       </TableHead>
 
@@ -97,7 +99,7 @@ const TeamsTable = ({
                       overflow: "hidden",
                     }}
                   >
-                    {team.created_at ? new Date(team.created_at).toLocaleDateString() : "无"}
+                    {team.created_at ? new Date(team.created_at).toLocaleDateString() : t("teams.table.none")}
                   </TableCell>
                   <TableCell
                     style={{
@@ -115,7 +117,7 @@ const TeamsTable = ({
                       overflow: "hidden",
                     }}
                   >
-                    {team["max_budget"] !== null && team["max_budget"] !== undefined ? team["max_budget"] : "不限制"}
+                    {team["max_budget"] !== null && team["max_budget"] !== undefined ? team["max_budget"] : t("teams.table.unlimited")}
                   </TableCell>
                   <ModelsCell team={team} />
                   <TableCell>{team.organization_id}</TableCell>
@@ -127,7 +129,7 @@ const TeamsTable = ({
                         perTeamInfo[team.team_id] &&
                         perTeamInfo[team.team_id].keys &&
                         perTeamInfo[team.team_id].keys.length}{" "}
-                      个密钥
+                      {t("teams.table.keys").trim()}
                     </Text>
                     <Text>
                       {perTeamInfo &&
@@ -136,7 +138,7 @@ const TeamsTable = ({
                         perTeamInfo[team.team_id].team_info &&
                         perTeamInfo[team.team_id].team_info.members_with_roles &&
                         perTeamInfo[team.team_id].team_info.members_with_roles.length}{" "}
-                      个成员
+                      {t("teams.table.members").trim()}
                     </Text>
                   </TableCell>
                   <TableCell>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { PlusCircleIcon, PencilIcon, TrashIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import { setCallbacksCall } from "./networking";
 import { Card, Title, Text, Table, TableHead, TableHeaderCell, TableBody, TableRow, TableCell } from "@tremor/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import NotificationsManager from "./molecules/notifications_manager";
 
 type ModelGroupAliasValue = string | { model: string; hidden?: boolean };
@@ -23,6 +24,7 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
   initialModelGroupAlias = {},
   onAliasUpdate,
 }) => {
+  const { t } = useLanguage();
   const [aliases, setAliases] = useState<AliasItem[]>([]);
   const [newAlias, setNewAlias] = useState({ aliasName: "", targetModelGroup: "" });
   const [editingAlias, setEditingAlias] = useState<AliasItem | null>(null);
@@ -74,13 +76,13 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
 
   const handleAddAlias = async () => {
     if (!newAlias.aliasName || !newAlias.targetModelGroup) {
-      NotificationsManager.fromBackend("Please provide both alias name and target model group");
+      NotificationsManager.fromBackend(t("models.modelAlias.errorRequired"));
       return;
     }
 
     // Check for duplicate alias names
     if (aliases.some((alias) => alias.aliasName === newAlias.aliasName)) {
-      NotificationsManager.fromBackend("An alias with this name already exists");
+      NotificationsManager.fromBackend(t("models.modelAlias.errorDuplicate"));
       return;
     }
 
@@ -95,7 +97,7 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
     if (await saveAliasesToBackend(updatedAliases)) {
       setAliases(updatedAliases);
       setNewAlias({ aliasName: "", targetModelGroup: "" });
-      NotificationsManager.success("Alias added successfully");
+      NotificationsManager.success(t("models.modelAlias.successAdded"));
     }
   };
 
@@ -107,13 +109,13 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
     if (!editingAlias) return;
 
     if (!editingAlias.aliasName || !editingAlias.targetModelGroup) {
-      NotificationsManager.fromBackend("Please provide both alias name and target model group");
+      NotificationsManager.fromBackend(t("models.modelAlias.errorRequired"));
       return;
     }
 
     // Check for duplicate alias names (excluding current alias)
     if (aliases.some((alias) => alias.id !== editingAlias.id && alias.aliasName === editingAlias.aliasName)) {
-      NotificationsManager.fromBackend("An alias with this name already exists");
+      NotificationsManager.fromBackend(t("models.modelAlias.errorDuplicate"));
       return;
     }
 
@@ -122,7 +124,7 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
     if (await saveAliasesToBackend(updatedAliases)) {
       setAliases(updatedAliases);
       setEditingAlias(null);
-      NotificationsManager.success("Alias updated successfully");
+      NotificationsManager.success(t("models.modelAlias.successUpdated"));
     }
   };
 
@@ -135,7 +137,7 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
 
     if (await saveAliasesToBackend(updatedAliases)) {
       setAliases(updatedAliases);
-      NotificationsManager.success("Alias deleted successfully");
+      NotificationsManager.success(t("models.modelAlias.successDeleted"));
     }
   };
 
@@ -312,9 +314,9 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
 
           {/* Configuration Example */}
           <Card>
-            <Title className="mb-4">Configuration Example</Title>
+            <Title className="mb-4">{t("models.modelAlias.configurationExample")}</Title>
             <Text className="text-gray-600 mb-4">
-              Here&apos;s how your current aliases would look in the config.yaml:
+              {t("models.modelAlias.configDescription")}
             </Text>
             <div className="bg-gray-100 rounded-lg p-4 font-mono text-sm">
               <div className="text-gray-700">
@@ -324,7 +326,7 @@ const ModelGroupAliasSettings: React.FC<ModelGroupAliasSettingsProps> = ({
                 {Object.keys(aliasObject).length === 0 ? (
                   <span className="text-gray-500">
                     <br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;# No aliases configured yet
+                    {t("models.modelAlias.noAliasesConfiguredYet")}
                   </span>
                 ) : (
                   Object.entries(aliasObject).map(([key, value]) => (

@@ -1,4 +1,5 @@
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button, Typography, Tooltip, Space, Divider, Flex } from "antd";
 import {
   ArrowLeftOutlined,
@@ -50,29 +51,31 @@ export function KeyInfoHeader({
   regenerateDisabled = false,
   regenerateTooltip,
 }: KeyInfoHeaderProps) {
+  // i18n hook
+  const { t } = useLanguage();
   return (
     <div>
       {onCreateNew && (
         <div style={{ marginBottom: 16 }}>
           <Button type="primary" icon={<PlusOutlined />} onClick={onCreateNew}>
-            Create New Key
+            {t("keyDetail.header.createNewKey")}
           </Button>
         </div>
       )}
 
       <div style={{ marginBottom: 16 }}>
         <Button type="text" icon={<ArrowLeftOutlined />} onClick={onBack}>
-          {backButtonText}
+          {t("keyDetail.header.backToKeys")}
         </Button>
       </div>
 
       <Flex justify="space-between" align="start" style={{ marginBottom: 20 }}>
         <div>
-          <Title level={3} copyable={{ tooltips: ["Copy Key Alias", "Copied!"] }} style={{ margin: 0 }}>
+          <Title level={3} copyable={{ tooltips: [t("keyDetail.header.copyKeyAlias"), t("keyDetail.header.copied")] }} style={{ margin: 0 }}>
             {data.keyName}
           </Title>
-          <Text type="secondary" copyable={{ text: data.keyId, tooltips: ["Copy Key ID", "Copied!"] }}>
-            Key ID: {data.keyId}
+          <Text type="secondary" copyable={{ text: data.keyId, tooltips: [t("keyDetail.header.copyKeyId"), t("keyDetail.header.copied")] }}>
+            {t("keyDetail.header.keyIdLabel")} {data.keyId}
           </Text>
         </div>
         {canModifyKey && (
@@ -80,12 +83,12 @@ export function KeyInfoHeader({
             <Tooltip title={regenerateTooltip || ""}>
               <span>
                 <Button icon={<SyncOutlined />} onClick={onRegenerate} disabled={regenerateDisabled}>
-                  Regenerate Key
+                  {t("keyDetail.header.regenerateKey")}
                 </Button>
               </span>
             </Tooltip>
             <Button danger icon={<DeleteOutlined />} onClick={onDelete}>
-              Delete Key
+              {t("keyDetail.header.deleteKey")}
             </Button>
           </Space>
         )}
@@ -93,9 +96,9 @@ export function KeyInfoHeader({
 
       <Flex align="stretch" gap={40} style={{ marginBottom: 40 }}>
         <Space direction="vertical" size={16}>
-          <LabeledField label="User Email" value={data.userEmail} icon={<MailOutlined />} />
+          <LabeledField label={t("keyDetail.header.userEmail")} value={data.userEmail} icon={<MailOutlined />} />
           <LabeledField
-            label="User ID"
+            label={t("keyDetail.header.userId")}
             value={data.userId}
             icon={<UserOutlined />}
             truncate
@@ -107,9 +110,9 @@ export function KeyInfoHeader({
         <Divider type="vertical" style={{ height: "auto" }} />
 
         <Space direction="vertical" size={16}>
-          <LabeledField label="Created At" value={data.createdAt} icon={<CalendarOutlined />} />
+          <LabeledField label={t("keyDetail.header.createdAt")} value={data.createdAt} icon={<CalendarOutlined />} />
           <LabeledField
-            label="Created By"
+            label={t("keyDetail.header.createdBy")}
             value={data.createdBy}
             icon={<SafetyCertificateOutlined />}
             truncate
@@ -121,8 +124,8 @@ export function KeyInfoHeader({
         <Divider type="vertical" style={{ height: "auto" }} />
 
         <Space direction="vertical" size={16}>
-          <LabeledField label="Last Updated" value={data.lastUpdated} icon={<ClockCircleOutlined />} />
-          <LabeledField label="Last Active" value={data.lastActive} icon={<ThunderboltOutlined />} />
+          <LabeledField label={t("keyDetail.header.lastUpdated")} value={data.lastUpdated} icon={<ClockCircleOutlined />} />
+          <LabeledField label={t("keyDetail.header.lastActive")} value={data.lastActive} icon={<ThunderboltOutlined />} />
         </Space>
       </Flex>
     </div>

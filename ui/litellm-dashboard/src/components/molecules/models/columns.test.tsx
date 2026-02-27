@@ -421,8 +421,8 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("In: $0.01")).toBeInTheDocument();
-    expect(screen.getByText("Out: $0.03")).toBeInTheDocument();
+    expect(screen.getByText("In: ¥0.01")).toBeInTheDocument();
+    expect(screen.getByText("Out: ¥0.03")).toBeInTheDocument();
   });
 
   it("should display '-' when costs are missing", () => {
@@ -905,7 +905,7 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("In: $0.01")).toBeInTheDocument();
+    expect(screen.getByText("In: ¥0.01")).toBeInTheDocument();
     expect(screen.queryByText(/Out:/)).not.toBeInTheDocument();
   });
 
@@ -929,7 +929,7 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("Out: $0.03")).toBeInTheDocument();
+    expect(screen.getByText("Out: ¥0.03")).toBeInTheDocument();
     expect(screen.queryByText(/In:/)).not.toBeInTheDocument();
   });
 });

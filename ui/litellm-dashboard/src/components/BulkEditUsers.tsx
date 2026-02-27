@@ -283,7 +283,7 @@ const BulkEditUserModal: React.FC<BulkEditUserModalProps> = ({
                 key: "max_budget",
                 width: "20%",
                 render: (budget: number | null) => (
-                  <Text style={{ fontSize: "12px" }}>{budget !== null ? `$${budget}` : "Unlimited"}</Text>
+                  <Text style={{ fontSize: "12px" }}>{budget !== null ? `¥${budget}` : "Unlimited"}</Text>
                 ),
               },
             ]}

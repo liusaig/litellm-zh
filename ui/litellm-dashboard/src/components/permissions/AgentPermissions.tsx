@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Text, Badge } from "@tremor/react";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import { Tooltip } from "antd";
@@ -22,6 +23,7 @@ export function AgentPermissions({
   agentAccessGroups = [], 
   accessToken 
 }: AgentPermissionsProps) {
+  const { t } = useLanguage();
   const [agentDetails, setAgentDetails] = useState<Agent[]>([]);
 
   // Fetch agent details when component mounts
@@ -62,7 +64,7 @@ export function AgentPermissions({
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <UserGroupIcon className="h-4 w-4 text-purple-600" />
-        <Text className="font-semibold text-gray-900">Agents</Text>
+        <Text className="font-semibold text-gray-900">{t("keyDetail.objectPermissions.agents")}</Text>
         <Badge color="purple" size="xs">
           {totalCount}
         </Badge>
@@ -88,7 +90,7 @@ export function AgentPermissions({
                       <span className="inline-block w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"></span>
                       <span className="text-sm font-medium text-gray-900 truncate">{item.value}</span>
                       <span className="ml-1 px-1.5 py-0.5 text-[9px] font-semibold text-green-600 bg-green-50 border border-green-200 rounded uppercase tracking-wide flex-shrink-0">
-                        Group
+                        {t("keyDetail.objectPermissions.group")}
                       </span>
                     </div>
                   )}
@@ -100,7 +102,7 @@ export function AgentPermissions({
       ) : (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
           <UserGroupIcon className="h-4 w-4 text-gray-400" />
-          <Text className="text-gray-500 text-sm">No agents or access groups configured</Text>
+          <Text className="text-gray-500 text-sm">{t("keyDetail.objectPermissions.noAgents")}</Text>
         </div>
       )}
     </div>
@@ -108,4 +110,3 @@ export function AgentPermissions({
 }
 
 export default AgentPermissions;
-

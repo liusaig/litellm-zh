@@ -18,6 +18,7 @@ import OnboardingModal, { InvitationLink } from "./onboarding_link";
 import { updateExistingKeys } from "@/utils/dataUtils";
 import { isAdminRole } from "@/utils/roles";
 import { useDebouncedState } from "@tanstack/react-pacer/debouncer";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Typography } from "antd";
 import DeleteResourceModal from "./common_components/DeleteResourceModal";
@@ -70,6 +71,7 @@ const initialFilters: FilterState = {
 };
 
 const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, token, userRole, userID, teams }) => {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -308,12 +310,12 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
                 variant={selectionMode ? "primary" : "secondary"}
                 className="flex items-center"
               >
-                {selectionMode ? "取消选择" : "选择用户"}
+                {selectionMode ? t("users.cancelSelection") : t("users.selectUsers")}
               </Button>
 
               {selectionMode && (
                 <Button onClick={handleBulkEdit} disabled={selectedUsers.length === 0} className="flex items-center">
-                  批量编辑（已选 {selectedUsers.length}）
+                  {t("users.bulkEdit")} ({t("users.selected")} {selectedUsers.length})
                 </Button>
               )}
             </>
@@ -323,8 +325,8 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
       <TabGroup defaultIndex={0} onIndexChange={(index) => setActiveTab(index === 0 ? "users" : "settings")}>
         <TabList className="mb-4">
-          <Tab>用户</Tab>
-          <Tab>默认用户设置</Tab>
+          <Tab>{t("users.tabs.users")}</Tab>
+          <Tab>{t("users.tabs.defaultSettings")}</Tab>
         </TabList>
 
         <TabPanels>

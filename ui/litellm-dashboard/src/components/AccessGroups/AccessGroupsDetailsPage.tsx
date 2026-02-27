@@ -25,6 +25,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import DefaultProxyAdminTag from "../common_components/DefaultProxyAdminTag";
 import { AccessGroupEditModal } from "./AccessGroupsModal/AccessGroupEditModal";
 
@@ -43,6 +44,7 @@ export function AccessGroupDetail({
   const { data: accessGroup, isLoading } =
     useAccessGroupDetails(accessGroupId);
   const { token } = theme.useToken();
+  const { t } = useLanguage();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [showAllKeys, setShowAllKeys] = useState(false);
   const [showAllTeams, setShowAllTeams] = useState(false);
@@ -78,7 +80,7 @@ export function AccessGroupDetail({
           type="text"
           style={{ marginBottom: 16 }}
         />
-        <Empty description="Access group not found" />
+        <Empty description={t("accessGroupDetail.notFound")} />
       </Content>
     );
   }
@@ -104,7 +106,7 @@ export function AccessGroupDetail({
       label: (
         <Flex align="center" gap={8}>
           <LayersIcon size={16} />
-          Models
+          {t("accessGroupDetail.tabs.models")}
           <Tag style={{ marginInlineEnd: 0 }}>{modelIds?.length}</Tag>
         </Flex>
       ),
@@ -122,7 +124,7 @@ export function AccessGroupDetail({
             )}
           />
         ) : (
-          <Empty description="No models assigned to this group" />
+          <Empty description={t("accessGroupDetail.noModels")} />
         ),
     },
     {
@@ -130,7 +132,7 @@ export function AccessGroupDetail({
       label: (
         <Flex align="center" gap={8}>
           <ServerIcon size={16} />
-          MCP Servers
+          {t("accessGroupDetail.tabs.mcpServers")}
           <Tag>{mcpServerIds?.length}</Tag>
         </Flex>
       ),
@@ -148,7 +150,7 @@ export function AccessGroupDetail({
             )}
           />
         ) : (
-          <Empty description="No MCP servers assigned to this group" />
+          <Empty description={t("accessGroupDetail.noMCPServers")} />
         ),
     },
     {
@@ -156,7 +158,7 @@ export function AccessGroupDetail({
       label: (
         <Flex align="center" gap={8}>
           <BotIcon size={16} />
-          Agents
+          {t("accessGroupDetail.tabs.agents")}
           <Tag>{agentIds?.length}</Tag>
         </Flex>
       ),
@@ -174,7 +176,7 @@ export function AccessGroupDetail({
             )}
           />
         ) : (
-          <Empty description="No agents assigned to this group" />
+          <Empty description={t("accessGroupDetail.noAgents")} />
         ),
     },
   ];
@@ -212,31 +214,31 @@ export function AccessGroupDetail({
           icon={<EditIcon size={16} />}
           onClick={handleEdit}
         >
-          Edit Access Group
+          {t("accessGroupDetail.editButton")}
         </Button>
       </div>
 
       {/* Group Details */}
       <Row style={{ marginBottom: 24 }}>
         <Card>
-          <Descriptions title="Group Details" column={1}>
-            <Descriptions.Item label="Description">
+          <Descriptions title={t("accessGroupDetail.groupDetails")} column={1}>
+            <Descriptions.Item label={t("accessGroupDetail.description")}>
               {accessGroup.description || "—"}
             </Descriptions.Item>
-            <Descriptions.Item label="Created">
+            <Descriptions.Item label={t("accessGroupDetail.created")}>
               {new Date(accessGroup.created_at).toLocaleString()}
               {accessGroup.created_by && (
                 <Text>
-                  &nbsp;{"by"}&nbsp;
+                  &nbsp;{t("accessGroupDetail.by")}&nbsp;
                   <DefaultProxyAdminTag userId={accessGroup.created_by} />
                 </Text>
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Last Updated">
+            <Descriptions.Item label={t("accessGroupDetail.lastUpdated")}>
               {new Date(accessGroup.updated_at).toLocaleString()}
               {accessGroup.updated_by && (
                 <Text>
-                  &nbsp;{"by"}&nbsp;
+                  &nbsp;{t("accessGroupDetail.by")}&nbsp;
                   <DefaultProxyAdminTag userId={accessGroup.updated_by} />
                 </Text>
               )}
@@ -252,7 +254,7 @@ export function AccessGroupDetail({
             title={
               <Flex align="center" gap={8}>
                 <KeyIcon size={16} />
-                Attached Keys
+                {t("accessGroupDetail.attachedKeys")}
                 <Tag>{keyIds?.length}</Tag>
               </Flex>
             }
@@ -262,7 +264,7 @@ export function AccessGroupDetail({
                   type="link"
                   onClick={() => setShowAllKeys(!showAllKeys)}
                 >
-                  {showAllKeys ? "Show Less" : `View All (${keyIds?.length})`}
+                  {showAllKeys ? t("accessGroupDetail.showLess") : `${t("accessGroupDetail.viewAll")} (${keyIds?.length})`}
                 </Button>
               ) : null
             }
@@ -281,7 +283,7 @@ export function AccessGroupDetail({
               </Flex>
             ) : (
               <Empty
-                description="No keys attached"
+                description={t("accessGroupDetail.noKeysAttached")}
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}
@@ -292,7 +294,7 @@ export function AccessGroupDetail({
             title={
               <Flex align="center" gap={8}>
                 <UsersIcon size={16} />
-                Attached Teams
+                {t("accessGroupDetail.attachedTeams")}
                 <Tag>{teamIds?.length}</Tag>
               </Flex>
             }
@@ -303,8 +305,8 @@ export function AccessGroupDetail({
                   onClick={() => setShowAllTeams(!showAllTeams)}
                 >
                   {showAllTeams
-                    ? "Show Less"
-                    : `View All (${teamIds?.length})`}
+                    ? t("accessGroupDetail.showLess")
+                    : `${t("accessGroupDetail.viewAll")} (${teamIds?.length})`}
                 </Button>
               ) : null
             }
@@ -321,7 +323,7 @@ export function AccessGroupDetail({
               </Flex>
             ) : (
               <Empty
-                description="No teams attached"
+                description={t("accessGroupDetail.noTeamsAttached")}
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}

@@ -1,6 +1,7 @@
 import { BarChart } from "@tremor/react";
 import { Segmented } from "antd";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { formatNumberWithCommas } from "../../../../utils/dataUtils";
 import { DataTable } from "../../../view_logs/table";
 
@@ -20,33 +21,34 @@ interface TopModelViewProps {
 
 export default function TopModelView({ topModels, topModelsLimit, setTopModelsLimit }: TopModelViewProps) {
   const [modelViewMode, setModelViewMode] = useState<"chart" | "table">("table");
+  const { t } = useLanguage();
 
   const columns = [
     {
-      header: "Model",
+      header: t("usagePage.topKeyView.model"),
       accessorKey: "key",
       cell: (info: any) => info.getValue() || "-",
     },
     {
-      header: "Spend (USD)",
+      header: "花费",
       accessorKey: "spend",
       cell: (info: any) => {
         const value = info.getValue();
-        return `$${formatNumberWithCommas(value, 2)}`;
+        return `¥${formatNumberWithCommas(value)}`;
       },
     },
     {
-      header: "Successful",
+      header: t("usagePage.successfulRequests"),
       accessorKey: "successful_requests",
       cell: (info: any) => <span className="text-green-600">{info.getValue()?.toLocaleString() || 0}</span>,
     },
     {
-      header: "Failed",
+      header: t("usagePage.failedRequests"),
       accessorKey: "failed_requests",
       cell: (info: any) => <span className="text-red-600">{info.getValue()?.toLocaleString() || 0}</span>,
     },
     {
-      header: "Tokens",
+      header: t("usagePage.totalTokens"),
       accessorKey: "tokens",
       cell: (info: any) => info.getValue()?.toLocaleString() || 0,
     },
@@ -90,7 +92,7 @@ export default function TopModelView({ topModels, topModelsLimit, setTopModelsLi
             index="key"
             categories={["spend"]}
             colors={["cyan"]}
-            valueFormatter={(value) => `$${formatNumberWithCommas(value, 2)}`}
+            valueFormatter={(value) => `¥${formatNumberWithCommas(value)}`}
             layout="vertical"
             yAxisWidth={200}
             tickGap={5}

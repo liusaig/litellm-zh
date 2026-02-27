@@ -42,9 +42,9 @@ const ModelSection = ({
         </Card>
         <Card>
           <Text>Total Spend</Text>
-          <Title>${formatNumberWithCommas(metrics.total_spend, 2)}</Title>
+          <Title>¥{formatNumberWithCommas(metrics.total_spend, 2)}</Title>
           <Text>
-            ${formatNumberWithCommas(metrics.total_spend / metrics.total_successful_requests, 3)} per successful request
+            ¥{formatNumberWithCommas(metrics.total_spend / metrics.total_successful_requests, 3)} per successful request
           </Text>
         </Card>
       </Grid>
@@ -89,7 +89,7 @@ const ModelSection = ({
           index="date"
           categories={["metrics.spend"]}
           colors={["green"]}
-          valueFormatter={(value: number) => `$${formatNumberWithCommas(value, 2, true)}`}
+          valueFormatter={(value: number) => `¥${formatNumberWithCommas(value)}`}
           yAxisWidth={72}
         />
       </Card>
@@ -275,7 +275,7 @@ export const ActivityMetrics: React.FC<ActivityMetricsProps> = ({ modelMetrics, 
           </Card>
           <Card>
             <Text>Total Spend</Text>
-            <Title>${formatNumberWithCommas(totalMetrics.total_spend, 2)}</Title>
+            <Title>¥{formatNumberWithCommas(totalMetrics.total_spend, 2)}</Title>
           </Card>
         </Grid>
 

@@ -10,6 +10,7 @@ import { PaginationState, SortingState } from "@tanstack/react-table";
 import { Grid, TabPanel } from "@tremor/react";
 import { Badge, Button, Select, Skeleton, Space, Typography } from "antd";
 import ModelSettingsModal from "@/components/model_dashboard/ModelSettingsModal/ModelSettingsModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 import debounce from "lodash/debounce";
 import { useEffect, useMemo, useState } from "react";
 import { useModelsInfo } from "../../hooks/models/useModels";
@@ -34,6 +35,7 @@ const AllModelsTab = ({
   setSelectedModelId,
   setSelectedTeamId,
 }: AllModelsTabProps) => {
+  const { t } = useLanguage();
   const { data: modelCostMapData, isLoading: isLoadingModelCostMap } = useModelCostMap();
   const { userId, userRole, premiumUser } = useAuthorized();
   const { data: teams, isLoading: isLoadingTeams } = useTeams();
@@ -199,7 +201,7 @@ const AllModelsTab = ({
             <div className="border-b px-6 py-4 bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Text className="text-lg font-semibold text-gray-900">当前团队：</Text>
+                  <Text className="text-lg font-semibold text-gray-900">{t("models.allModels.currentTeam")}</Text>
                   <div className="w-80">
                     {isLoading ? (
                       <Skeleton.Input active block size="large" />
@@ -232,7 +234,7 @@ const AllModelsTab = ({
                             label: (
                               <Space direction="horizontal" align="center">
                                 <Badge color="blue" size="small" />
-                                <Text style={{ fontSize: 16 }}>个人</Text>
+                                <Text style={{ fontSize: 16 }}>{t("models.allModels.personal")}</Text>
                               </Space>
                             ),
                           },
@@ -255,7 +257,7 @@ const AllModelsTab = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Text className="text-lg font-semibold text-gray-900">视图：</Text>
+                  <Text className="text-lg font-semibold text-gray-900">{t("models.allModels.view")}</Text>
                   <div className="w-64">
                     {isLoading ? (
                       <Skeleton.Input active block size="large" />
@@ -272,7 +274,7 @@ const AllModelsTab = ({
                             label: (
                               <Space direction="horizontal" align="center">
                                 <Badge color="purple" size="small" />
-                                <Text style={{ fontSize: 16 }}>当前团队模型</Text>
+                                <Text style={{ fontSize: 16 }}>{t("models.allModels.currentTeamModels")}</Text>
                               </Space>
                             ),
                           },
@@ -281,7 +283,7 @@ const AllModelsTab = ({
                             label: (
                               <Space direction="horizontal" align="center">
                                 <Badge color="gray" size="small" />
-                                <Text style={{ fontSize: 16 }}>所有可用模型</Text>
+                                <Text style={{ fontSize: 16 }}>{t("models.allModels.allAvailableModels")}</Text>
                               </Space>
                             ),
                           },
@@ -303,19 +305,19 @@ const AllModelsTab = ({
                           href="/public?login=success&page=api-keys"
                           className="text-gray-600 hover:text-gray-800 underline"
                         >
-                          虚拟密钥页面
+                          API密钥页面
                         </a>
                       </span>
                     ) : (
                       <span>
-                        要访问这些模型：创建一个虚拟密钥并选择团队为“
+                        要访问这些模型：创建一个API密钥并选择团队为“
                         {typeof currentTeam !== "string" ? currentTeam.team_alias || currentTeam.team_id : ""}&quot; on
-                        页面上创建一个虚拟密钥而不选择团队
+                        页面上创建一个API密钥而不选择团队
                         <a
                           href="/public?login=success&page=api-keys"
                           className="text-gray-600 hover:text-gray-800 underline"
                         >
-                          虚拟密钥页面
+                          API密钥页面
                         </a>
                       </span>
                     )}
@@ -334,7 +336,7 @@ const AllModelsTab = ({
                     <div className="relative w-64">
                       <input
                         type="text"
-                        placeholder="搜索模型名称..."
+                        placeholder={t("models.allModels.searchPlaceholder")}
                         className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         value={modelNameSearch}
                         onChange={(e) => setModelNameSearch(e.target.value)}
@@ -404,11 +406,11 @@ const AllModelsTab = ({
                         className="w-full"
                         value={selectedModelGroup ?? "all"}
                         onChange={(value) => setSelectedModelGroup(value === "all" ? "all" : value)}
-                        placeholder="按公开模型名称筛选"
+                        placeholder={t("models.allModels.filterByModelName")}
                         showSearch
                         options={[
-                          { value: "all", label: "所有模型" },
-                          { value: "wildcard", label: "通配符模型 (*)" },
+                          { value: "all", label: t("models.allModels.allModels") },
+                          { value: "wildcard", label: t("models.allModels.wildcardModels") },
                           ...availableModelGroups.map((group, idx) => ({
                             value: group,
                             label: group,
@@ -423,10 +425,10 @@ const AllModelsTab = ({
                         className="w-full"
                         value={selectedModelAccessGroupFilter ?? "all"}
                         onChange={(value) => setSelectedModelAccessGroupFilter(value === "all" ? null : value)}
-                        placeholder="按模型访问组筛选"
+                        placeholder={t("models.allModels.filterByAccessGroup")}
                         showSearch
                         options={[
-                          { value: "all", label: "所有模型访问组" },
+                          { value: "all", label: t("models.allModels.allModelAccessGroups") },
                           ...availableModelAccessGroups.map((accessGroup, idx) => ({
                             value: accessGroup,
                             label: accessGroup,
@@ -444,8 +446,8 @@ const AllModelsTab = ({
                   ) : (
                     <span className="text-sm text-gray-700">
                       {paginationMeta.total_count > 0
-                        ? `显示 ${((currentPage - 1) * pageSize) + 1} - ${Math.min(currentPage * pageSize, paginationMeta.total_count)}，共 ${paginationMeta.total_count} 条结果`
-                        : "显示 0 条结果"}
+                        ? t("models.allModels.showingResults").replace("{start}", String(((currentPage - 1) * pageSize) + 1)).replace("{end}", String(Math.min(currentPage * pageSize, paginationMeta.total_count))).replace("{total}", String(paginationMeta.total_count))
+                        : t("models.allModels.showingZeroResults")}
                     </span>
                   )}
 
@@ -465,7 +467,7 @@ const AllModelsTab = ({
                           : "hover:bg-gray-50"
                           }`}
                       >
-                        上一页
+                        {t("models.allModels.previousPage")}
                       </button>
                     )}
 
@@ -484,7 +486,7 @@ const AllModelsTab = ({
                           : "hover:bg-gray-50"
                           }`}
                       >
-                        下一页
+                        {t("models.allModels.nextPage")}
                       </button>
                     )}
                   </div>
@@ -504,6 +506,7 @@ const AllModelsTab = ({
                 () => { },
                 expandedRows,
                 setExpandedRows,
+                t,
               )}
               data={filteredData}
               isLoading={isLoadingModelsInfo}

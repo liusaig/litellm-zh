@@ -280,7 +280,7 @@ describe("KeyEditView", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByLabelText("Max Budget (USD)")).toBeInTheDocument();
+      expect(screen.getByLabelText("最大预算")).toBeInTheDocument();
     });
   });
 

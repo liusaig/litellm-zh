@@ -23,6 +23,7 @@ import Navbar from "@/components/navbar";
 import { getUiConfig, Organization, proxyBaseUrl, setGlobalLitellmHeaderName, getInProductNudgesCall } from "@/components/networking";
 import NewUsagePage from "@/components/UsagePage/components/UsagePageView";
 import OldTeams from "@/components/OldTeams";
+import TeamsView from "@/app/(dashboard)/teams/TeamsView";
 import { fetchUserModels } from "@/components/organisms/create_key_button";
 import Organizations, { fetchOrganizations } from "@/components/organizations";
 import PassThroughSettings from "@/components/pass_through_settings";
@@ -451,7 +452,7 @@ function CreateKeyPageContent() {
                       setKeys={setKeys}
                     />
                   ) : page == "teams" ? (
-                    <OldTeams
+                    <TeamsView
                       teams={teams}
                       setTeams={setTeams}
                       accessToken={accessToken}
@@ -459,7 +460,6 @@ function CreateKeyPageContent() {
                       userRole={userRole}
                       organizations={organizations}
                       premiumUser={premiumUser}
-                      searchParams={searchParams}
                     />
                   ) : page == "organizations" ? (
                     <Organizations

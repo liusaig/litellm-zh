@@ -8,6 +8,9 @@ services:
     volumes:
       - ./litellm/proxy/_experimental/out:/usr/lib/python3.13/site-packages/litellm/proxy/_experimental/out
       - ./siliconcloud-color.png:/app/siliconcloud-color.png:ro
+      - ./model_prices_and_context_window.json:/usr/lib/python3.13/site-packages/litellm/model_prices_and_context_window.json:ro
+      - ./litellm/proxy/_experimental/out:/usr/lib/python3.13/site-packages/litellm/proxy/_experimental/out
+      - ./siliconcloud-color.png:/app/siliconcloud-color.png:ro
     command:
       - "--use_prisma_db_push"
     ports:

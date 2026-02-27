@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { teamDeleteCall, Organization } from "@/components/networking";
 import { fetchTeams } from "@/components/common_components/fetch_teams";
 import { Form } from "antd";
@@ -54,6 +55,7 @@ const TeamsView: React.FC<TeamProps> = ({
   organizations,
   premiumUser = false,
 }) => {
+  const { t } = useLanguage();
   const [currentOrg, setCurrentOrg] = useState<Organization | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
@@ -247,7 +249,7 @@ const TeamsView: React.FC<TeamProps> = ({
         <Col numColSpan={1} className="flex flex-col gap-2">
           {(userRole == "Admin" || userRole == "Org Admin") && (
             <Button className="w-fit" onClick={() => setIsTeamModalVisible(true)}>
-              + 创建新分组
+              {t("teams.create")}
             </Button>
           )}
           {selectedTeamId ? (
@@ -286,7 +288,7 @@ const TeamsView: React.FC<TeamProps> = ({
             <TeamsHeaderTabs lastRefreshed={lastRefreshed} onRefresh={handleRefreshClick} userRole={userRole}>
               <TabPanel>
                 <Text>
-                  点击 &ldquo;分组 ID&rdquo; 可查看分组详情并管理分组成员。
+                  {t("teams.clickToView")}
                 </Text>
                 <Grid numItems={1} className="gap-2 pt-2 pb-2 h-[75vh] w-full mt-2">
                   <Col numColSpan={1}>
@@ -325,9 +327,9 @@ const TeamsView: React.FC<TeamProps> = ({
                   </Col>
                 </Grid>
               </TabPanel>
-              <TabPanel>
-                <AvailableTeamsPanel accessToken={accessToken} userID={userID} />
-              </TabPanel>
+              {/*               <TabPanel> */}
+              {/*                 <AvailableTeamsPanel accessToken={accessToken} userID={userID} /> */}
+              {/*               </TabPanel> */}
               {isAdminRole(userRole || "") && (
                 <TabPanel>
                   <TeamSSOSettings accessToken={accessToken} userID={userID || ""} userRole={userRole || ""} />

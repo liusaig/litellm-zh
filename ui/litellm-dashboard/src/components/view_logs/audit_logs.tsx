@@ -318,13 +318,13 @@ export default function AuditLogs({
                 {changedKeys.includes("spend") && (
                   <p>
                     <strong>Spend:</strong>{" "}
-                    {value.spend !== undefined ? `$${formatNumberWithCommas(value.spend, 6)}` : "N/A"}
+                    {value.spend !== undefined ? `¥${formatNumberWithCommas(value.spend, 6)}` : "N/A"}
                   </p>
                 )}
                 {changedKeys.includes("max_budget") && (
                   <p>
                     <strong>Max Budget:</strong>{" "}
-                    {value.max_budget !== undefined ? `$${formatNumberWithCommas(value.max_budget, 6)}` : "N/A"}
+                    {value.max_budget !== undefined ? `¥${formatNumberWithCommas(value.max_budget, 6)}` : "N/A"}
                   </p>
                 )}
               </div>

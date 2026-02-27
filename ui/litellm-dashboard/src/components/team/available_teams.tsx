@@ -13,6 +13,7 @@ import {
 } from "@tremor/react";
 import { availableTeamListCall, teamMemberAddCall } from "../networking";
 import NotificationsManager from "../molecules/notifications_manager";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AvailableTeam {
   team_id: string;
@@ -28,6 +29,7 @@ interface AvailableTeamsProps {
 }
 
 const AvailableTeamsPanel: React.FC<AvailableTeamsProps> = ({ accessToken, userID }) => {
+  const { t } = useLanguage();
   const [availableTeams, setAvailableTeams] = useState<AvailableTeam[]>([]);
 
   useEffect(() => {
@@ -92,7 +94,7 @@ const AvailableTeamsPanel: React.FC<AvailableTeamsProps> = ({ accessToken, userI
                 <div className="flex flex-col">
                   {!team.models || team.models.length === 0 ? (
                     <Badge size="xs" color="red">
-                      <Text>All Proxy Models</Text>
+                      <Text>{t("teams.allProxyModels")}</Text>
                     </Badge>
                   ) : (
                     team.models.map((model, index) => (

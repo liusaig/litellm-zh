@@ -8,6 +8,7 @@ import { errorPatterns } from "@/utils/errorPatterns";
 import { individualModelHealthCheckCall, latestHealthChecksCall } from "../networking";
 import { Table as TableInstance } from "@tanstack/react-table";
 import { Team } from "../key_team_helpers/key_list";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HealthStatus {
   status: string;
@@ -36,6 +37,7 @@ const HealthCheckComponent: React.FC<HealthCheckComponentProps> = ({
   setSelectedModelId,
   teams,
 }) => {
+  const { t } = useLanguage();
   const [modelHealthStatuses, setModelHealthStatuses] = useState<{ [key: string]: HealthStatus }>({});
   const [selectedModelsForHealth, setSelectedModelsForHealth] = useState<string[]>([]);
   const [allModelsSelected, setAllModelsSelected] = useState<boolean>(false);
@@ -514,8 +516,8 @@ const HealthCheckComponent: React.FC<HealthCheckComponentProps> = ({
               className="px-3 py-1 text-sm"
             >
               {selectedModelsForHealth.length > 0 && selectedModelsForHealth.length < all_models_on_proxy.length
-                ? "Run Selected Checks"
-                : "Run All Checks"}
+                ? t("models.healthCheck.runSelectedChecks")
+                : t("models.healthCheck.runAllChecks")}
             </Button>
           </div>
         </div>

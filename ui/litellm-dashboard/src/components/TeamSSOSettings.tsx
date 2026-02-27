@@ -6,6 +6,7 @@ import BudgetDurationDropdown, { getBudgetDurationLabel } from "./common_compone
 import { getModelDisplayName } from "./key_team_helpers/fetch_available_models_team_key";
 import NotificationsManager from "./molecules/notifications_manager";
 import { ModelSelect } from "./ModelSelect/ModelSelect";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TeamSSOSettingsProps {
   accessToken: string | null;
@@ -14,6 +15,7 @@ interface TeamSSOSettingsProps {
 }
 
 const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, userRole }) => {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState<boolean>(true);
   const [settings, setSettings] = useState<any>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -49,7 +51,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
         }
       } catch (error) {
         console.error("Error fetching team SSO settings:", error);
-        NotificationsManager.fromBackend("Failed to fetch team settings");
+        NotificationsManager.fromBackend(t("teams.defaultSettings.loadFailed"));
       } finally {
         setLoading(false);
       }
@@ -66,10 +68,10 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
       const updatedSettings = await updateDefaultTeamSettings(accessToken, editedValues);
       setSettings({ ...settings, values: updatedSettings.settings });
       setIsEditing(false);
-      NotificationsManager.success("Default team settings updated successfully");
+      NotificationsManager.success(t("teams.defaultSettings.saveSuccess"));
     } catch (error) {
       console.error("Error updating team settings:", error);
-      NotificationsManager.fromBackend("Failed to update team settings");
+      NotificationsManager.fromBackend(t("teams.defaultSettings.updateFailed"));
     } finally {
       setSaving(false);
     }
@@ -155,18 +157,18 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
   };
 
   const renderValue = (key: string, value: any): JSX.Element => {
-    if (value === null || value === undefined) return <span className="text-gray-400">Not set</span>;
+    if (value === null || value === undefined) return <span className="text-gray-400">{t("teams.defaultSettings.notSet")}</span>;
 
     if (key === "budget_duration") {
       return <span>{getBudgetDurationLabel(value)}</span>;
     }
 
     if (typeof value === "boolean") {
-      return <span>{value ? "Enabled" : "Disabled"}</span>;
+      return <span>{value ? t("teams.defaultSettings.enabled") : t("teams.defaultSettings.disabled")}</span>;
     }
 
     if (key === "models" && Array.isArray(value)) {
-      if (value.length === 0) return <span className="text-gray-400">None</span>;
+      if (value.length === 0) return <span className="text-gray-400">{t("teams.defaultSettings.none")}</span>;
 
       return (
         <div className="flex flex-wrap gap-2 mt-1">
@@ -181,7 +183,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
 
     if (typeof value === "object") {
       if (Array.isArray(value)) {
-        if (value.length === 0) return <span className="text-gray-400">None</span>;
+        if (value.length === 0) return <span className="text-gray-400">{t("teams.defaultSettings.none")}</span>;
 
         return (
           <div className="flex flex-wrap gap-2 mt-1">
@@ -211,7 +213,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
   if (!settings) {
     return (
       <Card>
-        <Text>No team settings available or you do not have permission to view them.</Text>
+        <Text>{t("teams.defaultSettings.notAvailable")}</Text>
       </Card>
     );
   }
@@ -221,7 +223,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
     const { values, field_schema } = settings;
 
     if (!field_schema || !field_schema.properties) {
-      return <Text>No schema information available</Text>;
+      return <Text>{t("teams.defaultSettings.noSchema")}</Text>;
     }
 
     return Object.entries(field_schema.properties).map(([key, property]: [string, any]) => {
@@ -232,7 +234,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
         <div key={key} className="mb-6 pb-6 border-b border-gray-200 last:border-0">
           <Text className="font-medium text-lg">{displayName}</Text>
           <Paragraph className="text-sm text-gray-500 mt-1">
-            {property.description || "No description available"}
+            {property.description || t("teams.defaultSettings.noDescription")}
           </Paragraph>
 
           {isEditing ? (
@@ -248,7 +250,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
   return (
     <Card>
       <div className="flex justify-between items-center mb-4">
-        <Title className="text-xl">Default Team Settings</Title>
+        <Title className="text-xl">{t("teams.defaultSettings.title")}</Title>
         {!loading &&
           settings &&
           (isEditing ? (
@@ -261,18 +263,18 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
                 }}
                 disabled={saving}
               >
-                Cancel
+                {t("teams.defaultSettings.cancel")}
               </Button>
               <Button onClick={handleSaveSettings} loading={saving}>
-                Save Changes
+                {t("teams.defaultSettings.saveChanges")}
               </Button>
             </div>
           ) : (
-            <Button onClick={() => setIsEditing(true)}>Edit Settings</Button>
+            <Button onClick={() => setIsEditing(true)}>{t("teams.defaultSettings.editSettings")}</Button>
           ))}
       </div>
 
-      <Text>These settings will be applied by default when creating new teams.</Text>
+      <Text>{t("teams.defaultSettings.description")}</Text>
 
       {settings?.field_schema?.description && (
         <Paragraph className="mb-4 mt-2">{settings.field_schema.description}</Paragraph>

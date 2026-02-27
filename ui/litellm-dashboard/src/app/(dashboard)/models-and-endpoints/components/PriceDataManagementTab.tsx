@@ -1,10 +1,12 @@
 import { TabPanel, Text, Title } from "@tremor/react";
 import PriceDataReload from "@/components/price_data_reload";
+import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
 import { useModelCostMap } from "../../hooks/models/useModelCostMap";
 
 const PriceDataManagementTab = () => {
+  const { t } = useLanguage();
   const { accessToken } = useAuthorized();
   const { refetch: refetchModelCostMap } = useModelCostMap();
 
@@ -12,9 +14,9 @@ const PriceDataManagementTab = () => {
     <TabPanel>
       <div className="p-6">
         <div className="mb-6">
-          <Title>价格数据管理</Title>
+          <Title>{t("models.priceReload.title")}</Title>
           <Text className="text-tremor-content">
-            管理模型定价数据并配置自动重载计划
+            {t("models.priceReload.description")}
           </Text>
         </div>
         <PriceDataReload
@@ -22,7 +24,7 @@ const PriceDataManagementTab = () => {
           onReloadSuccess={() => {
             refetchModelCostMap();
           }}
-          buttonText="重载价格数据"
+          buttonText={t("models.priceReload.reloadButton")}
           size="middle"
           type="primary"
           className="w-full"

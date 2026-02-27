@@ -1,4 +1,5 @@
 import { ShieldIcon, UserIcon } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const MEMBER_BADGE_BG = "#F3F4F6"; // gray-100
 const MEMBER_BADGE_TEXT = "#4B5563"; // gray-600
@@ -9,6 +10,7 @@ const ADMIN_BADGE_TEXT = "#3730A3"; // indigo-800
 const ADMIN_BADGE_BORDER = "#C7D2FE"; // indigo-200
 
 const TeamRoleBadge = (role: string | null) => {
+  const { t } = useLanguage();
   const base = "inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border";
 
   switch (role) {
@@ -23,7 +25,7 @@ const TeamRoleBadge = (role: string | null) => {
           }}
         >
           <ShieldIcon className="h-3 w-3 mr-1" />
-          Admin
+          {t("teams.roleBadges.admin")}
         </span>
       );
     case "user":
@@ -38,7 +40,7 @@ const TeamRoleBadge = (role: string | null) => {
           }}
         >
           <UserIcon className="h-3 w-3 mr-1" />
-          Member
+          {t("teams.roleBadges.member")}
         </span>
       );
   }

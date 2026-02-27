@@ -2,6 +2,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import type { FormInstance } from "antd";
 import { Form } from "antd";
 import type { UploadProps } from "antd/es/upload";
+import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 import type { Team } from "../key_team_helpers/key_list";
 import { type CredentialItem } from "../networking";
@@ -43,6 +44,7 @@ const AddModelTab: React.FC<AddModelTabProps> = ({
   accessToken,
   userRole,
 }) => {
+  const { t } = useLanguage();
   // Create separate form instance for auto router
   const [autoRouterForm] = Form.useForm();
 
@@ -61,8 +63,8 @@ const AddModelTab: React.FC<AddModelTabProps> = ({
     <>
       <TabGroup className="w-full">
         <TabList className="mb-4">
-          <Tab>Add Model</Tab>
-          <Tab>Add Auto Router</Tab>
+          <Tab>{t("models.addModel.tab")}</Tab>
+          <Tab>{t("models.addModel.autoRouterTab")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>

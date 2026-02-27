@@ -548,7 +548,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
               label={
                 <span>
                   所有者{" "}
-                  <Tooltip title="选择谁将拥有此虚拟密钥">
+                  <Tooltip title="选择谁将拥有此API密钥">
                     <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                   </Tooltip>
                 </span>
@@ -664,7 +664,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
           {isFormDisabled && (
             <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-md">
               <Text className="text-blue-800 text-sm">
-                请选择团队以继续配置您的虚拟密钥。如果您没有看到任何团队，请联系您的代理管理员为您提供模型访问权限或将您添加到团队中。
+                请选择团队以继续配置您的API密钥。如果您没有看到任何团队，请联系您的代理管理员为您提供模型访问权限或将您添加到团队中。
                 contact your Proxy Admin to either provide you with access to models or to add you to a team.
               </Text>
             </div>
@@ -819,13 +819,13 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                       </span>
                     }
                     name="max_budget"
-                    help={`预算不能超过团队最大预算：$${team?.max_budget !== null && team?.max_budget !== undefined ? team?.max_budget : "无限制"}`}
+                    help={`预算不能超过团队最大预算：¥${team?.max_budget !== null && team?.max_budget !== undefined ? team?.max_budget : "无限制"}`}
                     rules={[
                       {
                         validator: async (_, value) => {
                           if (value && team && team.max_budget !== null && value > team.max_budget) {
                             throw new Error(
-                              `预算不能超过团队最大预算：$${formatNumberWithCommas(team.max_budget, 4)}`,
+                              `预算不能超过团队最大预算：¥${formatNumberWithCommas(team.max_budget, 4)}`,
                             );
                           }
                         },

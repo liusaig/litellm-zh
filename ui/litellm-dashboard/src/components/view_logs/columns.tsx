@@ -24,6 +24,11 @@ export interface LogsSortProps {
   onSortChange: (sortBy: LogsSortField, sortOrder: "asc" | "desc") => void;
 }
 
+export interface ColumnsProps {
+  sortProps?: LogsSortProps;
+  t?: (key: string, params?: Record<string, string | number>) => string;
+}
+
 // Helper to get the appropriate logo URL
 const getLogoUrl = (row: LogEntry, provider: string) => {
   // Check if mcp_tool_call_metadata exists and contains mcp_server_logo_url
@@ -100,287 +105,293 @@ const SortableHeader = ({
   </div>
 );
 
-export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] => [
-  {
-    header: sortProps
-      ? () => (
-          <SortableHeader
-            label="Time"
-            field="startTime"
-            sortBy={sortProps.sortBy}
-            sortOrder={sortProps.sortOrder}
-            onSortChange={sortProps.onSortChange}
-          />
-        )
-      : "Time",
-    accessorKey: "startTime",
-    cell: (info: any) => <TimeCell utcTime={info.getValue()} />,
-  },
-  {
-    header: "Type",
-    id: "type",
-    cell: (info: any) => {
-      const row = info.row.original;
-      const sessionCount = row.session_total_count || 1;
-      const isMcp = MCP_CALL_TYPES.includes(row.call_type);
-      const sessionLlmCount = row.session_llm_count ?? (isMcp ? 0 : sessionCount);
-      const sessionMcpCount = row.session_mcp_count ?? (isMcp ? sessionCount : 0);
+export const createColumns = (props?: ColumnsProps): ColumnDef<LogEntry>[] => {
+  const { sortProps, t } = props || {};
 
-      if (isMcp) return <McpBadge />;
-      if (sessionCount <= 1) return <LlmBadge />;
+  const translate = (key: string, defaultValue?: string) => t?.(key) || defaultValue || key;
 
-      // Multi-call session — show total count, plus MCP indicator when mixed.
-      const sessionTypeBadge = (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-[11px] font-medium whitespace-nowrap">
-          <SparkleIcon />
-          <span>{sessionCount}</span>
-          {sessionMcpCount > 0 && (
-            <>
-              <span className="text-blue-300">·</span>
-              <WrenchIcon />
-            </>
-          )}
-        </span>
-      );
-
-      return (
-        <Tooltip title={`${sessionLlmCount} LLM • ${sessionMcpCount} MCP`}>
-          {sessionTypeBadge}
-        </Tooltip>
-      );
-    },
-  },
-  {
-    header: "Status",
-    accessorKey: "metadata.status",
-    cell: (info: any) => {
-      const status = info.getValue() || "Success";
-      const isSuccess = status.toLowerCase() !== "failure";
-
-      return (
-        <span
-          className={`px-2 py-1 rounded-md text-xs font-medium inline-block text-center w-16 ${
-            isSuccess ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
-        >
-          {isSuccess ? "Success" : "Failure"}
-        </span>
-      );
-    },
-  },
-  {
-    header: "Session ID",
-    accessorKey: "session_id",
-    cell: (info: any) => {
-      const value = String(info.getValue() || "");
-      const onSessionClick = info.row.original.onSessionClick;
-      return (
-        <Tooltip title={String(info.getValue() || "")}>
-          <Button
-            size="xs"
-            variant="light"
-            className="font-mono text-blue-500 bg-blue-50 hover:bg-blue-100 text-xs font-normal text-xs max-w-[15ch] truncate block"
-            onClick={() => onSessionClick?.(value)}
-          >
-            {String(info.getValue() || "")}
-          </Button>
-        </Tooltip>
-      );
-    },
-  },
-
-  {
-    header: "Request ID",
-    accessorKey: "request_id",
-    cell: (info: any) => (
-      <Tooltip title={String(info.getValue() || "")}>
-        <span className="font-mono text-xs max-w-[15ch] truncate block">{String(info.getValue() || "")}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    header: sortProps
-      ? () => (
-          <SortableHeader
-            label="Cost"
-            field="spend"
-            sortBy={sortProps.sortBy}
-            sortOrder={sortProps.sortOrder}
-            onSortChange={sortProps.onSortChange}
-          />
-        )
-      : "Cost",
-    accessorKey: "spend",
-    cell: (info: any) => {
-      const row = info.row.original;
-      const mcpCount = row.mcp_tool_call_count || 0;
-      const mcpSpend = row.mcp_tool_call_spend || 0;
-
-      return (
-        <div className="flex flex-col">
-          <Tooltip title={`$${String(info.getValue() || 0)}`}>
-            <span>{getSpendString(info.getValue() || 0)}</span>
-          </Tooltip>
-          {mcpCount > 0 && mcpSpend > 0 && (
-            <span className="text-[10px] text-amber-600">
-              incl. {getSpendString(mcpSpend)} from {mcpCount} MCP
-            </span>
-          )}
-        </div>
-      );
-    },
-  },
-  {
-    header: "Duration (s)",
-    accessorKey: "duration",
-    cell: (info: any) => (
-      <Tooltip title={String(info.getValue() || "-")}>
-        <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    header: "Team Name",
-    accessorKey: "metadata.user_api_key_team_alias",
-    cell: (info: any) => (
-      <Tooltip title={String(info.getValue() || "-")}>
-        <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    header: "Key Hash",
-    accessorKey: "metadata.user_api_key",
-    cell: (info: any) => {
-      const value = String(info.getValue() || "-");
-      const onKeyHashClick = info.row.original.onKeyHashClick;
-
-      return (
-        <Tooltip title={value}>
-          <span
-            className="font-mono max-w-[15ch] truncate block cursor-pointer hover:text-blue-600"
-            onClick={() => onKeyHashClick?.(value)}
-          >
-            {value}
-          </span>
-        </Tooltip>
-      );
-    },
-  },
-  {
-    header: "Key Name",
-    accessorKey: "metadata.user_api_key_alias",
-    cell: (info: any) => (
-      <Tooltip title={String(info.getValue() || "-")}>
-        <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    header: "Model",
-    accessorKey: "model",
-    cell: (info: any) => {
-      const row = info.row.original;
-      const provider = row.custom_llm_provider;
-      const modelName = String(info.getValue() || "");
-      return (
-        <div className="flex items-center space-x-2">
-          {provider && (
-            <img
-              src={getLogoUrl(row, provider)}
-              alt=""
-              className="w-4 h-4"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
+  return [
+    {
+      header: sortProps
+        ? () => (
+            <SortableHeader
+              label={translate("logs.columns.time", "Time")}
+              field="startTime"
+              sortBy={sortProps.sortBy}
+              sortOrder={sortProps.sortOrder}
+              onSortChange={sortProps.onSortChange}
             />
-          )}
-          <Tooltip title={modelName}>
-            <span className="max-w-[15ch] truncate block">{modelName}</span>
-          </Tooltip>
-        </div>
-      );
+          )
+        : translate("logs.columns.time", "Time"),
+      accessorKey: "startTime",
+      cell: (info: any) => <TimeCell utcTime={info.getValue()} />,
     },
-  },
-  {
-    header: sortProps
-      ? () => (
-          <SortableHeader
-            label="Tokens"
-            field="total_tokens"
-            sortBy={sortProps.sortBy}
-            sortOrder={sortProps.sortOrder}
-            onSortChange={sortProps.onSortChange}
-          />
-        )
-      : "Tokens",
-    accessorKey: "total_tokens",
-    cell: (info: any) => {
-      const row = info.row.original;
-      return (
-        <span className="text-sm">
-          {String(row.total_tokens || "0")}
-          <span className="text-gray-400 text-xs ml-1">
-            ({String(row.prompt_tokens || "0")}+{String(row.completion_tokens || "0")})
+    {
+      header: translate("logs.columns.type", "Type"),
+      id: "type",
+      cell: (info: any) => {
+        const row = info.row.original;
+        const sessionCount = row.session_total_count || 1;
+        const isMcp = MCP_CALL_TYPES.includes(row.call_type);
+        const sessionLlmCount = row.session_llm_count ?? (isMcp ? 0 : sessionCount);
+        const sessionMcpCount = row.session_mcp_count ?? (isMcp ? sessionCount : 0);
+
+        if (isMcp) return <McpBadge />;
+        if (sessionCount <= 1) return <LlmBadge />;
+
+        // Multi-call session — show total count, plus MCP indicator when mixed.
+        const sessionTypeBadge = (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-[11px] font-medium whitespace-nowrap">
+            <SparkleIcon />
+            <span>{sessionCount}</span>
+            {sessionMcpCount > 0 && (
+              <>
+                <span className="text-blue-300">·</span>
+                <WrenchIcon />
+              </>
+            )}
           </span>
-        </span>
-      );
+        );
+
+        return (
+          <Tooltip title={t?.("logs.columns.llmMcpCount", { llm: sessionLlmCount, mcp: sessionMcpCount }) || `${sessionLlmCount} LLM • ${sessionMcpCount} MCP`}>
+            {sessionTypeBadge}
+          </Tooltip>
+        );
+      },
     },
-  },
-  {
-    header: "Internal User",
-    accessorKey: "user",
-    cell: (info: any) => (
-      <Tooltip title={String(info.getValue() || "-")}>
-        <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    header: "End User",
-    accessorKey: "end_user",
-    cell: (info: any) => (
-      <Tooltip title={String(info.getValue() || "-")}>
-        <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
-      </Tooltip>
-    ),
-  },
+    {
+      header: translate("logs.columns.status", "Status"),
+      accessorKey: "metadata.status",
+      cell: (info: any) => {
+        const status = info.getValue() || translate("logs.columns.success", "Success");
+        const isSuccess = status.toLowerCase() !== "failure";
 
-  {
-    header: "Tags",
-    accessorKey: "request_tags",
-    cell: (info: any) => {
-      const tags = info.getValue();
-      if (!tags || Object.keys(tags).length === 0) return "-";
-
-      const tagEntries = Object.entries(tags);
-      const firstTag = tagEntries[0];
-      const remainingTags = tagEntries.slice(1);
-
-      return (
-        <div className="flex flex-wrap gap-1">
-          <Tooltip
-            title={
-              <div className="flex flex-col gap-1">
-                {tagEntries.map(([key, value]) => (
-                  <span key={key}>
-                    {key}: {String(value)}
-                  </span>
-                ))}
-              </div>
-            }
+        return (
+          <span
+            className={`px-2 py-1 rounded-md text-xs font-medium inline-block text-center w-16 ${
+              isSuccess ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
           >
-            <span className="px-2 py-1 bg-gray-100 rounded-full text-xs">
-              {firstTag[0]}: {String(firstTag[1])}
-              {remainingTags.length > 0 && ` +${remainingTags.length}`}
+            {isSuccess ? translate("logs.columns.success", "Success") : translate("logs.columns.failure", "Failure")}
+          </span>
+        );
+      },
+    },
+    {
+      header: translate("logs.columns.sessionId", "Session ID"),
+      accessorKey: "session_id",
+      cell: (info: any) => {
+        const value = String(info.getValue() || "");
+        const onSessionClick = info.row.original.onSessionClick;
+        return (
+          <Tooltip title={String(info.getValue() || "")}>
+            <Button
+              size="xs"
+              variant="light"
+              className="font-mono text-blue-500 bg-blue-50 hover:bg-blue-100 text-xs font-normal text-xs max-w-[15ch] truncate block"
+              onClick={() => onSessionClick?.(value)}
+            >
+              {String(info.getValue() || "")}
+            </Button>
+          </Tooltip>
+        );
+      },
+    },
+
+    {
+      header: translate("logs.columns.requestId", "Request ID"),
+      accessorKey: "request_id",
+      cell: (info: any) => (
+        <Tooltip title={String(info.getValue() || "")}>
+          <span className="font-mono text-xs max-w-[15ch] truncate block">{String(info.getValue() || "")}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      header: sortProps
+        ? () => (
+            <SortableHeader
+              label={translate("logs.columns.cost", "Cost")}
+              field="spend"
+              sortBy={sortProps.sortBy}
+              sortOrder={sortProps.sortOrder}
+              onSortChange={sortProps.onSortChange}
+            />
+          )
+        : translate("logs.columns.cost", "Cost"),
+      accessorKey: "spend",
+      cell: (info: any) => {
+        const row = info.row.original;
+        const mcpCount = row.mcp_tool_call_count || 0;
+        const mcpSpend = row.mcp_tool_call_spend || 0;
+
+        return (
+          <div className="flex flex-col">
+            <Tooltip title={`$${String(info.getValue() || 0)}`}>
+              <span>{getSpendString(info.getValue() || 0)}</span>
+            </Tooltip>
+            {mcpCount > 0 && mcpSpend > 0 && (
+              <span className="text-[10px] text-amber-600">
+                {t?.("logs.columns.inclFromMcp", { cost: getSpendString(mcpSpend), count: mcpCount }) || `incl. ${getSpendString(mcpSpend)} from ${mcpCount} MCP`}
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      header: translate("logs.columns.duration", "Duration (s)"),
+      accessorKey: "duration",
+      cell: (info: any) => (
+        <Tooltip title={String(info.getValue() || "-")}>
+          <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      header: translate("logs.columns.teamName", "Team Name"),
+      accessorKey: "metadata.user_api_key_team_alias",
+      cell: (info: any) => (
+        <Tooltip title={String(info.getValue() || "-")}>
+          <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      header: translate("logs.columns.keyHash", "Key Hash"),
+      accessorKey: "metadata.user_api_key",
+      cell: (info: any) => {
+        const value = String(info.getValue() || "-");
+        const onKeyHashClick = info.row.original.onKeyHashClick;
+
+        return (
+          <Tooltip title={value}>
+            <span
+              className="font-mono max-w-[15ch] truncate block cursor-pointer hover:text-blue-600"
+              onClick={() => onKeyHashClick?.(value)}
+            >
+              {value}
             </span>
           </Tooltip>
-        </div>
-      );
+        );
+      },
     },
-  },
-];
+    {
+      header: translate("logs.columns.keyName", "Key Name"),
+      accessorKey: "metadata.user_api_key_alias",
+      cell: (info: any) => (
+        <Tooltip title={String(info.getValue() || "-")}>
+          <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      header: translate("logs.columns.model", "Model"),
+      accessorKey: "model",
+      cell: (info: any) => {
+        const row = info.row.original;
+        const provider = row.custom_llm_provider;
+        const modelName = String(info.getValue() || "");
+        return (
+          <div className="flex items-center space-x-2">
+            {provider && (
+              <img
+                src={getLogoUrl(row, provider)}
+                alt=""
+                className="w-4 h-4"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                }}
+              />
+            )}
+            <Tooltip title={modelName}>
+              <span className="max-w-[15ch] truncate block">{modelName}</span>
+            </Tooltip>
+          </div>
+        );
+      },
+    },
+    {
+      header: sortProps
+        ? () => (
+            <SortableHeader
+              label={translate("logs.columns.tokens", "Tokens")}
+              field="total_tokens"
+              sortBy={sortProps.sortBy}
+              sortOrder={sortProps.sortOrder}
+              onSortChange={sortProps.onSortChange}
+            />
+          )
+        : translate("logs.columns.tokens", "Tokens"),
+      accessorKey: "total_tokens",
+      cell: (info: any) => {
+        const row = info.row.original;
+        return (
+          <span className="text-sm">
+            {String(row.total_tokens || "0")}
+            <span className="text-gray-400 text-xs ml-1">
+              ({String(row.prompt_tokens || "0")}+{String(row.completion_tokens || "0")})
+            </span>
+          </span>
+        );
+      },
+    },
+    {
+      header: translate("logs.columns.internalUser", "Internal User"),
+      accessorKey: "user",
+      cell: (info: any) => (
+        <Tooltip title={String(info.getValue() || "-")}>
+          <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      header: translate("logs.columns.endUser", "End User"),
+      accessorKey: "end_user",
+      cell: (info: any) => (
+        <Tooltip title={String(info.getValue() || "-")}>
+          <span className="max-w-[15ch] truncate block">{String(info.getValue() || "-")}</span>
+        </Tooltip>
+      ),
+    },
+
+    {
+      header: translate("logs.columns.tags", "Tags"),
+      accessorKey: "request_tags",
+      cell: (info: any) => {
+        const tags = info.getValue();
+        if (!tags || Object.keys(tags).length === 0) return "-";
+
+        const tagEntries = Object.entries(tags);
+        const firstTag = tagEntries[0];
+        const remainingTags = tagEntries.slice(1);
+
+        return (
+          <div className="flex flex-wrap gap-1">
+            <Tooltip
+              title={
+                <div className="flex flex-col gap-1">
+                  {tagEntries.map(([key, value]) => (
+                    <span key={key}>
+                      {key}: {String(value)}
+                    </span>
+                  ))}
+                </div>
+              }
+            >
+              <span className="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                {firstTag[0]}: {String(firstTag[1])}
+                {remainingTags.length > 0 && ` +${remainingTags.length}`}
+              </span>
+            </Tooltip>
+          </div>
+        );
+      },
+    },
+  ];
+};
 
 /** Default columns without sort (for backward compatibility) */
 export const columns = createColumns();

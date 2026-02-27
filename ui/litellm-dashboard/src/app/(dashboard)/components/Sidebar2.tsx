@@ -154,7 +154,7 @@ const toHref = (slugOrPath: string) => {
 
 // ----- Menu config -----
 const menuItems: MenuItemCfg[] = [
-  { key: "1", page: "api-keys", label: "虚拟密钥", icon: <KeyOutlined style={{ fontSize: 18 }} /> },
+  { key: "1", page: "api-keys", label: "API密钥", icon: <KeyOutlined style={{ fontSize: 18 }} /> },
   {
     key: "3",
     page: "llm-playground",

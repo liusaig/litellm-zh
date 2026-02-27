@@ -350,7 +350,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
         if (maxBudget === null) {
           return "无限制";
         }
-        return `$${formatNumberWithCommas(maxBudget)}`;
+        return `¥${formatNumberWithCommas(maxBudget)}`;
       },
     },
     {

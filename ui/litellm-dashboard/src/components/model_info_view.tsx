@@ -3,6 +3,7 @@ import { useModelHub, useModelsInfo } from "@/app/(dashboard)/hooks/models/useMo
 import { transformModelData } from "@/app/(dashboard)/models-and-endpoints/utils/modelDataTransformer";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { ArrowLeftIcon, KeyIcon, RefreshIcon, TrashIcon } from "@heroicons/react/outline";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Card,
   Grid,
@@ -61,6 +62,7 @@ export default function ModelInfoView({
   onModelUpdate,
   modelAccessGroups,
 }: ModelInfoViewProps) {
+  const { t } = useLanguage();
   const [form] = Form.useForm();
   const [localModelData, setLocalModelData] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -206,9 +208,9 @@ export default function ModelInfoView({
         custom_llm_provider: localModelData.litellm_params?.custom_llm_provider,
       },
     };
-    NotificationsManager.info("Storing credential..");
+    NotificationsManager.info(t("modelInfo.notifications.storingCredential"));
     let credentialResponse = await credentialCreateCall(accessToken, credentialItem);
-    NotificationsManager.success("Credential stored successfully");
+    NotificationsManager.success(t("modelInfo.notifications.credentialStored"));
   };
 
   const handleModelUpdate = async (values: any) => {
@@ -221,7 +223,7 @@ export default function ModelInfoView({
       try {
         parsedExtraParams = values.litellm_extra_params ? JSON.parse(values.litellm_extra_params) : {};
       } catch (e) {
-        NotificationsManager.fromBackend("Invalid JSON in LiteLLM Params");
+        NotificationsManager.fromBackend(t("modelInfo.notifications.invalidJsonLitellmParams"));
         setIsSaving(false);
         return;
       }
@@ -272,7 +274,7 @@ export default function ModelInfoView({
           };
         }
       } catch (e) {
-        NotificationsManager.fromBackend("Invalid JSON in Model Info");
+        NotificationsManager.fromBackend(t("modelInfo.notifications.invalidJsonModelInfo"));
         return;
       }
 
@@ -298,12 +300,12 @@ export default function ModelInfoView({
         onModelUpdate(updatedModelData);
       }
 
-      NotificationsManager.success("Model settings updated successfully");
+      NotificationsManager.success(t("modelInfo.notifications.modelSettingsUpdated"));
       setIsDirty(false);
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating model:", error);
-      NotificationsManager.fromBackend("Failed to update model settings");
+      NotificationsManager.fromBackend(t("modelInfo.notifications.failedToUpdateModelSettings"));
     } finally {
       setIsSaving(false);
     }
@@ -351,15 +353,15 @@ export default function ModelInfoView({
       );
 
       if (response.status === "success") {
-        NotificationsManager.success("Connection test successful!");
+        NotificationsManager.success(t("modelInfo.notifications.connectionTestSuccessful"));
       } else {
-        throw new Error(response?.result?.error || response?.message || "Unknown error");
+        throw new Error(response?.result?.error || response?.message || t("modelInfo.notifications.unknownError"));
       }
     } catch (error) {
       if (error instanceof Error) {
-        NotificationsManager.error("Error testing connection: " + truncateString(error.message, 100));
+        NotificationsManager.error(t("modelInfo.notifications.errorTestingConnection") + " " + truncateString(error.message, 100));
       } else {
-        NotificationsManager.error("Error testing connection: " + String(error));
+        NotificationsManager.error(t("modelInfo.notifications.errorTestingConnection") + " " + String(error));
       }
     }
   };
@@ -369,7 +371,7 @@ export default function ModelInfoView({
       setDeleteLoading(true);
       if (!accessToken) return;
       await modelDeleteCall(accessToken, modelId);
-      NotificationsManager.success("Model deleted successfully");
+      NotificationsManager.success(t("modelInfo.notifications.modelDeletedSuccessfully"));
 
       if (onModelUpdate) {
         onModelUpdate({
@@ -381,7 +383,7 @@ export default function ModelInfoView({
       onClose();
     } catch (error) {
       console.error("Error deleting the model:", error);
-      NotificationsManager.fromBackend("Failed to delete model");
+      NotificationsManager.fromBackend(t("modelInfo.notifications.failedToDeleteModel"));
     } finally {
       setDeleteLoading(false);
       setIsDeleteModalOpen(false);

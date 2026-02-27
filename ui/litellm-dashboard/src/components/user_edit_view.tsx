@@ -157,7 +157,7 @@ export function UserEditView({
       <Form.Item
         label={
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span>Max Budget (USD)</span>
+            <span>最大预算</span>
             <Checkbox
               checked={unlimitedBudget}
               onChange={handleUnlimitedBudgetChange}

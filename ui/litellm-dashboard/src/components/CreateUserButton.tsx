@@ -1,9 +1,10 @@
 import { InfoCircleOutlined, UserAddOutlined } from "@ant-design/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button as Button2, SelectItem, TextInput } from "@tremor/react";
-import { Alert, Button, Form, Input, Modal, Select, Select as Select2, Space, Tooltip, Typography } from "antd";
+import { Alert, Button, Form, Input, InputNumber, Modal, Select, Select as Select2, Space, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import BulkCreateUsers from "./bulk_create_users_button";
+import BudgetDurationDropdown from "./common_components/budget_duration_dropdown";
 import TeamDropdown from "./common_components/team_dropdown";
 import { getModelDisplayName } from "./key_team_helpers/fetch_available_models_team_key";
 import NotificationsManager from "./molecules/notifications_manager";
@@ -98,6 +99,8 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
       user_email?: string;
       models?: string[];
       user_role: string;
+      max_budget?: number | null;
+      budget_duration?: string;
     },
   ) => {
     try {
@@ -173,11 +176,8 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           showIcon
           className="mb-4"
         />
-        <Form.Item label="用户名" name="user_alias">
+        <Form.Item label="用户名" name="user_email">
           <TextInput placeholder="请输入用户名" />
-        </Form.Item>
-        <Form.Item label="用户邮箱" name="user_email">
-          <TextInput placeholder="请输入邮箱" />
         </Form.Item>
         <Form.Item label="用户角色" name="user_role">
           <Select2 placeholder="请选择角色">
@@ -202,6 +202,16 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
 
         <Form.Item label="元数据" name="metadata">
           <Input.TextArea rows={4} placeholder="请输入 JSON 格式元数据" />
+        </Form.Item>
+        <Form.Item
+          label="预算上限"
+          name="max_budget"
+          tooltip="留空表示不限额"
+        >
+          <InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="例如 100" />
+        </Form.Item>
+        <Form.Item label="预算重置周期" name="budget_duration">
+          <BudgetDurationDropdown onChange={(value) => form.setFieldValue("budget_duration", value)} />
         </Form.Item>
 
         <div style={{ textAlign: "right", marginTop: "10px" }}>
@@ -230,11 +240,8 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           <Text>创建可管理密钥的用户</Text>
         </Space>
         <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
-          <Form.Item label="用户名" name="user_alias">
+          <Form.Item label="用户名" name="user_email">
             <Input placeholder="请输入用户名" />
-          </Form.Item>
-          <Form.Item label="用户邮箱" name="user_email">
-            <Input placeholder="请输入邮箱" />
           </Form.Item>
           <Form.Item
             label={
@@ -296,6 +303,17 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
                 </Select2.Option>
               ))}
             </Select2>
+          </Form.Item>
+          <Form.Item
+            label="预算上限"
+            name="max_budget"
+            tooltip="留空表示不限额"
+            help="限制该用户的可用预算，留空表示无限制。"
+          >
+            <InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="例如 100" />
+          </Form.Item>
+          <Form.Item label="预算重置周期" name="budget_duration" help="可选。设置后按周期自动重置预算。">
+            <BudgetDurationDropdown onChange={(value) => form.setFieldValue("budget_duration", value)} />
           </Form.Item>
           <div style={{ textAlign: "right", marginTop: "10px" }}>
             <Button type="primary" icon={<UserAddOutlined />} htmlType="submit">创建用户</Button>

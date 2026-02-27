@@ -3,12 +3,14 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import { getModelDisplayName } from "@/components/key_team_helpers/fetch_available_models_team_key";
 import React, { useState } from "react";
 import { Team } from "@/components/key_team_helpers/key_list";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ModelsCellProps {
   team: Team;
 }
 
 const ModelsCell = ({ team }: ModelsCellProps) => {
+  const { t } = useLanguage();
   const [expandedAccordion, setExpandedAccordion] = useState<boolean>(false);
 
   return (
@@ -25,7 +27,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
           <div className="flex flex-col">
             {team.models.length === 0 ? (
               <Badge size={"xs"} className="mb-1" color="red">
-                <Text>All Proxy Models</Text>
+                <Text>{t("teams.allProxyModels")}</Text>
               </Badge>
             ) : (
               <>
@@ -46,7 +48,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
                     {team.models.slice(0, 3).map((model: string, index: number) =>
                       model === "all-proxy-models" ? (
                         <Badge key={index} size={"xs"} color="red">
-                          <Text>All Proxy Models</Text>
+                          <Text>{t("teams.allProxyModels")}</Text>
                         </Badge>
                       ) : (
                         <Badge key={index} size={"xs"} color="blue">
@@ -61,7 +63,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
                     {team.models.length > 3 && !expandedAccordion && (
                       <Badge size={"xs"} color="gray" className="cursor-pointer">
                         <Text>
-                          +{team.models.length - 3} {team.models.length - 3 === 1 ? "more model" : "more models"}
+                          +{team.models.length - 3} {t("teams.table.moreModels")}
                         </Text>
                       </Badge>
                     )}
@@ -70,7 +72,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
                         {team.models.slice(3).map((model: string, index: number) =>
                           model === "all-proxy-models" ? (
                             <Badge key={index + 3} size={"xs"} color="red">
-                              <Text>All Proxy Models</Text>
+                              <Text>{t("teams.allProxyModels")}</Text>
                             </Badge>
                           ) : (
                             <Badge key={index + 3} size={"xs"} color="blue">

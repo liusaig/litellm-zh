@@ -61,7 +61,7 @@ describe("Sidebar (leftnav)", () => {
     renderWithProviders(<Sidebar {...defaultProps} />);
 
     const topLevelLabels = [
-      "虚拟密钥",
+      "API密钥",
       "模型调试",
       "模型管理",
       "用量分析",

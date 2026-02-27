@@ -385,7 +385,7 @@ it("should render table headers correctly", () => {
   expect(screen.getByText("Key Alias")).toBeInTheDocument();
   expect(screen.getByText("Team Alias")).toBeInTheDocument();
   expect(screen.getByText("Models")).toBeInTheDocument();
-  expect(screen.getByText("Spend (USD)")).toBeInTheDocument();
+  expect(screen.getByText("花费")).toBeInTheDocument();
 });
 
 it("should handle column resizing hover events", () => {

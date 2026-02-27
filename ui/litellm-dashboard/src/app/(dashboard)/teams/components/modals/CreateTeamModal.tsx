@@ -13,6 +13,7 @@ import AgentSelector from "@/components/agent_management/AgentSelector";
 import PremiumLoggingSettings from "@/components/common_components/PremiumLoggingSettings";
 import ModelAliasManager from "@/components/common_components/ModelAliasManager";
 import React, { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import NotificationsManager from "@/components/molecules/notifications_manager";
 import { fetchMCPAccessGroups, getGuardrailsList, getPoliciesList, Organization, Team, teamCreateCall } from "@/components/networking";
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
@@ -71,6 +72,7 @@ const CreateTeamModal = ({
   setIsTeamModalVisible,
 }: CreateTeamModalProps) => {
   const { userId: userID, userRole, accessToken, premiumUser } = useAuthorized();
+  const { t } = useLanguage();
   const [form] = Form.useForm();
   const [userModels, setUserModels] = useState<string[]>([]);
   const [currentOrgForCreateTeam, setCurrentOrgForCreateTeam] = useState<Organization | null>(null);
@@ -173,7 +175,7 @@ const CreateTeamModal = ({
           throw new Error(`Team alias ${newTeamAlias} already exists, please pick another alias`);
         }
 
-        NotificationsManager.info("正在创建分组");
+        NotificationsManager.info(t("teams.createModal.creating"));
 
         // Handle logging settings in metadata
         if (loggingSettings.length > 0) {
@@ -279,7 +281,7 @@ const CreateTeamModal = ({
           setTeams([response]);
         }
         console.log(`response for team create call: ${response}`);
-        NotificationsManager.success("分组创建成功");
+        NotificationsManager.success(t("teams.createModal.success"));
         form.resetFields();
         setLoggingSettings([]);
         setModelAliases({});
@@ -287,13 +289,13 @@ const CreateTeamModal = ({
       }
     } catch (error) {
       console.error("Error creating the team:", error);
-      NotificationsManager.fromBackend("创建分组失败: " + error);
+      NotificationsManager.fromBackend(t("teams.createModal.failed") + error);
     }
   };
 
   return (
     <Modal
-      title="创建分组"
+      title={t("teams.createModal.title")}
       open={isTeamModalVisible}
       width={1000}
       footer={null}
@@ -303,25 +305,25 @@ const CreateTeamModal = ({
       <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
         <>
           <Form.Item
-            label="分组名称"
+            label={t("teams.createModal.teamAlias")}
             name="team_alias"
             rules={[
               {
                 required: true,
-                message: "请输入分组名称",
+                message: t("teams.createModal.teamAliasRequired"),
               },
             ]}
           >
-            <TextInput placeholder="请输入名称" />
+            <TextInput placeholder={t("teams.createModal.teamAliasPlaceholder")} />
           </Form.Item>
           <Form.Item
             label={
               <span>
-                组织{" "}
+                {t("teams.createModal.organization")}{" "}
                 <Tooltip
                   title={
                     <span>
-                      一个组织可以包含多个分组。了解更多请查看{" "}
+                      {t("teams.createModal.organizationHelp")}{" "}
                       <a
                         href="https://docs.litellm.ai/docs/proxy/user_management_heirarchy"
                         target="_blank"
@@ -332,7 +334,7 @@ const CreateTeamModal = ({
                         }}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        用户管理层级
+                        {t("teams.createModal.userManagementHierarchy")}
                       </a>
                     </span>
                   }
@@ -348,7 +350,7 @@ const CreateTeamModal = ({
             <Select2
               showSearch
               allowClear
-              placeholder="搜索或选择组织"
+              placeholder={t("teams.createModal.organizationPlaceholder")}
               onChange={(value) => {
                 form.setFieldValue("organization_id", value);
                 setCurrentOrgForCreateTeam(organizations?.find((org) => org.organization_id === value) || null);
@@ -371,17 +373,17 @@ const CreateTeamModal = ({
           <Form.Item
             label={
               <span>
-                模型{" "}
-                <Tooltip title="这些是当前分组可访问的模型">
+                {t("teams.createModal.models")}{" "}
+                <Tooltip title={t("teams.createModal.modelsHelp")}>
                   <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                 </Tooltip>
               </span>
             }
             name="models"
           >
-            <Select2 mode="multiple" placeholder="选择模型" style={{ width: "100%" }}>
+            <Select2 mode="multiple" placeholder={t("teams.createModal.modelsPlaceholder")} style={{ width: "100%" }}>
               <Select2.Option key="all-proxy-models" value="all-proxy-models">
-                所有代理模型
+                {t("teams.createModal.allProxyModels")}
               </Select2.Option>
               {modelsToPick.map((model) => (
                 <Select2.Option key={model} value={model}>
@@ -391,21 +393,21 @@ const CreateTeamModal = ({
             </Select2>
           </Form.Item>
 
-          <Form.Item label="最大预算" name="max_budget">
-            <NumericalInput step={0.01} precision={2} width={200} placeholder="请输入数值" />
+          <Form.Item label={t("teams.createModal.maxBudget")} name="max_budget">
+            <NumericalInput step={0.01} precision={2} width={200} placeholder={t("teams.createModal.maxBudgetPlaceholder")} />
           </Form.Item>
-          <Form.Item className="mt-8" label="预算重置周期" name="budget_duration">
-            <Select2 defaultValue={null} placeholder="不适用">
-              <Select2.Option value="24h">每天</Select2.Option>
-              <Select2.Option value="7d">每周</Select2.Option>
-              <Select2.Option value="30d">每月</Select2.Option>
+          <Form.Item className="mt-8" label={t("teams.createModal.budgetDuration")} name="budget_duration">
+            <Select2 defaultValue={null} placeholder={t("teams.createModal.budgetDurationPlaceholder")}>
+              <Select2.Option value="24h">{t("teams.createModal.budgetDaily")}</Select2.Option>
+              <Select2.Option value="7d">{t("teams.createModal.budgetWeekly")}</Select2.Option>
+              <Select2.Option value="30d">{t("teams.createModal.budgetMonthly")}</Select2.Option>
             </Select2>
           </Form.Item>
-          <Form.Item label="每分钟 Token 限制 (TPM)" name="tpm_limit">
-            <NumericalInput step={1} width={400} placeholder="请输入数值" />
+          <Form.Item label={t("teams.createModal.tpmLimit")} name="tpm_limit">
+            <NumericalInput step={1} width={400} placeholder={t("teams.createModal.tpmLimitPlaceholder")} />
           </Form.Item>
-          <Form.Item label="每分钟请求限制 (RPM)" name="rpm_limit">
-            <NumericalInput step={1} width={400} placeholder="请输入数值" />
+          <Form.Item label={t("teams.createModal.rpmLimit")} name="rpm_limit">
+            <NumericalInput step={1} width={400} placeholder={t("teams.createModal.rpmLimitPlaceholder")} />
           </Form.Item>
 
           <Accordion
@@ -418,18 +420,18 @@ const CreateTeamModal = ({
             }}
           >
             <AccordionHeader>
-              <b>高级设置</b>
+              <b>{t("teams.createModal.advancedSettings")}</b>
             </AccordionHeader>
             <AccordionBody>
               <Accordion className="mb-4">
                 <AccordionHeader>
-                  <b>其他设置</b>
+                  <b>{t("teams.createModal.otherSettings")}</b>
                 </AccordionHeader>
                 <AccordionBody>
                   <Form.Item
-                label="分组 ID"
+                label={t("teams.createModal.teamId")}
                 name="team_id"
-                help="要创建的分组 ID，不填则自动生成。"
+                help={t("teams.createModal.teamIdHelp")}
               >
                 <TextInput
                   onChange={(e) => {
@@ -438,48 +440,48 @@ const CreateTeamModal = ({
                 />
               </Form.Item>
                   <Form.Item
-                label="分组成员预算"
+                label={t("teams.createModal.teamMemberBudget")}
                 name="team_member_budget"
                 normalize={(value) => (value ? Number(value) : undefined)}
-                tooltip="这是该分组内单个成员的预算上限。"
+                tooltip={t("teams.createModal.teamMemberBudgetHelp")}
               >
-                <NumericalInput step={0.01} precision={2} width={200} placeholder="请输入数值" />
+                <NumericalInput step={0.01} precision={2} width={200} placeholder={t("teams.createModal.maxBudgetPlaceholder")} />
               </Form.Item>
                   <Form.Item
-                label="分组成员密钥时长（如：1d、1mo）"
+                label={t("teams.createModal.teamMemberKeyDuration")}
                 name="team_member_key_duration"
-                tooltip="设置分组成员密钥的有效时长。格式：30s（秒）、30m（分钟）、30h（小时）、30d（天）、1mo（月）"
+                tooltip={t("teams.createModal.teamMemberKeyDurationHelp")}
               >
-                <TextInput placeholder="例如：30d" />
+                <TextInput placeholder={t("teams.createModal.teamMemberKeyDurationPlaceholder")} />
               </Form.Item>
                   <Form.Item
-                label="分组成员 RPM 限制"
+                label={t("teams.createModal.teamMemberRpmLimit")}
                 name="team_member_rpm_limit"
-                tooltip="分组内单个成员的 RPM（每分钟请求数）限制"
+                tooltip={t("teams.createModal.teamMemberRpmLimitHelp")}
               >
-                <NumericalInput step={1} width={400} placeholder="请输入数值" />
+                <NumericalInput step={1} width={400} placeholder={t("teams.createModal.maxBudgetPlaceholder")} />
               </Form.Item>
                   <Form.Item
-                label="分组成员 TPM 限制"
+                label={t("teams.createModal.teamMemberTpmLimit")}
                 name="team_member_tpm_limit"
-                tooltip="分组内单个成员的 TPM（每分钟 Token 数）限制"
+                tooltip={t("teams.createModal.teamMemberTpmLimitHelp")}
               >
-                <NumericalInput step={1} width={400} placeholder="请输入数值" />
+                <NumericalInput step={1} width={400} placeholder={t("teams.createModal.maxBudgetPlaceholder")} />
               </Form.Item>
                   <Form.Item
-                label="元数据"
+                label={t("teams.createModal.metadata")}
                 name="metadata"
-                help="分组附加元数据，请输入 JSON 对象。"
+                help={t("teams.createModal.metadataHelp")}
               >
                 <Input.TextArea rows={4} />
               </Form.Item>
                   <Form.Item
-                label="密钥管理器设置"
+                label={t("teams.createModal.secretManagerSettings")}
                 name="secret_manager_settings"
                 help={
                   premiumUser
-                    ? "请输入密钥管理器配置（JSON 对象）。"
-                    : "高级功能：升级后可配置密钥管理器设置。"
+                    ? t("teams.createModal.secretManagerSettingsHelp")
+                    : t("teams.createModal.secretManagerSettingsPremiumHelp")
                 }
                 rules={[
                   {
@@ -491,7 +493,7 @@ const CreateTeamModal = ({
                         JSON.parse(value);
                         return Promise.resolve();
                       } catch (error) {
-                        return Promise.reject(new Error("请输入有效的 JSON"));
+                        return Promise.reject(new Error(t("teams.createModal.invalidJsonError")));
                       }
                     },
                   },
@@ -521,12 +523,12 @@ const CreateTeamModal = ({
                 }
                 name="guardrails"
                 className="mt-8"
-                help="选择已有护栏或输入新护栏"
+                help={t("teams.createModal.guardrailsPlaceholder")}
               >
                 <Select2
                   mode="tags"
                   style={{ width: "100%" }}
-                  placeholder="选择或输入护栏"
+                  placeholder={t("teams.createModal.guardrailsPlaceholder")}
                   options={guardrailsList.map((name) => ({
                     value: name,
                     label: name,
@@ -545,18 +547,18 @@ const CreateTeamModal = ({
                 name="disable_global_guardrails"
                 className="mt-4"
                 valuePropName="checked"
-                help="让该分组跳过全局护栏"
+                help={t("teams.createModal.disableGlobalGuardrailsLabelHelp")}
               >
                 <Switch
-                  checkedChildren="是"
-                  unCheckedChildren="否"
+                  checkedChildren={t("teams.createModal.yes")}
+                  unCheckedChildren={t("teams.createModal.no")}
                 />
               </Form.Item>
                   <Form.Item
                 label={
                   <span>
                     策略{" "}
-                    <Tooltip title="将策略应用到此分组以控制护栏和其他设置">
+                    <Tooltip title={t("teams.createModal.policiesHelp")}>
                       <a
                         href="https://docs.litellm.ai/docs/proxy/guardrails/guardrail_policies"
                         target="_blank"
@@ -570,12 +572,12 @@ const CreateTeamModal = ({
                 }
                 name="policies"
                 className="mt-8"
-                help="选择已有策略或输入新策略"
+                help={t("teams.createModal.policiesPlaceholder")}
               >
                 <Select2
                   mode="tags"
                   style={{ width: "100%" }}
-                  placeholder="选择或输入策略"
+                  placeholder={t("teams.createModal.policiesPlaceholder")}
                   options={policiesList.map((name) => ({
                     value: name,
                     label: name,
@@ -586,20 +588,20 @@ const CreateTeamModal = ({
                 label={
                   <span>
                     可用向量库{" "}
-                    <Tooltip title="选择该分组默认可访问的向量库。留空表示可访问所有向量库">
+                    <Tooltip title={t("teams.createModal.availableVectorStoresHelp")}>
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
                   </span>
                 }
                 name="allowed_vector_store_ids"
                 className="mt-8"
-                help="选择该分组可访问的向量库，留空表示可访问所有向量库"
+                help={t("teams.createModal.availableVectorStoresPlaceholder")}
               >
                 <VectorStoreSelector
                   onChange={(values: string[]) => form.setFieldValue("allowed_vector_store_ids", values)}
                   value={form.getFieldValue("allowed_vector_store_ids")}
                   accessToken={accessToken || ""}
-                  placeholder="选择向量库（可选）"
+                  placeholder={t("teams.createModal.availableVectorStoresPlaceholder")}
                 />
                   </Form.Item>
                 </AccordionBody>
@@ -607,27 +609,27 @@ const CreateTeamModal = ({
               <div className="mt-4">
                 <Accordion className="mb-4">
                   <AccordionHeader>
-                    <b>MCP 设置</b>
+                    <b>{t("teams.createModal.mcpSettings")}</b>
                   </AccordionHeader>
                   <AccordionBody>
                     <Form.Item
                       label={
                         <span>
                           可用 MCP 服务{" "}
-                          <Tooltip title="选择该分组可访问的 MCP 服务或访问组">
+                          <Tooltip title={t("teams.createModal.availableMcpServersHelp")}>
                             <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                           </Tooltip>
                         </span>
                       }
                       name="allowed_mcp_servers_and_groups"
                       className="mt-4"
-                      help="选择该分组可访问的 MCP 服务或访问组"
+                      help={t("teams.createModal.availableMcpServersPlaceholder")}
                     >
                       <MCPServerSelector
                         onChange={(val: any) => form.setFieldValue("allowed_mcp_servers_and_groups", val)}
                         value={form.getFieldValue("allowed_mcp_servers_and_groups")}
                         accessToken={accessToken || ""}
-                        placeholder="选择 MCP 服务或访问组（可选）"
+                        placeholder={t("teams.createModal.availableMcpServersPlaceholder")}
                       />
                     </Form.Item>
 
@@ -659,27 +661,27 @@ const CreateTeamModal = ({
 
                 <Accordion className="mb-4">
                   <AccordionHeader>
-                    <b>智能体设置</b>
+                    <b>{t("teams.createModal.agentsSettings")}</b>
                   </AccordionHeader>
                   <AccordionBody>
                     <Form.Item
                       label={
                         <span>
                           可用智能体{" "}
-                          <Tooltip title="选择该分组可访问的智能体或访问组">
+                          <Tooltip title={t("teams.createModal.availableAgentsHelp")}>
                             <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                           </Tooltip>
                         </span>
                       }
                       name="allowed_agents_and_groups"
                       className="mt-4"
-                      help="选择该分组可访问的智能体或访问组"
+                      help={t("teams.createModal.availableAgentsPlaceholder")}
                     >
                       <AgentSelector
                         onChange={(val: any) => form.setFieldValue("allowed_agents_and_groups", val)}
                         value={form.getFieldValue("allowed_agents_and_groups")}
                         accessToken={accessToken || ""}
-                        placeholder="选择智能体或访问组（可选）"
+                        placeholder={t("teams.createModal.availableAgentsPlaceholder")}
                       />
                     </Form.Item>
                   </AccordionBody>
@@ -687,7 +689,7 @@ const CreateTeamModal = ({
 
                 <Accordion className="mb-4">
                   <AccordionHeader>
-                    <b>日志设置</b>
+                    <b>{t("teams.createModal.loggingSettings")}</b>
                   </AccordionHeader>
                   <AccordionBody>
                     <div className="mt-4">
@@ -698,12 +700,12 @@ const CreateTeamModal = ({
 
                 <Accordion className="mb-0">
                   <AccordionHeader>
-                    <b>模型别名</b>
+                    <b>{t("teams.createModal.modelAliases")}</b>
                   </AccordionHeader>
                   <AccordionBody>
                     <div className="mt-4">
                       <Text className="text-sm text-gray-600 mb-4">
-                        为模型创建可在分组成员 API 调用中使用的自定义别名，从而为特定模型提供快捷调用方式。
+                        {t("teams.createModal.modelAliasesDesc")}
                       </Text>
                       <ModelAliasManager
                         accessToken={accessToken || ""}
@@ -719,7 +721,7 @@ const CreateTeamModal = ({
           </Accordion>
         </>
         <div style={{ textAlign: "right", marginTop: "10px" }}>
-          <Button2 htmlType="submit">创建分组</Button2>
+          <Button2 htmlType="submit">{t("teams.createModal.submit")}</Button2>
         </div>
       </Form>
     </Modal>

@@ -1,5 +1,6 @@
 import { Button, Select, SelectItem, TabPanel, Text, Title } from "@tremor/react";
 import { InputNumber } from "antd";
+import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 
 interface GlobalRetryPolicyObject {
@@ -42,20 +43,21 @@ const ModelRetrySettingsTab = ({
   setModelGroupRetryPolicy,
   handleSaveRetrySettings,
 }: ModelRetrySettingsTabProps) => {
+  const { t } = useLanguage();
   //  const [modelGroupRetryPolicy, setModelGroupRetryPolicy] = useState<RetryPolicyObject | null>(null);
 
   return (
     <TabPanel>
       <div className="flex items-center gap-4 mb-6">
         <div className="flex items-center">
-          <Text>重试策略范围：</Text>
+          <Text>{t("models.retrySettings.scopeLabel")}</Text>
           <Select
             className="ml-2 w-48"
             defaultValue="global"
             value={selectedModelGroup === "global" ? "global" : selectedModelGroup || availableModelGroups[0]}
             onValueChange={(value) => setSelectedModelGroup(value)}
           >
-            <SelectItem value="global">全局默认</SelectItem>
+            <SelectItem value="global">{t("models.retrySettings.globalTitle")}</SelectItem>
             {availableModelGroups.map((group, idx) => (
               <SelectItem key={idx} value={group} onClick={() => setSelectedModelGroup(group)}>
                 {group}
@@ -67,13 +69,13 @@ const ModelRetrySettingsTab = ({
 
       {selectedModelGroup === "global" ? (
         <>
-          <Title>全局重试策略</Title>
-          <Text className="mb-6">默认重试设置应用于所有模型组，除非被覆盖</Text>
+          <Title>{t("models.retrySettings.globalTitle")}</Title>
+          <Text className="mb-6">{t("models.retrySettings.globalDescription")}</Text>
         </>
       ) : (
         <>
-          <Title>模型组 {selectedModelGroup} 的重试策略</Title>
-          <Text className="mb-6">模型特定的重试设置。如果未设置，则回退到全局默认值。</Text>
+          <Title>{t("models.retrySettings.modelGroupTitle").replace("{modelGroup}", selectedModelGroup || "")}</Title>
+          <Text className="mb-6">{t("models.retrySettings.modelGroupDescription")}</Text>
         </>
       )}
       {retryPolicyMap && (
@@ -145,7 +147,7 @@ const ModelRetrySettingsTab = ({
         </table>
       )}
       <Button className="mt-6 mr-8" onClick={handleSaveRetrySettings}>
-        保存
+        {t("models.common.save")}
       </Button>
     </TabPanel>
   );

@@ -23,6 +23,7 @@ import {
   Title,
 } from "@tremor/react";
 import React, { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ActivityMetrics, processActivityData } from "../../../activity_metrics";
 import { UsageExportHeader } from "../../../EntityUsageExport";
 import type { EntityType } from "../../../EntityUsageExport/types";
@@ -98,6 +99,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
     },
   });
   const { teams } = useTeams();
+  const { t } = useLanguage();
 
   const modelMetrics = processActivityData(spendData, "models", teams || []);
   const keyMetrics = processActivityData(spendData, "api_keys", teams || []);
@@ -396,9 +398,9 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
       <TabGroup>
         <TabList variant="solid" className="mt-1">
           <Tab>Cost</Tab>
-          <Tab>{entityType === "agent" ? "Request / Token Consumption" : "Model Activity"}</Tab>
-          <Tab>Key Activity</Tab>
-          <Tab>Endpoint Activity</Tab>
+          <Tab>{entityType === "agent" ? t("usagePage.entityUsage.requestTokenConsumption") : t("usagePage.modelActivity")}</Tab>
+          <Tab>{t("usagePage.keyActivity")}</Tab>
+          <Tab>{t("usagePage.endpointActivity")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -406,34 +408,34 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
               {/* Total Spend Card */}
               <Col numColSpan={2}>
                 <Card>
-                  <Title>{capitalizedEntityLabel} Spend Overview</Title>
+                  <Title>{capitalizedEntityLabel} {t("usagePage.entityUsage.tagSpendOverview").replace("标签", "").replace("Tag", "")}</Title>
                   <Grid numItems={5} className="gap-4 mt-4">
                     <Card>
-                      <Title>Total Spend</Title>
+                      <Title>{t("usagePage.entityUsage.totalSpend")}</Title>
                       <Text className="text-2xl font-bold mt-2">
-                        ${formatNumberWithCommas(spendData.metadata.total_spend, 2)}
+                        ¥{formatNumberWithCommas(spendData.metadata.total_spend, 2)}
                       </Text>
                     </Card>
                     <Card>
-                      <Title>Total Requests</Title>
+                      <Title>{t("usagePage.totalRequests")}</Title>
                       <Text className="text-2xl font-bold mt-2">
                         {spendData.metadata.total_api_requests.toLocaleString()}
                       </Text>
                     </Card>
                     <Card>
-                      <Title>Successful Requests</Title>
+                      <Title>{t("usagePage.successfulRequests")}</Title>
                       <Text className="text-2xl font-bold mt-2 text-green-600">
                         {spendData.metadata.total_successful_requests.toLocaleString()}
                       </Text>
                     </Card>
                     <Card>
-                      <Title>Failed Requests</Title>
+                      <Title>{t("usagePage.failedRequests")}</Title>
                       <Text className="text-2xl font-bold mt-2 text-red-600">
                         {spendData.metadata.total_failed_requests.toLocaleString()}
                       </Text>
                     </Card>
                     <Card>
-                      <Title>Total Tokens</Title>
+                      <Title>{t("usagePage.totalTokens")}</Title>
                       <Text className="text-2xl font-bold mt-2">
                         {spendData.metadata.total_tokens.toLocaleString()}
                       </Text>
@@ -445,7 +447,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
               {/* Daily Spend Chart */}
               <Col numColSpan={2}>
                 <Card>
-                  <Title>Daily Spend</Title>
+                  <Title>{t("usagePage.dailySpend")}</Title>
                   <BarChart
                     data={[...spendData.results].sort(
                       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
@@ -601,7 +603,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
               {/* Top Models */}
               <Col numColSpan={1}>
                 <Card>
-                  <Title>{entityType === "agent" ? "Top Agents" : "Top Models"}</Title>
+                  <Title>{entityType === "agent" ? t("usagePage.entityUsage.topAgents") : t("usagePage.entityUsage.topModels")}</Title>
                   <TopModelView
                     topModels={getTopModels()}
                     topModelsLimit={topModelsLimit}
@@ -622,7 +624,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
                           data={getProviderSpend()}
                           index="provider"
                           category="spend"
-                          valueFormatter={(value) => `$${formatNumberWithCommas(value, 2)}`}
+                          valueFormatter={(value) => `¥${formatNumberWithCommas(value)}`}
                           colors={["cyan", "blue", "indigo", "violet", "purple"]}
                         />
                       </Col>

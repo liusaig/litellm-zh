@@ -106,18 +106,18 @@ describe("dataUtils", () => {
     });
 
     it("should format spend with dollar sign", () => {
-      expect(getSpendString(1234.5, 2)).toBe("$1,234.50");
+      expect(getSpendString(1234.5, 2)).toBe("¥1,234.50");
       expect(getSpendString(-2500, 0)).toBe("$-2,500");
     });
 
     it("should return threshold string for very small values", () => {
-      expect(getSpendString(0.0000004, 6)).toBe("< $0.000001");
-      expect(getSpendString(-0.0000004, 6)).toBe("< $0.000001");
+      expect(getSpendString(0.0000004, 6)).toBe("< ¥0.000001");
+      expect(getSpendString(-0.0000004, 6)).toBe("< ¥0.000001");
     });
 
     it("should respect custom decimals", () => {
-      expect(getSpendString(0.01234, 3)).toBe("$0.012");
-      expect(getSpendString(999.9999, 1)).toBe("$1,000.0");
+      expect(getSpendString(0.01234, 3)).toBe("¥0.012");
+      expect(getSpendString(999.9999, 1)).toBe("¥1,000.0");
     });
   });
 

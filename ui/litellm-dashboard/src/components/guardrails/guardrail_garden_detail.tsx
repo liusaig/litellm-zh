@@ -24,7 +24,7 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
   const detailRows = [
     { property: "Provider", value: card.category === "litellm" ? "LiteLLM Content Filter" : "Partner Guardrail" },
     ...(card.subcategory ? [{ property: "Subcategory", value: card.subcategory }] : []),
-    ...(card.category === "litellm" ? [{ property: "Cost", value: "$0 / request" }] : []),
+    ...(card.category === "litellm" ? [{ property: "Cost", value: "¥0 / 请求" }] : []),
     ...(card.category === "litellm" ? [{ property: "External Dependencies", value: "None" }] : []),
     ...(card.category === "litellm" ? [{ property: "Latency", value: card.eval?.latency || "<1ms" }] : []),
   ];
