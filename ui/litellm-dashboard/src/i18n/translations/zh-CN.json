@@ -1,4 +1,11 @@
 {
+  "memberTable": {
+    "defaultProxyAdmin": "默认代理管理员",
+    "actions": "操作",
+    "editMember": "编辑成员",
+    "deleteMember": "删除成员",
+    "addMember": "添加成员"
+  },
   "organizations": {
     "createButton": "创建新组织",
     "myOrganizations": "我的组织",
@@ -59,11 +66,941 @@
       "title": "删除组织？",
       "message": "确认删除该组织吗？此操作不可撤销。",
       "resourceTitle": "组织信息",
-      "resourceLabel": "组织 ID"
+      "resourceLabel": "组织 ID",
+      "cancel": "取消",
+      "confirm": "删除",
+      "deleting": "删除中..."
     },
     "notifications": {
       "deleteSuccess": "组织删除成功",
       "createSuccess": "组织创建成功"
     }
+  },
+  "organizationDetail": {
+    "loading": "加载中...",
+    "notFound": "未找到组织",
+    "backButton": "返回组织列表",
+    "columns": {
+      "spend": "花费",
+      "createdAt": "创建时间"
+    },
+    "tabs": {
+      "overview": "概览",
+      "members": "成员",
+      "settings": "设置"
+    },
+    "overview": {
+      "orgDetails": "组织详情",
+      "created": "创建时间",
+      "updated": "更新时间",
+      "createdBy": "创建者",
+      "budgetStatus": "预算状态",
+      "of": "共",
+      "unlimited": "不限制",
+      "reset": "重置周期",
+      "rateLimits": "速率限制",
+      "tpm": "TPM",
+      "rpm": "RPM",
+      "maxParallelRequests": "最大并行请求数",
+      "models": "模型",
+      "allProxyModels": "所有代理模型",
+      "teams": "分组"
+    },
+    "members": {
+      "roleColumn": "角色",
+      "noMembers": "无成员",
+      "addMemberTitle": "添加组织成员",
+      "editMemberTitle": "编辑组织成员",
+      "roles": {
+        "orgAdmin": {
+          "label": "组织管理员",
+          "description": "组织管理员拥有完全的访问权限"
+        },
+        "internalUser": {
+          "label": "内部用户",
+          "description": "受限访问，仅可执行基本操作"
+        },
+        "internalUserViewer": {
+          "label": "内部用户（只读）",
+          "description": "只读访问，可查看但不能修改"
+        }
+      }
+    },
+    "settings": {
+      "title": "组织设置",
+      "editButton": "编辑",
+      "orgName": "组织名称",
+      "orgNameRequired": "请输入组织名称",
+      "models": "模型",
+      "maxBudget": "最大预算",
+      "resetBudget": "预算重置周期",
+      "resetBudgetPlaceholder": "不适用",
+      "daily": "每天",
+      "weekly": "每周",
+      "monthly": "每月",
+      "tpmLimit": "TPM 限制",
+      "rpmLimit": "RPM 限制",
+      "vectorStores": "向量库",
+      "vectorStoresPlaceholder": "选择向量库（可选）",
+      "mcpServers": "MCP 服务器",
+      "mcpServersPlaceholder": "选择 MCP 服务器（可选）",
+      "metadata": "元数据",
+      "cancel": "取消",
+      "saveChanges": "保存更改",
+      "orgId": "组织 ID",
+      "createdAt": "创建时间",
+      "rateLimits": "速率限制",
+      "budget": "预算",
+      "max": "最大",
+      "noLimit": "不限制",
+      "never": "不重置",
+      "reset": "重置"
+    },
+    "errors": {
+      "loadFailed": "加载组织信息失败",
+      "memberAddFailed": "添加组织成员失败",
+      "memberUpdateFailed": "更新组织成员失败",
+      "memberDeleteFailed": "删除组织成员失败",
+      "settingsUpdateFailed": "更新组织设置失败"
+    },
+    "notifications": {
+      "memberAdded": "成员添加成功",
+      "memberUpdated": "成员更新成功",
+      "memberDeleted": "成员删除成功",
+      "settingsUpdated": "设置更新成功"
+    }
+  },
+  "keyDetail": {
+    "notFound": "未找到密钥",
+    "tabs": {
+      "overview": "概览",
+      "settings": "设置"
+    },
+    "autoRotation": {
+      "title": "自动轮换",
+      "description": "按计划自动轮换 API 密钥",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "every": "每",
+      "lastRotation": "上次轮换",
+      "nextScheduledRotation": "下次计划轮换",
+      "noHistory": "无轮换历史",
+      "notEnabled": "未启用自动轮换"
+    },
+    "deleteModal": {
+      "alertMessage": "此操作无法撤销",
+      "keyAlias": "密钥别名",
+      "keyId": "密钥 ID",
+      "message": "确定要删除此密钥吗？",
+      "resourceTitle": "密钥信息",
+      "spend": "花费",
+      "teamId": "团队 ID"
+    },
+    "header": {
+      "backToKeys": "返回密钥列表",
+      "copied": "已复制！",
+      "copyKeyAlias": "复制密钥别名",
+      "copyKeyId": "复制密钥 ID",
+      "createdAt": "创建时间",
+      "createdBy": "创建者",
+      "createNewKey": "创建新密钥",
+      "deleteKey": "删除密钥",
+      "keyIdLabel": "密钥 ID",
+      "lastActive": "最后活跃",
+      "lastUpdated": "最后更新",
+      "never": "从未",
+      "regenerateKey": "重新生成密钥",
+      "regenerateTooltip": "生成新的密钥值",
+      "userEmail": "用户邮箱",
+      "userId": "用户 ID",
+      "virtualKey": "虚拟密钥"
+    },
+    "loggingSettings": {
+      "title": "日志设置",
+      "description": "配置此密钥的日志回调",
+      "loggingIntegrations": "日志集成",
+      "parametersConfigured": "已配置参数",
+      "noIntegrations": "未配置日志集成",
+      "disabledCallbacks": "已禁用的回调",
+      "callbackDisabled": "回调已禁用",
+      "noCallbacksDisabled": "无已禁用的回调"
+    },
+    "overview": {
+      "spend": "花费",
+      "models": "模型",
+      "noModels": "未配置模型",
+      "rateLimits": "速率限制",
+      "tpm": "TPM",
+      "rpm": "RPM",
+      "unlimited": "不限制",
+      "of": "共",
+      "guardrails": "防护栏",
+      "noGuardrails": "未配置防护栏",
+      "globalGuardrailsDisabled": "全局防护栏已禁用",
+      "policies": "策略",
+      "noPolicies": "未配置策略",
+      "loadingGuardrails": "加载防护栏中...",
+      "resolvedGuardrails": "已解析的防护栏："
+    },
+    "objectPermissions": {
+      "title": "对象权限",
+      "description": "向量库和 MCP 服务器的访问控制",
+      "vectorStores": "向量库",
+      "noVectorStores": "未配置向量库",
+      "mcpServers": "MCP 服务器",
+      "noMCPServers": "未配置 MCP 服务器",
+      "tool": "工具",
+      "tools": "工具",
+      "group": "组",
+      "agents": "代理",
+      "noAgents": "未配置代理"
+    },
+    "settings": {
+      "title": "密钥设置",
+      "editButton": "编辑",
+      "keyId": "密钥 ID",
+      "keyAlias": "密钥别名",
+      "secretKey": "密钥",
+      "teamId": "团队 ID",
+      "organization": "组织",
+      "notSet": "未设置",
+      "created": "创建时间",
+      "lastRegenerated": "上次重新生成",
+      "recent": "刚刚",
+      "expires": "过期时间",
+      "never": "永不过期",
+      "spend": "花费",
+      "budget": "预算",
+      "unlimited": "不限制",
+      "alias": "别名",
+      "models": "模型",
+      "maxBudget": "最大预算",
+      "budgetDuration": {
+        "daily": "每天",
+        "weekly": "每周",
+        "monthly": "每月"
+      },
+      "resetBudget": "重置预算",
+      "rpm": "RPM",
+      "tpm": "TPM",
+      "tpmLimit": "TPM 限制",
+      "rpmLimit": "RPM 限制",
+      "maxParallelRequests": "最大并行请求数",
+      "modelTpmLimits": "模型 TPM 限制",
+      "modelRpmLimits": "模型 RPM 限制",
+      "tags": "标签",
+      "noTags": "未设置标签",
+      "prompts": "提示词",
+      "noPrompts": "未设置提示词",
+      "allowedRoutes": "允许的路由",
+      "allRoutesAllowed": "允许所有路由",
+      "allowedPassThroughRoutes": "允许的透传路由",
+      "noPassThroughRoutes": "未设置透传路由",
+      "disableGlobalGuardrails": "禁用全局防护栏",
+      "globalGuardrailsEnabled": "全局防护栏已禁用",
+      "globalGuardrailsDisabled": "全局防护栏 已启用",
+      "rateLimits": "速率限制",
+      "noModels": "未配置模型",
+      "metadata": "元数据",
+      "keyType": "密钥类型",
+      "guardrails": "安全防护",
+      "disableGlobalGuardrailsLabel": "禁用全局防护栏",
+      "disableGlobalGuardrailsTooltip": "启用后，此密钥将绕过所有为每个请求配置的防护栏（全局防护栏）",
+      "policies": "策略",
+      "policiesTooltip": "为此密钥应用策略以控制防护栏和其他设置",
+      "accessGroups": "访问组",
+      "accessGroupsTooltip": "为此密钥分配访问组。访问组控制此密钥可以使用的模型、MCP 服务器和代理",
+      "allowedPassThroughRoutesLabel": "允许的透传路由",
+      "vectorStores": "向量库",
+      "mcpServers": "MCP 服务器/ 访问组",
+      "agents": "代理/ 访问组",
+      "loggingSettings": "日志设置",
+      "metadataLabel": "元数据",
+      "button": {
+        "cancel": "取消",
+        "saveChanges": "保存更改",
+        "edit": "编辑"
+      },
+      "placeholders": {
+        "enterNumericalValue": "请输入数值",
+        "na": "不适用",
+        "selectModels": "选择模型",
+        "selectKeyType": "选择密钥类型",
+        "selectTags": "选择或输入标签",
+        "selectAccessGroups": "选择访问组（可选）",
+        "selectVectorStores": "选择向量库",
+        "selectMcpServers": "选择 MCP 服务器或访问组（可选）",
+        "selectAgents": "选择代理或访问组（可选）",
+        "selectTeam": "选择团队",
+        "selectPrompts": "选择或输入提示词",
+        "selectRateLimitType": "选择速率限制类型",
+        "modelTpmPlaceholder": "{\"gpt-4\": 100, \"claude-v1\": 200}",
+        "modelRpmPlaceholder": "{\"gpt-4\": 100, \"claude-v1\": 200}",
+        "allowedRoutesPlaceholder": "输入允许的路由（以逗号分隔）。特殊值：llm_api_routes, management_routes。示例：llm_api_routes, /chat/completions, /keys/*。留空以允许所有路由",
+        "allowedRoutesTitle": "允许的路由",
+        "allowedRoutesTooltip": "密钥的允许路由列表（逗号分隔）。可以是特定路由（如 '/chat/completions'）或路由模式（如 'llm_api_routes', 'management_routes', '/keys/*'）。留空以允许所有路由。"
+      },
+      "keyTypes": {
+        "default": {
+          "value": "默认",
+          "description": "可调用 AI API + 管理路由"
+        },
+        "llmApi": {
+          "value": "AI API",
+          "description": "仅可调用 AI API 路由（chat/completions、embeddings 等）"
+        },
+        "management": {
+          "value": "管理",
+          "description": "仅可调用管理路由（用户/团队/密钥管理）"
+        },
+        "readOnly": {
+          "value": "只读",
+          "description": "仅可调用只读路由（信息查询）"
+        }
+      },
+      "features": {
+        "premiumFeature": "企业功能",
+        "upgradeForGuardrails": "企业功能 - 升级以按密钥设置安全防护",
+        "upgradeForPolicies": "企业功能 - 升级以按密钥设置策略",
+        "upgradeForPrompts": "企业功能 - 升级以按密钥设置提示词",
+        "upgradeForPassThrough": "企业功能 - 升级以按密钥设置允许的透传路由",
+        "settingGuardrailsPremium": "企业功能 - 升级以按密钥设置防护栏"
+      },
+      "messages": {
+        "modelsFieldDisabled": "此密钥类型禁用模型字段",
+        "allTeamModels": "所有团队模型"
+      },
+      "save": "保存"
+    },
+    "keyLifecycle": {
+      "title": "密钥过期设置",
+      "expireKey": "密钥过期",
+      "expireKeyTooltipCreate": "设置此密钥的过期时间。格式：30s（秒）、30m（分钟）、30h（小时）、30d（天）。留空永不过期。",
+      "expireKeyTooltipEdit": "设置此密钥的过期时间。格式：30s（秒）、30m（分钟）、30h（小时）、30d（天）。使用 -1 永不过期。",
+      "expirePlaceholderCreate": "例如：30d 或留空永不过期",
+      "expirePlaceholderEdit": "例如：30d 或 -1 永不过期",
+      "rotationSettings": "自动轮换设置",
+      "enableRotation": "启用自动轮换",
+      "enableRotationTooltip": "密钥将在指定间隔自动重新生成，以提高安全性。",
+      "rotationInterval": "轮换间隔",
+      "rotationIntervalTooltip": "密钥应自动轮换的频率。选择最适合您安全要求的间隔。",
+      "selectInterval": "选择间隔",
+      "7days": "7 天",
+      "30days": "30 天",
+      "90days": "90 天",
+      "180days": "180 天",
+      "365days": "365 天",
+      "customInterval": "自定义间隔",
+      "customIntervalPlaceholder": "例如：1s、5m、2h、14d",
+      "supportedFormats": "支持的格式：秒（s）、分钟（m）、小时（h）、天（d）",
+      "rotationNotice": "发生轮换时，您将收到包含新密钥的通知。旧密钥将在短暂的宽限期后被停用。"
+    },
+    "disabledCallbacks": {
+      "title": "禁用的回调",
+      "tooltip": "选择要为此密钥禁用的回调。禁用的回调将不会收到任何日志数据。",
+      "label": "禁用的回调",
+      "placeholder": "选择要禁用的回调",
+      "helpText": "选择应为此密钥禁用的回调。这些回调将不会接收任何日志数据。"
+    },
+    "loggingIntegrations": {
+      "title": "日志集成",
+      "tooltip": "为此团队配置回调日志集成。",
+      "addIntegration": "添加集成",
+      "noIntegrationsConfigured": "未配置日志集成",
+      "addIntegrationPrompt": "点击\"添加集成\"为此团队配置日志",
+      "configuration": "配置",
+      "newIntegration": "新集成",
+      "remove": "移除",
+      "integrationType": "集成类型",
+      "selectIntegration": "选择集成",
+      "eventType": "事件类型",
+      "successOnly": "仅成功",
+      "failureOnly": "仅失败",
+      "successAndFailure": "成功和失败",
+      "integrationParameters": "集成参数",
+      "sensitive": "敏感",
+      "number": "数字",
+      "valueRange": "值必须在 0 和 1 之间"
+    },
+    "notifications": {
+      "updateSuccess": "密钥更新成功",
+      "deleteSuccess": "密钥删除成功",
+      "aliasUpdated": "别名已更新"
+    }
+  },
+  "teamDetail": {
+    "loading": "加载中...",
+    "notFound": "未找到团队",
+    "backButton": "返回团队列表",
+    "tabs": {
+      "overview": "概览",
+      "members": "成员",
+      "memberPermissions": "成员权限",
+      "settings": "设置"
+    },
+    "memberPermissions": {
+      "title": "成员权限",
+      "description": "控制非管理员团队成员的权限",
+      "loading": "加载权限中...",
+      "reset": "重置",
+      "saveChanges": "保存更改",
+      "loadFailed": "加载权限失败",
+      "updateSuccess": "权限更新成功",
+      "updateFailed": "更新权限失败",
+      "table": {
+        "method": "方法",
+        "endpoint": "端点",
+        "description": "描述",
+        "support": "允许访问"
+      },
+      "modal": {
+        "userEmail": "用户邮箱",
+        "userId": "用户 ID",
+        "current": "当前：",
+        "role": "角色",
+        "roleRequired": "请选择角色",
+        "validEmail": "请输入有效的邮箱",
+        "or": "或",
+        "addMember": "添加成员",
+        "editMember": "编辑成员",
+        "cancel": "取消",
+        "adding": "添加中...",
+        "saving": "保存中..."
+      }
+    },
+    "settings": {
+      "title": "团队设置"
+    },
+    "deleteModal": {
+      "title": "删除团队成员？",
+      "alertMessage": "此操作无法撤销",
+      "message": "确定要将此成员从团队中移除吗？",
+      "resourceTitle": "成员信息",
+      "email": "邮箱",
+      "userId": "用户 ID",
+      "role": "角色"
+    },
+    "errors": {
+      "loadFailed": "加载团队信息失败",
+      "memberAddFailed": "添加团队成员失败",
+      "memberAddPremium": "添加团队成员需要高级版",
+      "memberUpdateFailed": "更新团队成员失败",
+      "memberUpdatePremium": "更新团队成员需要高级版",
+      "memberDeleteFailed": "删除团队成员失败",
+      "invalidMetadata": "元数据格式无效",
+      "invalidSecretManager": "密钥管理器配置无效"
+    },
+    "memberModal": {
+      "editTitle": "编辑团队成员",
+      "adminRole": "管理员",
+      "memberRole": "成员"
+    },
+    "notifications": {
+      "memberAdded": "成员添加成功",
+      "memberUpdated": "成员更新成功",
+      "memberDeleted": "成员删除成功",
+      "settingsUpdated": "设置更新成功"
+    },
+    "overview": {
+      "budgetStatus": "预算状态",
+      "of": "共",
+      "unlimited": "不限制",
+      "reset": "重置",
+      "teamMemberBudget": "团队成员预算",
+      "rateLimits": "速率限制",
+      "tpm": "TPM",
+      "rpm": "RPM",
+      "maxParallelRequests": "最大并行请求数",
+      "models": "模型",
+      "allProxyModels": "全部代理模型",
+      "virtualKeys": "API密钥",
+      "userKeys": "用户密钥",
+      "serviceAccountKeys": "服务账户密钥",
+      "total": "总计",
+      "guardrails": "防护栏",
+      "noGuardrails": "未配置防护栏",
+      "globalGuardrailsDisabled": "全局防护栏已禁用",
+      "policies": "策略",
+      "noPolicies": "未配置策略",
+      "loadingGuardrails": "加载防护栏中...",
+      "resolvedGuardrails": "已解析的防护栏："
+    }
+  },
+  "accessGroupDetail": {
+    "loading": "加载中...",
+    "notFound": "未找到访问组",
+    "backButton": "返回访问组列表",
+    "tabs": {
+      "overview": "概览",
+      "settings": "设置"
+    },
+    "overview": {
+      "name": "名称",
+      "description": "描述",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "members": "成员",
+      "loadingMembers": "加载成员中...",
+      "noMembers": "无成员"
+    },
+    "settings": {
+      "title": "访问组设置",
+      "editButton": "编辑",
+      "nameLabel": "名称",
+      "namePlaceholder": "请输入名称",
+      "descriptionLabel": "描述",
+      "descriptionPlaceholder": "请输入描述",
+      "mcpServices": "MCP 服务",
+      "mcpServicesPlaceholder": "选择 MCP 服务",
+      "cancel": "取消",
+      "saveChanges": "保存更改",
+      "updated": "已更新",
+      "created": "已创建",
+      "noDescription": "无描述",
+      "loading": "加载中...",
+      "addMember": "添加成员",
+      "removeMember": "移除成员"
+    }
+  },
+  "usagePage": {
+    "title": "使用情况",
+    "description": {
+      "teamAdmin": "作为团队管理员，您可以查看和管理您团队的使用情况。",
+      "admin": "作为管理员，您可以查看和管理所有使用情况。"
+    },
+    "allUsersPlaceholder": "所有用户",
+    "noUsersFound": "未找到用户",
+    "filteringByUser": "按用户筛选",
+    "usageMetrics": "使用指标",
+    "totalRequests": "总请求数",
+    "successfulRequests": "成功请求数",
+    "failedRequests": "失败请求数",
+    "failedRequestsTooltip": "包括无法路由到提供商的请求、工具使用失败以及其他无法确定提供商的请求错误。",
+    "totalTokens": "总 Token 数",
+    "averageCostPerRequest": "平均每请求成本",
+    "dailySpend": "每日花费",
+    "spend": "花费",
+    "requests": "请求数",
+    "successful": "成功",
+    "failed": "失败",
+    "tokens": "Tokens",
+    "topVirtualKeys": "排名靠前的虚拟密钥",
+    "topPublicModelNames": "排名靠前的公开模型",
+    "topLitellmModels": "排名靠前的 Silinex 模型",
+    "publicModelName": "公开模型名称",
+    "litellmModelName": "Silinex 模型名称",
+    "reusableCredentialsTracked": "可重用凭证已跟踪",
+    "reusableCredentialsDescription": "此视图显示可重用凭证（如 API 密钥）的使用情况。",
+    "exportUsageData": "导出使用数据",
+    "modelActivity": "模型活动",
+    "keyActivity": "密钥活动",
+    "endpointActivity": "端点活动",
+    "tabs": {
+      "entityUsage": "实体使用情况",
+      "endpointUsage": "端点使用情况",
+      "keyModelUsage": "密钥-模型使用情况"
+    },
+    "entityUsage": {
+      "title": "实体使用情况",
+      "entitySelectorPlaceholder": "选择实体",
+      "loading": "加载中...",
+      "noData": "暂无数据",
+      "totalSpend": "总花费",
+      "requests": "请求数",
+      "successRate": "成功率",
+      "failedRequests": "失败请求数",
+      "tagSpendOverview": "标签花费概览",
+      "topModels": "排名靠前的模型",
+      "topAgents": "排名靠前的智能体",
+      "requestTokenConsumption": "请求 / Token 消耗"
+    },
+    "views": {
+      "spendByProvider": "按提供商花费",
+      "topKeyView": "顶级密钥",
+      "aiChat": "AI 聊天"
+    },
+    "topKeyView": {
+      "title": "排名靠前的密钥",
+      "noData": "暂无数据",
+      "keyId": "密钥 ID",
+      "keyAlias": "密钥别名",
+      "tags": "标签",
+      "spend": "花费",
+      "tableView": "表格视图",
+      "model": "模型"
+    },
+    "spendByProvider": {
+      "title": "按提供商花费",
+      "noData": "暂无数据",
+      "showZeroSpend": "显示零花费",
+      "showUnknown": "显示未知",
+      "showUnknownTooltip": "包括无法路由到提供商的请求",
+      "provider": "提供商",
+      "spend": "花费",
+      "successful": "成功",
+      "failed": "失败",
+      "tokens": "Tokens"
+    },
+    "aiChat": {
+      "title": "AI 聊天",
+      "description": "向 AI 询问您的使用情况数据。",
+      "placeholder": "请输入您的问题..."
+    },
+    "endpointUsage": {
+      "title": "端点使用情况",
+      "description": "查看不同端点的使用情况。",
+      "endpoint": "端点",
+      "successfulFailed": "成功/失败",
+      "totalRequest": "总请求数",
+      "successRate": "成功率",
+      "tokens": "Tokens",
+      "spend": "花费",
+      "chart": {
+        "title": "端点花费趋势",
+        "failedRequests": "失败请求数",
+        "failedRequestsTooltip": "包括无法路由到提供商的请求、工具使用失败以及其他无法确定提供商的请求错误。"
+      }
+    },
+    "keyModelUsage": {
+      "title": "模型使用情况",
+      "description": "查看密钥对不同模型的使用情况。",
+      "model": "模型",
+      "spend": "花费",
+      "successful": "成功",
+      "failed": "失败",
+      "tokens": "Tokens",
+      "table": "表格",
+      "chart": "图表"
+    },
+    "usageView": "使用视图",
+    "selectUsageView": "选择要查看的使用数据",
+    "globalUsage": "全局使用情况",
+    "globalUsageAdmin": "全局使用情况",
+    "globalUsageNonAdmin": "您的使用情况",
+    "globalUsageDescAdmin": "查看所有资源的使用情况",
+    "globalUsageDescNonAdmin": "查看您的使用情况",
+    "organizationUsage": "组织使用情况",
+    "organizationUsageAdmin": "组织使用情况",
+    "organizationUsageNonAdmin": "您的组织使用情况",
+    "organizationUsageDescAdmin": "查看所有组织的使用情况",
+    "organizationUsageDescNonAdmin": "查看您组织的使用情况",
+    "teamUsage": "团队使用情况",
+    "teamUsageDesc": "按团队查看使用情况",
+    "customerUsage": "客户使用情况",
+    "customerUsageDesc": "按客户账户查看使用情况",
+    "tagUsage": "标签使用情况",
+    "tagUsageDesc": "按标签分组查看使用情况",
+    "agentUsage": "智能体使用情况 (A2A)",
+    "agentUsageDesc": "按 AI 智能体查看使用情况",
+    "userAgentActivity": "用户代理活动",
+    "userAgentActivityDesc": "查看详细的用户代理活动日志",
+    "datePicker": {
+      "type": "时间类型",
+      "day": "日",
+      "week": "周",
+      "month": "月",
+      "weekFormat": "{year}年第{week}周",
+      "monthFormat": "{year}年{month}月",
+      "placeholder": {
+        "day": "选择日期范围",
+        "week": "选择周",
+        "month": "选择月份"
+      }
+    },
+    "title": "询问 AI",
+    "subtitle": "询问您的花费、模型、密钥和趋势",
+    "selectModel": "选择模型（可选，默认为 gpt-4o-mini）",
+    "askQuestion": "询问您的使用情况...",
+    "askQuestionPlaceholder": "例如：\"哪个模型花费最多？\"",
+    "emptyState": "询问关于您使用情况的问题",
+    "send": "发送",
+    "clearChat": "清空对话",
+    "filter": "筛选",
+    "timeRangeType": {
+      "day": "日",
+      "week": "周",
+      "month": "月",
+      "selectTimeRange": "选择时间范围"
+    }
   }
+},
+"teams": {
+  "allProxyModels": "所有代理模型",
+  "tabs": {
+    "myTeams": "我的分组",
+    "availableTeams": "可加入分组",
+    "defaultSettings": "默认分组设置"
+  },
+  "lastRefreshed": "最近刷新：",
+  "create": "+ 创建新分组",
+  "clickToView": "点击 \"分组 ID\" 查看分组详情并管理团队成员。",
+  "filters": {
+    "create": "+ 创建新分组",
+  },
+}
+}
+},
+"teams": {
+"allProxyModels": "所有代理模型",
+}
+}
+},
+"teams": {}
+},
+"teams": {}
+}
+}
+},
+"teams": {
+"allProxyModels": "所有代理模型",
+"tabs": {
+"myTeams": "我的分组",
+"availableTeams": "可加入分组",
+"defaultSettings": "默认分组设置"
+},
+"lastRefreshed": "最近刷新：",
+"create": "+ 创建新分组",
+"clickToView": "点击 \"分组 ID\" 查看分组详情并管理团队成员。",
+"filters": {
+"searchPlaceholder": "按分组名称搜索...",
+"filter": "筛选",
+"reset": "重置筛选",
+"teamIdPlaceholder": "输入分组 ID",
+"selectOrganization": "选择组织"
+},
+"table": {
+"teamName": "分组名称",
+"teamId": "分组 ID",
+"createdAt": "创建时间",
+"spend": "花费",
+"budget": "预算",
+"models": "模型",
+"organization": "组织",
+"yourRole": "你的角色",
+"info": "信息",
+"none": "无",
+"unlimited": "不限制",
+"keys": " 个密钥",
+"members": " 个成员",
+"moreModels": "个更多模型"
+},
+"createModal": {
+"title": "创建分组",
+"teamAlias": "分组名称",
+"teamAliasPlaceholder": "请输入名称",
+"teamAliasRequired": "请输入分组名称",
+"organization": "组织",
+"organizationHelp": "一个组织可以包含多个分组。了解更多请查看",
+"userManagementHierarchy": "用户管理层级",
+"organizationPlaceholder": "搜索或选择组织",
+"models": "模型",
+"modelsHelp": "这些是当前分组可访问的模型",
+"modelsPlaceholder": "选择模型",
+"allProxyModels": "所有代理模型",
+"maxBudget": "最大预算",
+"maxBudgetPlaceholder": "请输入数值"
+},
+"deleteModal": {
+"title": "删除分组？",
+"message": "确定要删除此分组吗？此操作无法撤销。",
+"warningKeys": "该分组下还有 {keyCount} 个 API 密钥将被删除。请确认：",
+"warningDeleteAll": "删除分组将删除所有关联的资源，包括所有 API 密钥、团队成员和配置。此操作无法撤销。",
+"confirmInfo": "请输入分组名称以确认删除操作。",
+"enterName": "请输入分组名称 ",
+"placeholder": "请输入分组名称...",
+"close": "关闭",
+"cancel": "取消",
+"forceDelete": "强制删除分组"
+},
+"roleBadges": {
+"admin": {
+"label": "分组管理员",
+"tooltip": "分组管理员拥有完全的访问权限"
+},
+"viewer": {
+"label": "查看者",
+"tooltip": "只读访问，可以查看但不能修改"
+}
+},
+"memberTab": {
+"roleColumn": "角色",
+"roleTooltip": "将成员提升为分组管理员，或将其降级为普通成员",
+"defaultValue": "角色：视图器",
+"defaultUser": "默认用户"
+},
+"defaultSettings": {
+"title": "默认分组设置",
+"description": "创建新分组时将默认应用这些设置。",
+"editSettings": "编辑设置",
+"saveChanges": "保存更改",
+"cancel": "取消",
+"notAvailable": "没有可用的分组设置，或者您没有权限查看。",
+"noSchema": "没有可用的架构信息",
+"notSet": "未设置",
+"noDescription": "没有可用描述",
+"enabled": "已启用",
+"disabled": "已禁用",
+"none": "无",
+"loadFailed": "获取分组设置失败",
+"saveSuccess": "默认分组设置已成功更新",
+"updateFailed": "更新分组设置失败"
+}
+},
+"onboardingModal": {
+"invitation": {
+"title": "邀请链接",
+"description": "请将以下邀请链接发送给新用户，用户可通过该链接完成首次登录和账户激活。",
+"linkLabel": "邀请链接",
+"copyButton": "复制邀请链接"
+},
+"resetPassword": {
+"title": "重置密码链接",
+"description": "请将以下链接发送给用户，用户可通过该链接重置密码。",
+"linkLabel": "重置密码链接",
+"copyButton": "复制重置链接"
+},
+"userId": "用户 ID",
+"copied": "已复制到剪贴板"
+},
+"models": {
+"title": "模型管理",
+"description": {
+"teamAdmin": "作为团队管理员，您可以查看和管理您团队的模型。",
+"admin": "作为管理员，您可以查看和管理所有模型。"
+},
+"tabs": {
+"allModels": "所有模型",
+"yourModels": "您的模型"
+},
+"notifications": {
+"modelDeleted": "模型删除成功",
+"accessDenied": "没有权限执行此操作"
+},
+"validation": {
+"modelNameRequired": "请输入模型名称",
+"invalidModelName": "请输入有效的模型名称",
+"selectProvider": "请选择提供商"
+},
+"accessDenied": {
+"title": "访问被拒绝",
+"message": "您没有权限执行此操作。"
+},
+"allModels": "全部模型"
+},
+"table": "表格",
+"actions": "操作",
+"modal": {
+"title": "模态框"
+},
+"common": {
+"loading": "加载中...",
+"save": "保存",
+"cancel": "取消",
+"delete": "删除",
+"edit": "编辑",
+"create": "创建",
+"search": "搜索",
+"filter": "筛选",
+"export": "导出",
+"refresh": "刷新",
+"back": "返回",
+"next": "下一页",
+"previous": "上一页",
+"page": "页",
+"of": "of",
+"noResults": "无结果",
+"noData": "无数据",
+"required": "必填",
+"optional": "可选",
+"success": "成功",
+"error": "错误",
+"warning": "警告",
+"info": "信息",
+"confirm": "确认",
+"yes": "是",
+"no": "否",
+"close": "关闭",
+"submit": "提交",
+"timeRangeType": {
+"day": "日",
+"week": "周",
+"month": "月",
+"selectTimeRange": "选择时间范围"
+}
+    "submit": "提交"
+},
+"modelInfo": {
+"title": "模型信息",
+"tabs": {
+"overview": "概览",
+"credentials": "凭证",
+"healthCheck": "健康检查",
+"modelAlias": "模型别名",
+"priceDataManagement": "价格数据管理",
+"retrySettings": "重试设置"
+},
+"tooltip": {
+"deleteModel": "删除模型",
+"editCredentials": "编辑凭证"
+},
+"labels": {
+"name": "名称",
+"provider": "提供商",
+"alias": "别名",
+"credentials": "凭证",
+"healthCheck": "健康检查",
+"priceData": "价格数据",
+"retrySettings": "重试设置",
+"guardrails": "防护栏",
+"modelName": "模型名称"
+},
+"placeholders": {
+"search": "搜索模型..."
+},
+"notifications": {
+"modelSaved": "模型已保存",
+"modelDeleted": "模型已删除",
+"credentialsUpdated": "凭证已更新"
+}
+},
+"users": {
+"tabs": {
+"general": "常规",
+"keys": "密钥",
+"teams": "分组"
+},
+"defaultSettings": {
+"title": "默认用户设置",
+"description": "设置新用户的默认配置。",
+"models": "默认模型",
+"modelsPlaceholder": "选择默认模型",
+"maxBudget": "最大预算",
+"maxBudgetPlaceholder": "请输入预算金额",
+"tpmLimit": "每分钟限制 (TPM)",
+"tpmLimitPlaceholder": "请输入数值",
+"rpmLimit": "每分钟请求限制 (RPM)",
+"rpmLimitPlaceholder": "请输入数值",
+"maxParallelRequests": "最大并行请求数",
+"maxParallelRequestsPlaceholder": "请输入数值",
+"saveChanges": "保存更改",
+"cancel": "取消",
+"noModels": "未配置模型",
+"notSpecified": "未指定"
+},
+"deleteModal": {
+"title": "删除用户？",
+"message": "您确定要删除此用户吗？所有关联的数据将被永久删除。",
+"resourceTitle": "用户信息",
+"email": "邮箱",
+"userId": "用户 ID",
+"globalProxyRole": "全局代理角色",
+"totalSpend": "总花费",
+"addTeam": "添加分组",
+"noTeamsAssigned": "未分配分组",
+"noLimit": "不限制",
+"role": "角色",
+"noDefaultModels": "没有默认模型",
+"allProxyModels": "所有代理模型"
+}
+}
 }

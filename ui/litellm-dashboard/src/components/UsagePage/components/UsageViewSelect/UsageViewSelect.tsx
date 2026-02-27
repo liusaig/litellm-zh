@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Badge, Select } from "antd";
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 export type UsageOption = "global" | "organization" | "team" | "customer" | "tag" | "agent" | "user-agent-activity";
 export interface UsageViewSelectProps {
   value: UsageOption;
@@ -31,58 +32,58 @@ interface OptionConfig {
   descriptionForNonAdmin?: string;
   badgeText?: string;
 }
-const OPTIONS: OptionConfig[] = [
+const getOptions = (t: (key: string) => string): OptionConfig[] => [
   {
     value: "global",
-    label: "Global Usage",
-    showForAdmin: "Global Usage",
-    showForNonAdmin: "Your Usage",
-    description: "View usage across all resources",
-    descriptionForAdmin: "View usage across all resources",
-    descriptionForNonAdmin: "View your usage",
+    label: t("usagePage.globalUsage"),
+    showForAdmin: t("usagePage.globalUsageAdmin"),
+    showForNonAdmin: t("usagePage.globalUsageNonAdmin"),
+    description: t("usagePage.globalUsageDescAdmin"),
+    descriptionForAdmin: t("usagePage.globalUsageDescAdmin"),
+    descriptionForNonAdmin: t("usagePage.globalUsageDescNonAdmin"),
     icon: <GlobalOutlined style={{ fontSize: "16px" }} />,
   },
   {
     value: "organization",
-    label: "Organization Usage",
-    showForAdmin: "Organization Usage",
-    showForNonAdmin: "Your Organization Usage",
-    description: "View organization-level usage",
-    descriptionForAdmin: "View usage across all organizations",
-    descriptionForNonAdmin: "View your organization's usage",
+    label: t("usagePage.organizationUsage"),
+    showForAdmin: t("usagePage.organizationUsageAdmin"),
+    showForNonAdmin: t("usagePage.organizationUsageNonAdmin"),
+    description: t("usagePage.organizationUsageDescAdmin"),
+    descriptionForAdmin: t("usagePage.organizationUsageDescAdmin"),
+    descriptionForNonAdmin: t("usagePage.organizationUsageDescNonAdmin"),
     icon: <BankOutlined style={{ fontSize: "16px" }} />,
   },
   {
     value: "team",
-    label: "Team Usage",
-    description: "View usage by team",
+    label: t("usagePage.teamUsage"),
+    description: t("usagePage.teamUsageDesc"),
     icon: <TeamOutlined style={{ fontSize: "16px" }} />,
   },
   {
     value: "customer",
-    label: "Customer Usage",
-    description: "View usage by customer accounts",
+    label: t("usagePage.customerUsage"),
+    description: t("usagePage.customerUsageDesc"),
     icon: <ShoppingCartOutlined style={{ fontSize: "16px" }} />,
     adminOnly: true,
   },
   {
     value: "tag",
-    label: "Tag Usage",
-    description: "View usage grouped by tags",
+    label: t("usagePage.tagUsage"),
+    description: t("usagePage.tagUsageDesc"),
     icon: <TagsOutlined style={{ fontSize: "16px" }} />,
     adminOnly: true,
   },
   {
     value: "agent",
-    label: "Agent Usage (A2A)",
-    description: "View usage by AI agents",
+    label: t("usagePage.agentUsage"),
+    description: t("usagePage.agentUsageDesc"),
     icon: <RobotOutlined style={{ fontSize: "16px" }} />,
     adminOnly: true,
   },
   {
     value: "user-agent-activity",
-    label: "User Agent Activity",
-    description: "View detailed user agent activity logs",
+    label: t("usagePage.userAgentActivity"),
+    description: t("usagePage.userAgentActivityDesc"),
     icon: <LineChartOutlined style={{ fontSize: "16px" }} />,
     adminOnly: true,
   },
@@ -95,8 +96,9 @@ export const UsageViewSelect: React.FC<UsageViewSelectProps> = ({
   description = "Select the usage data you want to view",
   "data-id": dataId,
 }) => {
+  const { t } = useLanguage();
   const getFilteredOptions = () => {
-    return OPTIONS.filter((option) => {
+    return getOptions(t).filter((option) => {
       if (option.adminOnly && !isAdmin) {
         return false;
       }
@@ -128,8 +130,8 @@ export const UsageViewSelect: React.FC<UsageViewSelectProps> = ({
             <BarChartOutlined style={{ fontSize: "32px" }} />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-gray-900 mb-0.5 leading-tight">{title}</h3>
-            <p className="text-xs text-gray-600 leading-tight">{description}</p>
+            <h3 className="text-sm font-semibold text-gray-900 mb-0.5 leading-tight">{t("usagePage.usageView")}</h3>
+            <p className="text-xs text-gray-600 leading-tight">{t("usagePage.selectUsageView")}</p>
           </div>
         </div>
         <div className="flex-shrink-0">

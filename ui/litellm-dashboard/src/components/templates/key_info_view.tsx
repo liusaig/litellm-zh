@@ -21,6 +21,7 @@ import ObjectPermissionsView from "../object_permissions_view";
 import { RegenerateKeyModal } from "../organisms/regenerate_key_modal";
 import { parseErrorMessage } from "../shared/errorUtils";
 import { KeyEditView } from "./key_edit_view";
+import { getModelDisplayName } from "../key_team_helpers/fetch_available_models_team_key";
 
 interface KeyInfoViewProps {
   keyId: string;
@@ -49,6 +50,11 @@ export default function KeyInfoView({
 }: KeyInfoViewProps) {
   const { accessToken, userId: userID, userRole, premiumUser } = useAuthorized();
   const { t } = useLanguage();
+  const getLocalizedModelLabel = (model: string): string => {
+    if (model === "all-team-models") return t("keyDetail.settings.messages.allTeamModels");
+    if (model === "all-proxy-models") return t("teams.allProxyModels");
+    return getModelDisplayName(model);
+  };
   const { teams: teamsData } = useTeams();
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
@@ -352,6 +358,7 @@ export default function KeyInfoView({
         onDelete={() => setIsDeleteModalOpen(true)}
         canModifyKey={canModifyKey}
         backButtonText={backButtonText}
+        showRegenerateButton={false}
         regenerateDisabled={!premiumUser}
         regenerateTooltip={
           !premiumUser
@@ -441,7 +448,7 @@ export default function KeyInfoView({
                   {currentKeyData.models && currentKeyData.models.length > 0 ? (
                     currentKeyData.models.map((model, index) => (
                       <Badge key={index} color="red">
-                        {model}
+                        {getLocalizedModelLabel(model)}
                       </Badge>
                     ))
                   ) : (
@@ -696,7 +703,7 @@ export default function KeyInfoView({
                       {currentKeyData.models && currentKeyData.models.length > 0 ? (
                         currentKeyData.models.map((model, index) => (
                           <span key={index} className="px-2 py-1 bg-blue-100 rounded text-xs">
-                            {model}
+                            {getLocalizedModelLabel(model)}
                           </span>
                         ))
                       ) : (

@@ -148,7 +148,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
               <button
                 onClick={() => toggleTagsExpansion(apiKey)}
                 className="ml-1 p-1 hover:bg-gray-200 rounded-full transition-colors"
-                title={isExpanded ? "Show fewer tags" : "Show all tags"}
+                title={isExpanded ? t("usagePage.topKeyView.showFewerTags") : t("usagePage.topKeyView.showAllTags")}
               >
                 {isExpanded ? (
                   <ChevronUpIcon className="h-3 w-3 text-gray-500" />

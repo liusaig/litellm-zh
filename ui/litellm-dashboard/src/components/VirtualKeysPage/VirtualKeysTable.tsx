@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useKeys } from "@/app/(dashboard)/hooks/keys/useKeys";
 import { formatNumberWithCommas } from "@/utils/dataUtils";
 import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, SwitchVerticalIcon } from "@heroicons/react/outline";
@@ -112,6 +113,13 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
       };
     }
   }, [refetch]);
+
+  const { t } = useLanguage();
+  const getLocalizedModelLabel = (model: string): string => {
+    if (model === "all-team-models") return t("keyDetail.settings.messages.allTeamModels");
+    if (model === "all-proxy-models") return t("teams.allProxyModels");
+    return getModelDisplayName(model);
+  };
 
   const columns: ColumnDef<KeyResponse>[] = useMemo(() => [
     {
@@ -241,7 +249,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
       enableSorting: false,
       cell: (info) => {
         const userId = info.getValue() as string | null;
-        const displayValue = userId === "default_user_id" ? "Default Proxy Admin" : userId;
+        const displayValue = userId === "default_user_id" ? t("memberTable.defaultProxyAdmin") : userId;
         const width = info.cell.column.getSize();
         return (
           <Tooltip title={displayValue}>
@@ -271,7 +279,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
       enableSorting: false,
       cell: (info) => {
         const value = info.getValue() as string | null;
-        const displayValue = value === "default_user_id" ? "Default Proxy Admin" : value;
+        const displayValue = value === "default_user_id" ? t("memberTable.defaultProxyAdmin") : value;
         const width = info.cell.column.getSize();
         return (
           <Tooltip title={displayValue}>
@@ -400,16 +408,16 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                       )}
                       <div className="flex flex-wrap gap-1">
                         {models.slice(0, 3).map((model, index) =>
-                          model === "all-proxy-models" ? (
+                          model === "all-proxy-models" || model === "all-team-models" ? (
                             <Badge key={index} size={"xs"} color="red">
-                              <Text>所有代理模型</Text>
+                              <Text>{getLocalizedModelLabel(model)}</Text>
                             </Badge>
                           ) : (
                             <Badge key={index} size={"xs"} color="blue">
                               <Text>
                                 {model.length > 30
-                                  ? `${getModelDisplayName(model).slice(0, 30)}...`
-                                  : getModelDisplayName(model)}
+                                  ? `${getLocalizedModelLabel(model).slice(0, 30)}...`
+                                  : getLocalizedModelLabel(model)}
                               </Text>
                             </Badge>
                           ),
@@ -424,16 +432,16 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
                         {expandedAccordions[info.row.id] && (
                           <div className="flex flex-wrap gap-1">
                             {models.slice(3).map((model, index) =>
-                              model === "all-proxy-models" ? (
+                              model === "all-proxy-models" || model === "all-team-models" ? (
                                 <Badge key={index + 3} size={"xs"} color="red">
-                                  <Text>所有代理模型</Text>
+                                  <Text>{getLocalizedModelLabel(model)}</Text>
                                 </Badge>
                               ) : (
                                 <Badge key={index + 3} size={"xs"} color="blue">
                                   <Text>
                                     {model.length > 30
-                                      ? `${getModelDisplayName(model).slice(0, 30)}...`
-                                      : getModelDisplayName(model)}
+                                      ? `${getLocalizedModelLabel(model).slice(0, 30)}...`
+                                      : getLocalizedModelLabel(model)}
                                   </Text>
                                 </Badge>
                               ),
@@ -465,7 +473,7 @@ export function VirtualKeysTable({ teams, organizations, onSortChange, currentSo
         );
       },
     },
-  ], []);
+  ], [t]);
 
   const filterOptions: FilterOption[] = [
     {

@@ -39,7 +39,7 @@ import CloudZeroExportModal from "../../cloudzero_export_modal";
 import EntityUsageExportModal from "../../EntityUsageExport";
 import { Team } from "../../key_team_helpers/key_list";
 import { Organization, tagListCall, userDailyActivityAggregatedCall, userDailyActivityCall } from "../../networking";
-import AdvancedDatePicker from "../../shared/advanced_date_picker";
+import AdvancedUsageDatePicker, { TimeRangeType } from "../../shared/AdvancedUsageDatePicker";
 import { ChartLoader } from "../../shared/chart_loader";
 import { Tag } from "../../tag_management/types";
 import UserAgentActivity from "../../user_agent_activity";
@@ -422,7 +422,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
   }, [accessToken, dateValue.from, dateValue.to, selectedUserId, isAdmin, userID]);
 
   // Super responsive date change handler
-  const handleDateChange = useCallback((newValue: DateRangePickerValue) => {
+  const handleDateChange = useCallback((newValue: DateRangePickerValue, type?: TimeRangeType) => {
     // Instant visual feedback
     setIsDateChanging(true);
     setLoading(true);
@@ -486,17 +486,50 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
         </div>
       )} */}
 
-      {/* Global Date Picker and Tabs - Single Row */}
-      <div className="flex items-end justify-between gap-6 mb-6">
-        <div className="flex-1">
-          <div className="flex items-end justify-between gap-6 mb-4 w-full">
+      {/* Global controls and tabs */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+          <div className="flex-1 min-w-[280px]">
             <UsageViewSelect
               value={usageView}
               onChange={(value) => setUsageView(value)}
               isAdmin={isAdmin}
             />
-            <AdvancedDatePicker value={dateValue} onValueChange={handleDateChange} />
           </div>
+          <div className="flex flex-wrap items-center justify-end gap-3 w-full xl:w-auto">
+            <AdvancedUsageDatePicker value={dateValue} onValueChange={handleDateChange} className="w-full sm:w-auto" />
+            {usageView === "global" && (
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  onClick={() => setIsAiChatOpen(true)}
+                  icon={() => (
+                    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11 6.5 7.5 3 6l3.5-1.5L8 1zm4 7l.75 1.75L14.5 10.5l-1.75.75L12 13l-.75-1.75L9.5 10.5l1.75-.75L12 8zM4 9l.75 1.75L6.5 11.5l-1.75.75L4 14l-.75-1.75L1.5 11.5l1.75-.75L4 9z" />
+                    </svg>
+                  )}
+                >
+                  Ask AI
+                </Button>
+                <Button
+                  onClick={() => setIsGlobalExportModalOpen(true)}
+                  icon={() => (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                  )}
+                >
+                  Export Data
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex-1">
           {/* Your Usage Panel */}
           {usageView === "global" && (
             <>
@@ -509,33 +542,6 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
                   <Tab>MCP Server Activity</Tab>
                   <Tab>Endpoint Activity</Tab>
                 </TabList>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setIsAiChatOpen(true)}
-                    icon={() => (
-                      <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11 6.5 7.5 3 6l3.5-1.5L8 1zm4 7l.75 1.75L14.5 10.5l-1.75.75L12 13l-.75-1.75L9.5 10.5l1.75-.75L12 8zM4 9l.75 1.75L6.5 11.5l-1.75.75L4 14l-.75-1.75L1.5 11.5l1.75-.75L4 9z" />
-                      </svg>
-                    )}
-                  >
-                    Ask AI
-                  </Button>
-                  <Button
-                    onClick={() => setIsGlobalExportModalOpen(true)}
-                    icon={() => (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                        />
-                      </svg>
-                    )}
-                  >
-                    Export Data
-                  </Button>
-                </div>
               </div>
               <TabPanels>
                 {/* Cost Panel */}

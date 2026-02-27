@@ -357,9 +357,9 @@ export default function AuditLogs({
 
       if ((action === "updated" || action === "rotated") && before_value && updated_values) {
         if (
-          table_name === "LiteLLM_TeamTable" ||
-          table_name === "LiteLLM_UserTable" ||
-          table_name === "LiteLLM_VerificationToken"
+          table_name === "Silinex_TeamTable" ||
+          table_name === "Silinex_UserTable" ||
+          table_name === "Silinex_VerificationToken"
         ) {
           const changedBefore: Record<string, any> = {};
           const changedUpdated: Record<string, any> = {};
@@ -412,11 +412,11 @@ export default function AuditLogs({
         <div className="-mx-4 p-4 bg-slate-100 border-y border-slate-300 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h4 className="font-semibold mb-2 text-sm text-slate-700">Before Value:</h4>
-            {renderValue(displayBeforeValue, table_name === "LiteLLM_VerificationToken")}
+            {renderValue(displayBeforeValue, table_name === "Silinex_VerificationToken")}
           </div>
           <div>
             <h4 className="font-semibold mb-2 text-sm text-slate-700">Updated Value:</h4>
-            {renderValue(displayUpdatedValue, table_name === "LiteLLM_VerificationToken")}
+            {renderValue(displayUpdatedValue, table_name === "Silinex_VerificationToken")}
           </div>
         </div>
       );

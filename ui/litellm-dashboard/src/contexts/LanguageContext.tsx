@@ -17,7 +17,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 // Storage key
-const STORAGE_KEY = "litellm-language";
+const STORAGE_KEY = "silinex-language";
 
 // Provider props
 interface LanguageProviderProps {

@@ -173,7 +173,7 @@ describe("KeyInfoView", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Regenerate Key")).toBeInTheDocument();
+      expect(screen.queryByText("Regenerate Key")).not.toBeInTheDocument();
       expect(screen.getByText("Delete Key")).toBeInTheDocument();
     });
   });
@@ -218,7 +218,7 @@ describe("KeyInfoView", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Regenerate Key")).toBeInTheDocument();
+      expect(screen.queryByText("Regenerate Key")).not.toBeInTheDocument();
       expect(screen.getByText("Delete Key")).toBeInTheDocument();
     });
   });
@@ -242,7 +242,7 @@ describe("KeyInfoView", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Regenerate Key")).toBeInTheDocument();
+      expect(screen.queryByText("Regenerate Key")).not.toBeInTheDocument();
       expect(screen.getByText("Delete Key")).toBeInTheDocument();
     });
   });

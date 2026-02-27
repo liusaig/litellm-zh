@@ -18,6 +18,9 @@ interface DeleteResourceModalProps {
   onOk: () => void;
   confirmLoading: boolean;
   requiredConfirmation?: string;
+  okText?: string;
+  okLoadingText?: string;
+  cancelText?: string;
 }
 
 export default function DeleteResourceModal({
@@ -31,6 +34,9 @@ export default function DeleteResourceModal({
   onOk,
   confirmLoading,
   requiredConfirmation,
+  okText = "Delete",
+  okLoadingText = "Deleting...",
+  cancelText = "Cancel",
 }: DeleteResourceModalProps) {
   const { Title, Text } = Typography;
   const { token } = theme.useToken();
@@ -49,8 +55,8 @@ export default function DeleteResourceModal({
       onOk={onOk}
       onCancel={onCancel}
       confirmLoading={confirmLoading}
-      okText={confirmLoading ? "Deleting..." : "Delete"}
-      cancelText="Cancel"
+      okText={confirmLoading ? okLoadingText : okText}
+      cancelText={cancelText}
       okButtonProps={{
         danger: true,
         disabled: (!!requiredConfirmation && requiredConfirmationInput !== requiredConfirmation) || confirmLoading,

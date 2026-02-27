@@ -22,7 +22,7 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
   const [activeTab, setActiveTab] = useState("overview");
 
   const detailRows = [
-    { property: "Provider", value: card.category === "litellm" ? "LiteLLM Content Filter" : "Partner Guardrail" },
+    { property: "Provider", value: card.category === "litellm" ? "Silinex Content Filter" : "Partner Guardrail" },
     ...(card.subcategory ? [{ property: "Subcategory", value: card.subcategory }] : []),
     ...(card.category === "litellm" ? [{ property: "Cost", value: "¥0 / 请求" }] : []),
     ...(card.category === "litellm" ? [{ property: "External Dependencies", value: "None" }] : []),

@@ -72,7 +72,7 @@ interface GuardrailSettings {
   };
 }
 
-interface LiteLLMParams {
+interface SilinexParams {
   guardrail: string;
   mode: string;
   default_on: boolean;

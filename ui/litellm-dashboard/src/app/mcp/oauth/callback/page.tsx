@@ -3,8 +3,8 @@
 import { Suspense, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 
-const RESULT_STORAGE_KEY = "litellm-mcp-oauth-result";
-const RETURN_URL_STORAGE_KEY = "litellm-mcp-oauth-return-url";
+const RESULT_STORAGE_KEY = "silinex-mcp-oauth-result";
+const RETURN_URL_STORAGE_KEY = "silinex-mcp-oauth-return-url";
 
 const resolveDefaultRedirect = () => {
   if (typeof window === "undefined") {
@@ -29,7 +29,7 @@ const McpOAuthCallbackContent = () => {
       return null;
     }
     return {
-      type: "litellm-mcp-oauth",
+      type: "silinex-mcp-oauth",
       code: searchParams.get("code"),
       state: searchParams.get("state"),
     };

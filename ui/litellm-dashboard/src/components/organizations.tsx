@@ -542,6 +542,9 @@ const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
         onCancel={cancelDelete}
         onOk={confirmDelete}
         confirmLoading={isDeleting}
+        cancelText={t("organizations.delete.cancel")}
+        okText={t("organizations.delete.confirm")}
+        okLoadingText={t("organizations.delete.deleting")}
       />
     </div>
   );

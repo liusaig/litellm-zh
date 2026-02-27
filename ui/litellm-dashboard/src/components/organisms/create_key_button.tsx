@@ -1,11 +1,12 @@
 "use client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { keyKeys } from "@/app/(dashboard)/hooks/keys/useKeys";
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
 import { formatNumberWithCommas } from "@/utils/dataUtils";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { Accordion, AccordionBody, AccordionHeader, Button, Col, Grid, Text, TextInput, Title } from "@tremor/react";
-import { Button as Button2, Form, Input, Modal, Radio, Select, Switch, Tag, Tooltip, message } from "antd";
+import { Button as Button2, Form, Input, Modal, Radio, Select, Switch, Tooltip } from "antd";
 import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -29,13 +30,11 @@ import MCPServerSelector from "../mcp_server_management/MCPServerSelector";
 import MCPToolPermissions from "../mcp_server_management/MCPToolPermissions";
 import NotificationsManager from "../molecules/notifications_manager";
 import {
-  getAgentsList,
   getGuardrailsList,
   getPoliciesList,
   getPossibleUserRoles,
   getPromptsList,
   keyCreateCall,
-  keyCreateServiceAccountCall,
   modelAvailableCall,
   proxyBaseUrl,
   userFilterUICall,
@@ -144,6 +143,7 @@ export const fetchUserModels = async (
  */
 const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
   const { accessToken, userId: userID, userRole, premiumUser } = useAuthorized();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -171,8 +171,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
   const [rotationInterval, setRotationInterval] = useState<string>("30d");
   const [routerSettings, setRouterSettings] = useState<RouterSettingsAccordionValue | null>(null);
   const [routerSettingsKey, setRouterSettingsKey] = useState<number>(0);
-  const [agentsList, setAgentsList] = useState<{ agent_id: string; agent_name: string }[]>([]);
-  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const handleOk = () => {
     setIsModalVisible(false);
     form.resetFields();
@@ -184,7 +182,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
     setRotationInterval("30d");
     setRouterSettings(null);
     setRouterSettingsKey((prev) => prev + 1);
-    setSelectedAgentId(null);
   };
 
   const handleCancel = () => {
@@ -200,7 +197,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
     setRotationInterval("30d");
     setRouterSettings(null);
     setRouterSettingsKey((prev) => prev + 1);
-    setSelectedAgentId(null);
   };
 
   useEffect(() => {
@@ -208,14 +204,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
       fetchUserModels(userID, userRole, accessToken, setUserModels);
     }
   }, [accessToken, userID, userRole]);
-
-  useEffect(() => {
-    if (accessToken) {
-      getAgentsList(accessToken)
-        .then((res) => setAgentsList(res?.agents || []))
-        .catch(() => setAgentsList([]));
-    }
-  }, [accessToken]);
 
   useEffect(() => {
     const fetchGuardrails = async () => {
@@ -297,12 +285,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
 
       if (keyOwner === "you") {
         formValues.user_id = userID;
-      } else if (keyOwner === "agent") {
-        if (!selectedAgentId) {
-          message.error("Please select an agent");
-          return;
-        }
-        formValues.agent_id = selectedAgentId;
       }
 
       // Handle metadata for all key types
@@ -311,11 +293,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
         metadata = JSON.parse(formValues.metadata || "{}");
       } catch (error) {
         console.error("Error parsing metadata:", error);
-      }
-
-      // If it's a service account, add the service_account_id to the metadata
-      if (keyOwner === "service_account") {
-        metadata["service_account_id"] = formValues.key_alias;
       }
 
       // Add logging settings to the metadata
@@ -435,12 +412,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
         }
       }
 
-      let response;
-      if (keyOwner === "service_account") {
-        response = await keyCreateServiceAccountCall(accessToken, formValues);
-      } else {
-        response = await keyCreateCall(accessToken, userID, formValues);
-      }
+      const response = await keyCreateCall(accessToken, userID, formValues);
 
       console.log("key create Response:", response);
 
@@ -540,10 +512,17 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
         </Button>
       )}
       <Modal open={isModalVisible} width={1000} footer={null} onOk={handleOk} onCancel={handleCancel}>
-        <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
+        <Form
+          form={form}
+          onFinish={handleCreate}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign="left"
+          className="[&_.ant-form-item]:mb-6"
+        >
           {/* Section 1: Key Ownership */}
           <div className="mb-8">
-            <Title className="mb-4">密钥所有权</Title>
+            <Title className="mb-4">创建密钥</Title>
             <Form.Item
               label={
                 <span>
@@ -557,9 +536,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
             >
               <Radio.Group onChange={(e) => setKeyOwner(e.target.value)} value={keyOwner}>
                 <Radio value="you">您</Radio>
-                <Radio value="service_account">服务账户</Radio>
                 {userRole === "Admin" && <Radio value="another_user">其他用户</Radio>}
-                <Radio value="agent">智能体 <Tag color="purple">新</Tag></Radio>
               </Radio.Group>
             </Form.Item>
 
@@ -586,7 +563,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                   <div style={{ display: "flex", marginBottom: "8px" }}>
                     <Select
                       showSearch
-                      placeholder="输入邮箱搜索用户"
+                      placeholder="输入用户名搜索用户"
                       filterOption={false}
                       onSearch={handleUserSearch}
                       onSelect={(value, option) => handleUserSelect(value, option as UserOption)}
@@ -600,35 +577,9 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                       创建用户
                     </Button2>
                   </div>
-                  <div className="text-xs text-gray-500">通过邮箱搜索用户</div>
+                  <div className="text-xs text-gray-500">通过用户名搜索用户</div>
                 </div>
               </Form.Item>
-            )}
-            {keyOwner === "agent" && (
-              <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-md">
-                <div className="mb-3">
-                  <span className="text-sm font-medium text-gray-700">
-                    选择智能体 <span className="text-red-500">*</span>
-                  </span>
-                </div>
-                <Select
-                  showSearch
-                  placeholder="选择智能体"
-                  style={{ width: "100%" }}
-                  value={selectedAgentId}
-                  onChange={(value) => setSelectedAgentId(value)}
-                  filterOption={(input, option) =>
-                    (option?.label as string)?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  options={agentsList.map((a) => ({
-                    label: a.agent_name || a.agent_id,
-                    value: a.agent_id,
-                  }))}
-                />
-                <div className="text-xs text-gray-500 mt-2">
-                  此密钥将被选定的智能体用于向 LiteLLM 发起请求
-                </div>
-              </div>
             )}
             <Form.Item
               label={
@@ -642,13 +593,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
               name="team_id"
               initialValue={team ? team.team_id : null}
               className="mt-4"
-              rules={[
-                {
-                  required: keyOwner === "service_account",
-                  message: "请为服务账户选择团队",
-                },
-              ]}
-              help={keyOwner === "service_account" ? "必填" : ""}
             >
               <TeamDropdown
                 teams={teams}
@@ -677,13 +621,9 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
               <Form.Item
                 label={
                   <span>
-                    {keyOwner === "you" || keyOwner === "another_user" ? "密钥名称" : "服务账户 ID"}{" "}
+                    密钥名称{" "}
                     <Tooltip
-                      title={
-                        keyOwner === "you" || keyOwner === "another_user"
-                          ? "用于识别此密钥的描述性名称"
-                          : "此服务账户的唯一标识符"
-                      }
+                      title={"用于识别此密钥的描述性名称"}
                     >
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
@@ -693,10 +633,9 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                 rules={[
                   {
                     required: true,
-                    message: `请输入${keyOwner === "you" ? "密钥名称" : "服务账户 ID"}`,
+                    message: "请输入密钥名称",
                   },
                 ]}
-                help="必填"
               >
                 <TextInput placeholder="" />
               </Form.Item>
@@ -719,7 +658,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                 help={
                   keyType === "management" || keyType === "read_only"
                     ? "此密钥类型禁用模型字段"
-                    : "必填"
+                    : undefined
                 }
                 className="mt-4"
               >
@@ -735,7 +674,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                   }}
                 >
                   <Option key="all-team-models" value="all-team-models">
-                    所有团队模型
+                    {t("keyDetail.settings.messages.allTeamModels")}
                   </Option>
                   {modelsToPick.map((model: string) => (
                     <Option key={model} value={model}>
@@ -797,9 +736,64 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                   </Option>
                 </Select>
               </Form.Item>
+              <Form.Item
+                className="mt-4 mb-8"
+                style={{ marginBottom: 40 }}
+                label={
+                  <span>
+                    最大预算{' '}
+                    <Tooltip title="此密钥可以消费的最大金额。达到后，密钥将被阻止发起进一步请求">
+                      <InfoCircleOutlined style={{ marginLeft: '4px' }} />
+                    </Tooltip>
+                  </span>
+                }
+                name="max_budget"
+                help={
+                  <div className="pb-2">
+                    {`预算不能超过团队最大预算：¥${team?.max_budget !== null && team?.max_budget !== undefined ? team.max_budget : '无限制'}`}
+                  </div>
+                }
+                rules={[
+                  {
+                    validator: async (_, value) => {
+                      if (value && team && team.max_budget !== null && value > team.max_budget) {
+                        throw new Error(
+                          `预算不能超过团队最大预算：¥${formatNumberWithCommas(team.max_budget, 4)}`,
+                        );
+                      }
+                    },
+                  },
+                ]}
+              >
+                <NumericalInput
+                  step={0.01}
+                  precision={2}
+                  width={200}
+                  placeholder={t("keyDetail.settings.placeholders.enterNumericalValue")}
+                />
+              </Form.Item>
+              <Form.Item
+                className="mt-4 mb-8"
+                style={{ marginBottom: 40 }}
+                label={
+                  <span>
+                    重置预算{' '}
+                    <Tooltip title="预算应多久重置一次。例如，设置'每天'将每 24 小时重置一次预算">
+                      <InfoCircleOutlined style={{ marginLeft: '4px' }} />
+                    </Tooltip>
+                  </span>
+                }
+                name="budget_duration"
+                help={
+                  <div className="pb-2">
+                    {`团队重置预算：${team?.budget_duration !== null && team?.budget_duration !== undefined ? team.budget_duration : '无'}`}
+                  </div>
+                }
+              >
+                <BudgetDurationDropdown onChange={(value) => form.setFieldValue('budget_duration', value)} />
+              </Form.Item>
             </div>
           )}
-
           {/* Section 3: Optional Settings */}
           {!isFormDisabled && (
             <div className="mb-8">
@@ -808,47 +802,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                   <Title className="m-0">可选设置</Title>
                 </AccordionHeader>
                 <AccordionBody>
-                  <Form.Item
-                    className="mt-4"
-                    label={
-                      <span>
-                        最大预算{" "}
-                        <Tooltip title="此密钥可以消费的最大金额。达到后，密钥将被阻止发起进一步请求">
-                          <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                        </Tooltip>
-                      </span>
-                    }
-                    name="max_budget"
-                    help={`预算不能超过团队最大预算：¥${team?.max_budget !== null && team?.max_budget !== undefined ? team?.max_budget : "无限制"}`}
-                    rules={[
-                      {
-                        validator: async (_, value) => {
-                          if (value && team && team.max_budget !== null && value > team.max_budget) {
-                            throw new Error(
-                              `预算不能超过团队最大预算：¥${formatNumberWithCommas(team.max_budget, 4)}`,
-                            );
-                          }
-                        },
-                      },
-                    ]}
-                  >
-                    <NumericalInput step={0.01} precision={2} width={200} />
-                  </Form.Item>
-                  <Form.Item
-                    className="mt-4"
-                    label={
-                      <span>
-                        重置预算{" "}
-                        <Tooltip title="预算应多久重置一次。例如，设置'每天'将每 24 小时重置一次预算">
-                          <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                        </Tooltip>
-                      </span>
-                    }
-                    name="budget_duration"
-                    help={`团队重置预算：${team?.budget_duration !== null && team?.budget_duration !== undefined ? team?.budget_duration : "无"}`}
-                  >
-                    <BudgetDurationDropdown onChange={(value) => form.setFieldValue("budget_duration", value)} />
-                  </Form.Item>
                   <Form.Item
                     className="mt-4"
                     label={
@@ -871,7 +824,11 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                       },
                     ]}
                   >
-                    <NumericalInput step={1} width={400} />
+                    <NumericalInput
+                      step={1}
+                      width={400}
+                      placeholder={t("keyDetail.settings.placeholders.enterNumericalValue")}
+                    />
                   </Form.Item>
                   <RateLimitTypeFormItem
                     type="tpm"
@@ -903,7 +860,11 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                       },
                     ]}
                   >
-                    <NumericalInput step={1} width={400} />
+                    <NumericalInput
+                      step={1}
+                      width={400}
+                      placeholder={t("keyDetail.settings.placeholders.enterNumericalValue")}
+                    />
                   </Form.Item>
                   <RateLimitTypeFormItem
                     type="rpm"
@@ -913,139 +874,114 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     form={form}
                     showDetailedDescriptions={true}
                   />
-                  <Form.Item
-                    label={
-                      <span>
-                        安全防护{" "}
-                        <Tooltip title="为此密钥应用安全防护以过滤内容或强制执行策略">
-                          <a
-                            href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()} // Prevent accordion from collapsing when clicking link
-                          >
-                            <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                          </a>
-                        </Tooltip>
-                      </span>
-                    }
-                    name="guardrails"
-                    className="mt-4"
-                    help={
-                      premiumUser
-                        ? "选择现有安全防护或输入新的"
-                        : "企业功能 - 升级以按密钥设置安全防护"
-                    }
-                  >
-                    <Select
-                      mode="tags"
-                      style={{ width: "100%" }}
-                      disabled={!premiumUser}
-                      placeholder={
-                        !premiumUser
-                          ? "企业功能 - 升级以按密钥设置安全防护"
-                          : "选择或输入安全防护"
-                      }
-                      options={guardrailsList.map((name) => ({ value: name, label: name }))}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label={
-                      <span>
-                        禁用全局安全防护{" "}
-                        <Tooltip title="启用后，此密钥将绕过任何配置为在每个请求上运行的安全防护（全局安全防护）">
-                          <a
-                            href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()} // Prevent accordion from collapsing when clicking link
-                          >
-                            <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                          </a>
-                        </Tooltip>
-                      </span>
-                    }
-                    name="disable_global_guardrails"
-                    className="mt-4"
-                    valuePropName="checked"
-                    help={
-                      premiumUser
-                        ? "为此密钥绕过全局安全防护"
-                        : "企业功能 - 升级以按密钥禁用全局安全防护"
-                    }
-                  >
-                    <Switch disabled={!premiumUser} checkedChildren="是" unCheckedChildren="否" />
-                  </Form.Item>
-                  <Form.Item
-                    label={
-                      <span>
-                        策略{" "}
-                        <Tooltip title="为此密钥应用策略以控制安全防护和其他设置">
-                          <a
-                            href="https://docs.litellm.ai/docs/proxy/guardrails/guardrail_policies"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()} // Prevent accordion from collapsing when clicking link
-                          >
-                            <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                          </a>
-                        </Tooltip>
-                      </span>
-                    }
-                    name="policies"
-                    className="mt-4"
-                    help={
-                      premiumUser
-                        ? "选择现有策略或输入新的"
-                        : "企业功能 - 升级以按密钥设置策略"
-                    }
-                  >
-                    <Select
-                      mode="tags"
-                      style={{ width: "100%" }}
-                      disabled={!premiumUser}
-                      placeholder={
-                        !premiumUser
-                          ? "企业功能 - 升级以按密钥设置策略"
-                          : "选择或输入策略"
-                      }
-                      options={policiesList.map((name) => ({ value: name, label: name }))}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label={
-                      <span>
-                        提示词{" "}
-                        <Tooltip title="允许此密钥使用特定的提示词模板">
-                          <a
-                            href="https://docs.litellm.ai/docs/proxy/prompt_management"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()} // Prevent accordion from collapsing when clicking link
-                          >
-                            <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                          </a>
-                        </Tooltip>
-                      </span>
-                    }
-                    name="prompts"
-                    className="mt-4"
-                    help={
-                      premiumUser
-                        ? "选择现有提示词或输入新的"
-                        : "企业功能 - 升级以按密钥设置提示词"
-                    }
-                  >
-                    <Select
-                      mode="tags"
-                      style={{ width: "100%" }}
-                      disabled={!premiumUser}
-                      placeholder={
-                        !premiumUser ? "企业功能 - 升级以按密钥设置提示词" : "选择或输入提示词"
-                      }
-                      options={promptsList.map((name) => ({ value: name, label: name }))}
-                    />
-                  </Form.Item>
+                  {premiumUser && (
+                    <>
+                      <Form.Item
+                        label={
+                          <span>
+                            安全防护{" "}
+                            <Tooltip title="为此密钥应用安全防护以过滤内容或强制执行策略">
+                              <a
+                                href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <InfoCircleOutlined style={{ marginLeft: "4px" }} />
+                              </a>
+                            </Tooltip>
+                          </span>
+                        }
+                        name="guardrails"
+                        className="mt-4"
+                        help="选择现有安全防护或输入新的"
+                      >
+                        <Select
+                          mode="tags"
+                          style={{ width: "100%" }}
+                          placeholder="选择或输入安全防护"
+                          options={guardrailsList.map((name) => ({ value: name, label: name }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label={
+                          <span>
+                            禁用全局安全防护{" "}
+                            <Tooltip title="启用后，此密钥将绕过任何配置为在每个请求上运行的安全防护（全局安全防护）">
+                              <a
+                                href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <InfoCircleOutlined style={{ marginLeft: "4px" }} />
+                              </a>
+                            </Tooltip>
+                          </span>
+                        }
+                        name="disable_global_guardrails"
+                        className="mt-4"
+                        valuePropName="checked"
+                        help="为此密钥绕过全局安全防护"
+                      >
+                        <Switch checkedChildren="是" unCheckedChildren="否" />
+                      </Form.Item>
+                      <Form.Item
+                        label={
+                          <span>
+                            策略{" "}
+                            <Tooltip title="为此密钥应用策略以控制安全防护和其他设置">
+                              <a
+                                href="https://docs.litellm.ai/docs/proxy/guardrails/guardrail_policies"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <InfoCircleOutlined style={{ marginLeft: "4px" }} />
+                              </a>
+                            </Tooltip>
+                          </span>
+                        }
+                        name="policies"
+                        className="mt-4"
+                        help="选择现有策略或输入新的"
+                      >
+                        <Select
+                          mode="tags"
+                          style={{ width: "100%" }}
+                          placeholder="选择或输入策略"
+                          options={policiesList.map((name) => ({ value: name, label: name }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label={
+                          <span>
+                            提示词{" "}
+                            <Tooltip title="允许此密钥使用特定的提示词模板">
+                              <a
+                                href="https://docs.litellm.ai/docs/proxy/prompt_management"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <InfoCircleOutlined style={{ marginLeft: "4px" }} />
+                              </a>
+                            </Tooltip>
+                          </span>
+                        }
+                        name="prompts"
+                        className="mt-4"
+                        help="选择现有提示词或输入新的"
+                      >
+                        <Select
+                          mode="tags"
+                          style={{ width: "100%" }}
+                          placeholder={t("keyDetail.settings.placeholders.selectPrompts")}
+                          options={promptsList.map((name) => ({ value: name, label: name }))}
+                        />
+                      </Form.Item>
+                    </>
+                  )}
                   <Form.Item
                     label={
                       <span>
@@ -1057,49 +993,42 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     }
                     name="access_group_ids"
                     className="mt-4"
-                    help="选择要分配给此密钥的访问组"
+                    help={t("keyDetail.settings.accessGroupsTooltip")}
                   >
                     <AccessGroupSelector
-                      placeholder="选择访问组（可选）"
+                      placeholder={t("keyDetail.settings.placeholders.selectAccessGroups")}
                     />
                   </Form.Item>
-                  <Form.Item
-                    label={
-                      <span>
-                        允许的透传路由{" "}
-                        <Tooltip title="允许此密钥使用特定的透传路由">
-                          <a
-                            href="https://docs.litellm.ai/docs/proxy/pass_through"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()} // Prevent accordion from collapsing when clicking link
-                          >
-                            <InfoCircleOutlined style={{ marginLeft: "4px" }} />
-                          </a>
-                        </Tooltip>
-                      </span>
-                    }
-                    name="allowed_passthrough_routes"
-                    className="mt-4"
-                    help={
-                      premiumUser
-                        ? "选择现有透传路由或输入新的"
-                        : "企业功能 - 升级以按密钥设置透传路由"
-                    }
-                  >
-                    <PassThroughRoutesSelector
-                      onChange={(values: string[]) => form.setFieldValue("allowed_passthrough_routes", values)}
-                      value={form.getFieldValue("allowed_passthrough_routes")}
-                      accessToken={accessToken}
-                      placeholder={
-                        !premiumUser
-                          ? "企业功能 - 升级以按密钥设置透传路由"
-                          : "选择或输入透传路由"
+                  {premiumUser && (
+                    <Form.Item
+                      label={
+                        <span>
+                          允许的透传路由{" "}
+                          <Tooltip title="允许此密钥使用特定的透传路由">
+                            <a
+                              href="https://docs.litellm.ai/docs/proxy/pass_through"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <InfoCircleOutlined style={{ marginLeft: "4px" }} />
+                            </a>
+                          </Tooltip>
+                        </span>
                       }
-                      disabled={!premiumUser}
-                      teamId={selectedCreateKeyTeam ? selectedCreateKeyTeam.team_id : null}
-                    />
-                  </Form.Item>
+                      name="allowed_passthrough_routes"
+                      className="mt-4"
+                      help="选择现有透传路由或输入新的"
+                    >
+                      <PassThroughRoutesSelector
+                        onChange={(values: string[]) => form.setFieldValue("allowed_passthrough_routes", values)}
+                        value={form.getFieldValue("allowed_passthrough_routes")}
+                        accessToken={accessToken}
+                        placeholder="选择或输入透传路由"
+                        teamId={selectedCreateKeyTeam ? selectedCreateKeyTeam.team_id : null}
+                      />
+                    </Form.Item>
+                  )}
                   <Form.Item
                     label={
                       <span>
@@ -1111,13 +1040,13 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     }
                     name="allowed_vector_store_ids"
                     className="mt-4"
-                    help="选择此密钥可以访问的向量库。留空则可访问所有向量库"
+                    help={t("keyDetail.settings.vectorStores")}
                   >
                     <VectorStoreSelector
                       onChange={(values: string[]) => form.setFieldValue("allowed_vector_store_ids", values)}
                       value={form.getFieldValue("allowed_vector_store_ids")}
                       accessToken={accessToken}
-                      placeholder="选择向量库（可选）"
+                      placeholder={t("keyDetail.settings.placeholders.selectVectorStores")}
                     />
                   </Form.Item>
                   <Form.Item
@@ -1132,7 +1061,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     name="metadata"
                     className="mt-4"
                   >
-                    <Input.TextArea rows={4} placeholder="输入 JSON 格式的元数据" />
+                    <Input.TextArea rows={4} placeholder={t("keyDetail.settings.metadataLabel")} />
                   </Form.Item>
                   <Form.Item
                     label={
@@ -1150,7 +1079,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     <Select
                       mode="tags"
                       style={{ width: "100%" }}
-                      placeholder="输入标签"
+                      placeholder={t("keyDetail.settings.placeholders.selectTags")}
                       tokenSeparators={[","]}
                       options={predefinedTags}
                     />
@@ -1170,13 +1099,13 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                           </span>
                         }
                         name="allowed_mcp_servers_and_groups"
-                        help="选择此密钥可以访问的 MCP 服务器或访问组"
+                        help={t("keyDetail.settings.mcpServers")}
                       >
                         <MCPServerSelector
                           onChange={(val: any) => form.setFieldValue("allowed_mcp_servers_and_groups", val)}
                           value={form.getFieldValue("allowed_mcp_servers_and_groups")}
                           accessToken={accessToken}
-                          placeholder="选择 MCP 服务器或访问组（可选）"
+                          placeholder={t("keyDetail.settings.placeholders.selectMcpServers")}
                         />
                       </Form.Item>
 
@@ -1221,19 +1150,19 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                           </span>
                         }
                         name="allowed_agents_and_groups"
-                        help="选择此密钥可以访问的智能体或访问组"
+                        help={t("keyDetail.settings.agents")}
                       >
                         <AgentSelector
                           onChange={(val: any) => form.setFieldValue("allowed_agents_and_groups", val)}
                           value={form.getFieldValue("allowed_agents_and_groups")}
                           accessToken={accessToken}
-                          placeholder="选择智能体或访问组（可选）"
+                          placeholder={t("keyDetail.settings.placeholders.selectAgents")}
                         />
                       </Form.Item>
                     </AccordionBody>
                   </Accordion>
 
-                  {premiumUser ? (
+                  {premiumUser && (
                     <Accordion className="mt-4 mb-4">
                       <AccordionHeader>
                         <b>日志设置</b>
@@ -1250,40 +1179,6 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                         </div>
                       </AccordionBody>
                     </Accordion>
-                  ) : (
-                    <Tooltip
-                      title={
-                        <span>
-                          密钥级别的日志设置是企业功能，请联系 -
-                          <a href="https://www.litellm.ai/enterprise" target="_blank">
-                            https://www.litellm.ai/enterprise
-                          </a>
-                        </span>
-                      }
-                      placement="top"
-                    >
-                      <div style={{ position: "relative" }}>
-                        <div style={{ opacity: 0.5 }}>
-                          <Accordion className="mt-4 mb-4">
-                            <AccordionHeader>
-                              <b>日志设置</b>
-                            </AccordionHeader>
-                            <AccordionBody>
-                              <div className="mt-4">
-                                <PremiumLoggingSettings
-                                  value={loggingSettings}
-                                  onChange={setLoggingSettings}
-                                  premiumUser={false}
-                                  disabledCallbacks={disabledCallbacks}
-                                  onDisabledCallbacksChange={setDisabledCallbacks}
-                                />
-                              </div>
-                            </AccordionBody>
-                          </Accordion>
-                        </div>
-                        <div style={{ position: "absolute", inset: 0, cursor: "not-allowed" }} />
-                      </div>
-                    </Tooltip>
                   )}
 
                   <Accordion key={`router-settings-accordion-${routerSettingsKey}`} className="mt-4 mb-4">

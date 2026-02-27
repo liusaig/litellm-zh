@@ -570,19 +570,19 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
       const tableName = info.getValue();
       let displayValue = tableName;
       switch (tableName) {
-        case "LiteLLM_VerificationToken":
+        case "Silinex_VerificationToken":
           displayValue = "Keys";
           break;
-        case "LiteLLM_TeamTable":
+        case "Silinex_TeamTable":
           displayValue = "Teams";
           break;
-        case "LiteLLM_OrganizationTable":
+        case "Silinex_OrganizationTable":
           displayValue = "Organizations";
           break;
-        case "LiteLLM_UserTable":
+        case "Silinex_UserTable":
           displayValue = "Users";
           break;
-        case "LiteLLM_ProxyModelTable":
+        case "Silinex_ProxyModelTable":
           displayValue = "Models";
           break;
         default:

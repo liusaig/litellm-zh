@@ -36,6 +36,7 @@ interface KeyInfoHeaderProps {
   onDelete?: () => void;
   canModifyKey?: boolean;
   backButtonText?: string;
+  showRegenerateButton?: boolean;
   regenerateDisabled?: boolean;
   regenerateTooltip?: string;
 }
@@ -48,6 +49,7 @@ export function KeyInfoHeader({
   onDelete,
   canModifyKey = true,
   backButtonText = "Back to Keys",
+  showRegenerateButton = true,
   regenerateDisabled = false,
   regenerateTooltip,
 }: KeyInfoHeaderProps) {
@@ -80,13 +82,15 @@ export function KeyInfoHeader({
         </div>
         {canModifyKey && (
           <Space>
-            <Tooltip title={regenerateTooltip || ""}>
-              <span>
-                <Button icon={<SyncOutlined />} onClick={onRegenerate} disabled={regenerateDisabled}>
-                  {t("keyDetail.header.regenerateKey")}
-                </Button>
-              </span>
-            </Tooltip>
+            {showRegenerateButton && (
+              <Tooltip title={regenerateTooltip || ""}>
+                <span>
+                  <Button icon={<SyncOutlined />} onClick={onRegenerate} disabled={regenerateDisabled}>
+                    {t("keyDetail.header.regenerateKey")}
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
             <Button danger icon={<DeleteOutlined />} onClick={onDelete}>
               {t("keyDetail.header.deleteKey")}
             </Button>

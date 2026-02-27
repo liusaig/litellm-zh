@@ -1,7 +1,7 @@
 export enum VectorStoreProviders {
   Bedrock = "Amazon Bedrock",
   S3Vectors = "Amazon S3 Vectors",
-  PgVector = "PostgreSQL pgvector (LiteLLM Connector)",
+  PgVector = "PostgreSQL pgvector (Silinex Connector)",
   VertexRagEngine = "Vertex AI RAG Engine",
   OpenAI = "OpenAI",
   Azure = "Azure OpenAI",

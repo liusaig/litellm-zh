@@ -3,6 +3,7 @@ import { isAdminRole } from "@/utils/roles";
 import { RefreshIcon } from "@heroicons/react/outline";
 import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 type TeamsHeaderTabsProps = {
   lastRefreshed: string;
@@ -17,12 +18,12 @@ const TeamsHeaderTabs = ({ lastRefreshed, onRefresh, userRole, children }: Teams
     <TabGroup className="gap-2 h-[75vh] w-full">
       <TabList className="flex justify-between mt-2 w-full items-center">
         <div className="flex">
-          <Tab>{t("teams.tabs.myTeams")}</Tab>
+          <Tab>{teamT(t, "teams.tabs.myTeams")}</Tab>
           {/* <Tab>可加入分组</Tab> */}
-          {isAdminRole(userRole || "") && <Tab>{t("teams.tabs.defaultSettings")}</Tab>}
+          {isAdminRole(userRole || "") && <Tab>{teamT(t, "teams.tabs.defaultSettings")}</Tab>}
         </div>
         <div className="flex items-center space-x-2">
-          {lastRefreshed && <Text>{t("teams.lastRefreshed")}{lastRefreshed}</Text>}
+          {lastRefreshed && <Text>{teamT(t, "teams.lastRefreshed")}{lastRefreshed}</Text>}
           <Icon
             icon={RefreshIcon} // Modify as necessary for correct icon name
             variant="shadow"

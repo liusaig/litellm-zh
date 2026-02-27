@@ -8,7 +8,7 @@ export interface ModelInfo {
   access_groups: string[] | null;
 }
 
-export interface LiteLLMParams {
+export interface SilinexParams {
   model: string;
   api_base?: string;
   input_cost_per_token?: number;
@@ -28,7 +28,7 @@ export interface ModelData {
   max_tokens: number;
   max_input_tokens: number;
   api_base?: string;
-  litellm_params: LiteLLMParams;
+  litellm_params: SilinexParams;
   cleanedLitellmParams: Record<string, any>;
   accessToken?: string;
 }

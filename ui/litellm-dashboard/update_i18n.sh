@@ -2,8 +2,8 @@
 
 # Update litellm_model_name.tsx
 sed -i '' \
-  -e 's/label="LiteLLM Model Name(s)"/label={t("models.addModel.litellmModelName")}/g' \
-  -e 's/tooltip="The model name LiteLLM will send to the LLM API"/tooltip={t("models.addModel.litellmModelNameTooltip")}/g' \
+  -e 's/label="Silinex Model Name(s)"/label={t("models.addModel.litellmModelName")}/g' \
+  -e 's/tooltip="The model name Silinex will send to the LLM API"/tooltip={t("models.addModel.litellmModelNameTooltip")}/g' \
   -e 's/placeholder="Select models"/placeholder={t("models.addModel.selectModels")}/g' \
   -e 's/label: "Custom Model Name (Enter below)"/label: t("models.addModel.customModelName")/g' \
   -e 's/label: `All \${selectedProvider} Models (Wildcard)`/label: t("models.addModel.allModelsWildcard").replace("{provider}", selectedProvider)/g' \
@@ -15,9 +15,9 @@ sed -i '' \
 # Update conditional_public_model_name.tsx
 sed -i '' \
   -e 's/Public Model Name/{t("models.addModel.publicModelName")}/g' \
-  -e 's/LiteLLM Model Name/{t("models.addModel.litellmModelNameColumn")}/g' \
+  -e 's/Silinex Model Name/{t("models.addModel.litellmModelNameColumn")}/g' \
   -e 's/label="Model Mappings"/label={t("models.addModel.modelMappings")}/g' \
-  -e 's/tooltip="Map public model names to LiteLLM model names for load balancing"/tooltip={t("models.addModel.modelMappingsTooltip")}/g' \
+  -e 's/tooltip="Map public model names to Silinex model names for load balancing"/tooltip={t("models.addModel.modelMappingsTooltip")}/g' \
   -e 's/"At least one model mapping is required"/{t("models.addModel.atLeastOneMappingRequired")}/g' \
   -e 's/"All model mappings must have valid public names"/{t("models.addModel.allMappingsNeedNames")}/g' \
   src/components/add_model/conditional_public_model_name.tsx

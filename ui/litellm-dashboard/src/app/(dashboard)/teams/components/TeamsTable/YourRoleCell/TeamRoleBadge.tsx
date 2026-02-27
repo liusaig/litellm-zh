@@ -1,5 +1,6 @@
 import { ShieldIcon, UserIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 const MEMBER_BADGE_BG = "#F3F4F6"; // gray-100
 const MEMBER_BADGE_TEXT = "#4B5563"; // gray-600
@@ -25,7 +26,7 @@ const TeamRoleBadge = (role: string | null) => {
           }}
         >
           <ShieldIcon className="h-3 w-3 mr-1" />
-          {t("teams.roleBadges.admin")}
+          {teamT(t, "teams.roleBadges.admin")}
         </span>
       );
     case "user":
@@ -40,7 +41,7 @@ const TeamRoleBadge = (role: string | null) => {
           }}
         >
           <UserIcon className="h-3 w-3 mr-1" />
-          {t("teams.roleBadges.member")}
+          {teamT(t, "teams.roleBadges.member")}
         </span>
       );
   }

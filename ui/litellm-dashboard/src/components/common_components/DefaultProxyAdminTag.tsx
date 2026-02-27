@@ -1,4 +1,5 @@
 import { Tag, Typography } from "antd";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 
@@ -16,8 +17,10 @@ interface DefaultProxyAdminTagProps {
 export default function DefaultProxyAdminTag({
   userId,
 }: DefaultProxyAdminTagProps) {
+  const { t } = useLanguage();
+
   if (userId === DEFAULT_USER_ID) {
-    return <Tag color="blue">Default Proxy Admin</Tag>;
+    return <Tag color="blue">{t("memberTable.defaultProxyAdmin")}</Tag>;
   }
 
   return <Text>{userId}</Text>;

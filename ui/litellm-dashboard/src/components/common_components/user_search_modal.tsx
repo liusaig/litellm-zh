@@ -41,7 +41,7 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   onCancel,
   onSubmit,
   accessToken,
-  title = "Add Team Member",
+  title = "添加成员",
   roles = [
     {
       label: "admin",
@@ -123,11 +123,11 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
           role: defaultRole,
         }}
       >
-        <Form.Item label="Email" name="user_email" className="mb-4">
+        <Form.Item label="邮箱" name="user_email" className="mb-4">
           <Select
             showSearch
             className="w-full"
-            placeholder="Search by email"
+            placeholder="按邮箱搜索"
             filterOption={false}
             onSearch={(value) => handleSearch(value, "user_email")}
             onSelect={(value, option) => handleSelect(value, option as UserOption)}
@@ -137,13 +137,13 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
           />
         </Form.Item>
 
-        <div className="text-center mb-4">OR</div>
+        <div className="text-center mb-4">或</div>
 
-        <Form.Item label="User ID" name="user_id" className="mb-4">
+        <Form.Item label="用户 ID" name="user_id" className="mb-4">
           <Select
             showSearch
             className="w-full"
-            placeholder="Search by user ID"
+            placeholder="按用户 ID 搜索"
             filterOption={false}
             onSearch={(value) => handleSearch(value, "user_id")}
             onSelect={(value, option) => handleSelect(value, option as UserOption)}
@@ -153,7 +153,7 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
           />
         </Form.Item>
 
-        <Form.Item label="Member Role" name="role" className="mb-4">
+        <Form.Item label="成员角色" name="role" className="mb-4">
           <Select defaultValue={defaultRole}>
             {roles.map((role) => (
               <Select.Option key={role.value} value={role.value}>
@@ -168,7 +168,7 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
 
         <div className="text-right mt-4">
           <Button type="default" htmlType="submit">
-            Add Member
+            添加成员
           </Button>
         </div>
       </Form>

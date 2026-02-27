@@ -26,7 +26,7 @@ export async function makeOpenAIAudioSpeechRequest(
     apiKey: accessToken,
     baseURL: proxyBaseUrl,
     dangerouslyAllowBrowser: true,
-    defaultHeaders: tags && tags.length > 0 ? { "x-litellm-tags": tags.join(",") } : undefined,
+    defaultHeaders: tags && tags.length > 0 ? { "x-silinex-tags": tags.join(",") } : undefined,
   });
 
   try {

@@ -59,11 +59,365 @@
       "title": "Delete Organization?",
       "message": "Are you sure you want to delete this organization? This action cannot be undone.",
       "resourceTitle": "Organization Information",
-      "resourceLabel": "Organization ID"
+      "resourceLabel": "Organization ID",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting..."
     },
     "notifications": {
       "deleteSuccess": "Organization deleted successfully",
       "createSuccess": "Organization created successfully"
     }
+  },
+  "memberTable": {
+    "defaultProxyAdmin": "Default Proxy Admin",
+    "actions": "Actions",
+    "editMember": "Edit member",
+    "deleteMember": "Delete member",
+    "addMember": "Add Member"
+  },
+  "keyDetail": {
+    "notFound": "Key not found",
+    "tabs": {
+      "overview": "Overview",
+      "settings": "Settings"
+    },
+    "autoRotation": {
+      "title": "Auto Rotation",
+      "description": "Automatically rotate API keys on a schedule",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "every": "Every",
+      "lastRotation": "Last Rotation",
+      "nextScheduledRotation": "Next Scheduled Rotation",
+      "noHistory": "No rotation history",
+      "notEnabled": "Auto rotation is not enabled"
+    },
+    "deleteModal": {
+      "alertMessage": "This action cannot be undone",
+      "keyAlias": "Key Alias",
+      "keyId": "Key ID",
+      "message": "Are you sure you want to delete this key?",
+      "resourceTitle": "Key Information",
+      "spend": "Spend",
+      "teamId": "Team ID"
+    },
+    "header": {
+      "backToKeys": "Back to Keys",
+      "copied": "Copied!",
+      "copyKeyAlias": "Copy Key Alias",
+      "copyKeyId": "Copy Key ID",
+      "createdAt": "Created At",
+      "createdBy": "Created By",
+      "createNewKey": "Create New Key",
+      "deleteKey": "Delete Key",
+      "keyIdLabel": "Key ID",
+      "lastActive": "Last Active",
+      "lastUpdated": "Last Updated",
+      "never": "Never",
+      "regenerateKey": "Regenerate Key",
+      "regenerateTooltip": "Generate a new key value",
+      "userEmail": "User Email",
+      "userId": "User ID",
+      "virtualKey": "Virtual Key"
+    },
+    "loggingSettings": {
+      "title": "Logging Settings",
+      "description": "Configure logging callbacks for this key",
+      "loggingIntegrations": "Logging Integrations",
+      "parametersConfigured": "Parameters Configured",
+      "noIntegrations": "No logging integrations configured",
+      "disabledCallbacks": "Disabled Callbacks",
+      "callbackDisabled": "Callback disabled",
+      "noCallbacksDisabled": "No disabled callbacks"
+    },
+    "overview": {
+      "spend": "Spend",
+      "models": "Models",
+      "noModels": "No models configured",
+      "rateLimits": "Rate Limits",
+      "tpm": "TPM",
+      "rpm": "RPM",
+      "unlimited": "Unlimited",
+      "of": "of",
+      "guardrails": "Guardrails",
+      "noGuardrails": "No guardrails configured",
+      "globalGuardrailsDisabled": "Global guardrails are disabled",
+      "policies": "Policies",
+      "noPolicies": "No policies configured",
+      "loadingGuardrails": "Loading guardrails...",
+      "resolvedGuardrails": "Resolved guardrails:"
+    },
+    "objectPermissions": {
+      "title": "Object Permissions",
+      "description": "Access control for Vector Stores and MCP Servers",
+      "vectorStores": "Vector Stores",
+      "noVectorStores": "No vector stores configured",
+      "mcpServers": "MCP Servers",
+      "noMCPServers": "No MCP servers configured",
+      "tool": "Tool",
+      "tools": "Tools",
+      "group": "Group",
+      "agents": "Agents",
+      "noAgents": "No agents configured"
+    },
+    "settings": {
+      "title": "Key Settings",
+      "editButton": "Edit",
+      "keyId": "Key ID",
+      "keyAlias": "Key Alias",
+      "secretKey": "Secret Key",
+      "teamId": "Team ID",
+      "organization": "Organization",
+      "notSet": "Not Set",
+      "created": "Created",
+      "lastRegenerated": "Last Regenerated",
+      "recent": "Just now",
+      "expires": "Expires",
+      "never": "Never",
+      "spend": "Spend",
+      "budget": "Budget",
+      "unlimited": "Unlimited",
+      "alias": "Alias",
+      "models": "Models",
+      "maxBudget": "Max Budget",
+      "budgetDuration": "Budget Duration",
+      "resetBudget": "Reset Budget",
+      "rpm": "RPM",
+      "tpm": "TPM",
+      "tpmLimit": "TPM Limit",
+      "rpmLimit": "RPM Limit",
+      "maxParallelRequests": "Max Parallel Requests",
+      "modelTpmLimits": "Model TPM Limit",
+      "modelRpmLimits": "Model RPM Limit",
+      "tags": "Tags",
+      "noTags": "No tags set",
+      "prompts": "Prompts",
+      "noPrompts": "No prompts set",
+      "allowedRoutes": "Allowed Routes",
+      "allRoutesAllowed": "All routes allowed",
+      "allowedPassThroughRoutes": "Allowed Pass Through Routes",
+      "noPassThroughRoutes": "No pass through routes set",
+      "disableGlobalGuardrails": "Disable Global Guardrails",
+      "globalGuardrailsEnabled": "Global guardrails disabled",
+      "globalGuardrailsDisabled": "Global guardrails enabled",
+      "rateLimits": "Rate Limits",
+      "noModels": "No models configured",
+      "metadata": "Metadata",
+      "keyType": "Key Type",
+      "guardrails": "Guardrails",
+      "disableGlobalGuardrailsLabel": "Disable Global Guardrails",
+      "disableGlobalGuardrailsTooltip": "When enabled, this key will bypass any guardrails configured to run on every request (global guardrails)",
+      "policies": "Policies",
+      "policiesTooltip": "Apply policies to this key to control guardrails and other settings",
+      "accessGroups": "Access Groups",
+      "accessGroupsTooltip": "Assign access groups to this key. Access groups control which models, MCP servers, and agents this key can use",
+      "allowedPassThroughRoutesLabel": "Allowed Pass Through Routes",
+      "vectorStores": "Vector Stores",
+      "mcpServers": "MCP Servers / Access Groups",
+      "agents": "Agents / Access Groups",
+      "loggingSettings": "Logging Settings",
+      "metadataLabel": "Metadata",
+      "button": {
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "edit": "Edit"
+      },
+      "placeholders": {
+        "enterNumericalValue": "Enter a numerical value",
+        "na": "n/a",
+        "selectModels": "Select models",
+        "selectKeyType": "Select key type",
+        "selectTags": "Select or enter tags",
+        "selectAccessGroups": "Select access groups (optional)",
+        "selectVectorStores": "Select vector stores",
+        "selectMcpServers": "Select MCP servers or access groups (optional)",
+        "selectAgents": "Select agents or access groups (optional)",
+        "selectTeam": "Select team",
+        "selectPrompts": "Select or enter prompts",
+        "selectRateLimitType": "Select rate limit type",
+        "modelTpmPlaceholder": "{\"gpt-4\": 100, \"claude-v1\": 200}",
+        "modelRpmPlaceholder": "{\"gpt-4\": 100, \"claude-v1\": 200}",
+        "allowedRoutesPlaceholder": "Enter allowed routes (comma-separated). Special values: llm_api_routes, management_routes. Examples: llm_api_routes, /chat/completions, /keys/*. Leave empty to allow all routes",
+        "allowedRoutesTitle": "Allowed Routes",
+        "allowedRoutesTooltip": "List of allowed routes for the key (comma-separated). Can be specific routes (e.g., '/chat/completions') or route patterns (e.g., 'llm_api_routes', 'management_routes', '/keys/*'). Leave empty to allow all routes."
+      },
+      "keyTypes": {
+        "default": {
+          "value": "Default",
+          "description": "Can call AI APIs + Management routes"
+        },
+        "llmApi": {
+          "value": "AI APIs",
+          "description": "Can call only AI API routes (chat/completions, embeddings, etc.)"
+        },
+        "management": {
+          "value": "Management",
+          "description": "Can call only management routes (user/team/key management)"
+        },
+        "readOnly": {
+          "value": "Read Only",
+          "description": "Can call only read-only routes (information queries)"
+        }
+      },
+      "budgetDuration": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "features": {
+        "premiumFeature": "Premium feature",
+        "upgradeForGuardrails": "Premium feature - Upgrade to set guardrails by key",
+        "upgradeForPolicies": "Premium feature - Upgrade to set policies by key",
+        "upgradeForPrompts": "Premium feature - Upgrade to set prompts by key",
+        "upgradeForPassThrough": "Premium feature - Upgrade to set allowed pass through routes by key",
+        "settingGuardrailsPremium": "Premium feature - Upgrade to set guardrails by key"
+      },
+      "messages": {
+        "modelsFieldDisabled": "Models field is disabled for this key type",
+        "allTeamModels": "All Team Models"
+      },
+      "save": "Save"
+    },
+    "keyLifecycle": {
+      "title": "Key Expiry Settings",
+      "expireKey": "Expire Key",
+      "expireKeyTooltipCreate": "Set when this key should expire. Format: 30s (seconds), 30m (minutes), 30h (hours), 30d (days). Leave empty to never expire.",
+      "expireKeyTooltipEdit": "Set when this key should expire. Format: 30s (seconds), 30m (minutes), 30h (hours), 30d (days). Use -1 to never expire.",
+      "expirePlaceholderCreate": "e.g., 30d or leave empty to never expire",
+      "expirePlaceholderEdit": "e.g., 30d or -1 to never expire",
+      "rotationSettings": "Auto-Rotation Settings",
+      "enableRotation": "Enable Auto-Rotation",
+      "enableRotationTooltip": "Key will automatically regenerate at the specified interval for enhanced security.",
+      "rotationInterval": "Rotation Interval",
+      "rotationIntervalTooltip": "How often the key should be automatically rotated. Choose the interval that best fits your security requirements.",
+      "selectInterval": "Select interval",
+      "7days": "7 days",
+      "30days": "30 days",
+      "90days": "90 days",
+      "180days": "180 days",
+      "365days": "365 days",
+      "customInterval": "Custom interval",
+      "customIntervalPlaceholder": "e.g., 1s, 5m, 2h, 14d",
+      "supportedFormats": "Supported formats: seconds (s), minutes (m), hours (h), days (d)",
+      "rotationNotice": "When rotation occurs, you'll receive a notification with the new key. The old key will be deactivated after a brief grace period."
+    },
+    "disabledCallbacks": {
+      "title": "Disabled Callbacks",
+      "tooltip": "Select callbacks to disable for this key. Disabled callbacks will not receive any logging data.",
+      "label": "Disabled Callbacks",
+      "placeholder": "Select callbacks to disable",
+      "helpText": "Select callbacks that should be disabled for this key. These callbacks will not receive any logging data."
+    },
+    "loggingIntegrations": {
+      "title": "Logging Integrations",
+      "tooltip": "Configure callback logging integrations for this team.",
+      "addIntegration": "Add Integration",
+      "noIntegrationsConfigured": "No logging integrations configured",
+      "addIntegrationPrompt": "Click \"Add Integration\" to configure logging for this team",
+      "configuration": "Configuration",
+      "newIntegration": "New Integration",
+      "remove": "Remove",
+      "integrationType": "Integration Type",
+      "selectIntegration": "Select integration",
+      "eventType": "Event Type",
+      "successOnly": "Success Only",
+      "failureOnly": "Failure Only",
+      "successAndFailure": "Success & Failure",
+      "integrationParameters": "Integration Parameters",
+      "sensitive": "Sensitive",
+      "number": "Number",
+      "valueRange": "Value must be between 0 and 1"
+    },
+    "notifications": {
+      "updateSuccess": "Key updated successfully",
+      "deleteSuccess": "Key deleted successfully",
+      "aliasUpdated": "Alias updated successfully"
+    }
+  },
+  "teamDetail": {
+    "loading": "Loading...",
+    "notFound": "Team not found",
+    "backButton": "Back to Teams",
+    "tabs": {
+      "overview": "Overview",
+      "members": "Members",
+      "memberPermissions": "Member Permissions",
+      "settings": "Settings"
+    },
+    "memberPermissions": {
+      "title": "Member Permissions",
+      "description": "Control what team members can do when they are not team admins",
+      "loading": "Loading permissions...",
+      "reset": "Reset",
+      "saveChanges": "Save Changes",
+      "loadFailed": "Failed to load permissions",
+      "updateSuccess": "Permissions updated successfully",
+      "updateFailed": "Failed to update permissions",
+      "table": {
+        "method": "Method",
+        "endpoint": "Endpoint",
+        "description": "Description",
+        "support": "Allow Access"
+      },
+      "modal": {
+        "userEmail": "User Email",
+        "userId": "User ID",
+        "current": "Current: ",
+        "role": "Role",
+        "roleRequired": "Please select role",
+        "validEmail": "Please enter valid email",
+        "or": "or",
+        "addMember": "Add member",
+        "editMember": "Edit member",
+        "cancel": "Cancel",
+        "adding": "Adding...",
+        "saving": "Saving..."
+      }
+    },
+    "settings": {
+      "title": "Team Settings"
+    },
+    "deleteModal": {
+      "title": "Delete team member?",
+      "alertMessage": "This action cannot be undone",
+      "message": "Are you sure you want to remove this member from the team?",
+      "resourceTitle": "Member Information",
+      "email": "Email",
+      "userId": "User ID",
+      "role": "Role"
+    },
+    "errors": {
+      "loadFailed": "Failed to load team information",
+      "memberAddFailed": "Failed to add team member",
+      "memberAddPremium": "Adding team members requires premium",
+      "memberUpdateFailed": "Failed to update team member",
+      "memberUpdatePremium": "Updating team members requires premium",
+      "memberDeleteFailed": "Failed to delete team member",
+      "invalidMetadata": "Invalid metadata format",
+      "invalidSecretManager": "Invalid secret manager configuration"
+    },
+    "memberModal": {
+      "editTitle": "Edit team member",
+      "adminRole": "Admin",
+      "memberRole": "Member"
+    },
+    "notifications": {
+      "memberAdded": "Member added successfully",
+      "memberUpdated": "Member updated successfully",
+      "memberDeleted": "Member deleted successfully",
+      "settingsUpdated": "Settings updated successfully"
+    },
+    "overview": {
+      "budgetStatus": "Budget Status",
+      "of": "of",
+      "unlimited": "No limit",
+      "reset": "Reset",
+      "teamMemberBudget": "Team Member Budget"
+    }
+  },
+  "teams": {
+    "allProxyModels": "All Proxy Models",
+    "moreModels": " more model(s)"
   }
 }

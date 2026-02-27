@@ -254,7 +254,7 @@ export interface PublicModelHubInfo {
   useful_links: Record<string, string | { url: string; index: number }>;
 }
 
-export interface LiteLLMWellKnownUiConfig {
+export interface SilinexWellKnownUiConfig {
   server_root_path: string;
   proxy_base_url: string | null;
   auto_redirect_to_sso: boolean;
@@ -366,7 +366,7 @@ export const getUiConfig = async () => {
     ? `${defaultProxyBaseUrl}/litellm/.well-known/litellm-ui-config`
     : `/litellm/.well-known/litellm-ui-config`;
   const response = await fetch(url);
-  const jsonData: LiteLLMWellKnownUiConfig = await response.json();
+  const jsonData: SilinexWellKnownUiConfig = await response.json();
   /**
    * Update the proxy base url and server root path
    */
@@ -399,7 +399,7 @@ export const modelCostMap = async () => {
       },
     });
     const jsonData = await response.json();
-    console.log(`received litellm model cost data: ${jsonData}`);
+    console.log(`received silinex model cost data: ${jsonData}`);
     return jsonData;
   } catch (error) {
     console.error("Failed to get model cost map:", error);
@@ -1838,7 +1838,7 @@ export const teamDailyActivityCall = async (
     page,
     extraQueryParams: {
       team_ids: teamIds,
-      exclude_team_ids: "litellm-dashboard",
+      exclude_team_ids: "silinex-dashboard",
     },
   });
 };
@@ -5412,8 +5412,8 @@ export const testMCPSemanticFilter = async (accessToken: string, model: string, 
     });
 
     // Extract headers before checking response status
-    const filterHeader = response.headers.get("x-litellm-semantic-filter");
-    const toolsHeader = response.headers.get("x-litellm-semantic-filter-tools");
+    const filterHeader = response.headers.get("x-silinex-semantic-filter");
+    const toolsHeader = response.headers.get("x-silinex-semantic-filter-tools");
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -8931,7 +8931,7 @@ export const testMCPToolsListRequest = async (
       "Content-Type": "application/json",
     };
     if (accessToken) {
-      headers["x-litellm-api-key"] = accessToken;
+      headers["x-silinex-api-key"] = accessToken;
     }
     if (oauthAccessToken) {
       headers["Authorization"] = `Bearer ${oauthAccessToken}`;

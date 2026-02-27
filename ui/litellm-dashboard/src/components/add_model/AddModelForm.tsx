@@ -14,7 +14,7 @@ import { Providers, providerLogoMap } from "../provider_info_helpers";
 import { ProviderLogo } from "../molecules/models/ProviderLogo";
 import AdvancedSettings from "./advanced_settings";
 import ConditionalPublicModelName from "./conditional_public_model_name";
-import LiteLLMModelNameField from "./litellm_model_name";
+import SilinexModelNameField from "./litellm_model_name";
 import ConnectionErrorDisplay from "./model_connection_test";
 import ProviderSpecificFields from "./provider_specific_fields";
 import { TEST_MODES } from "./add_model_modes";
@@ -199,7 +199,7 @@ const AddModelForm: React.FC<AddModelFormProps> = ({
                     })}
                   </AntdSelect>
                 </Form.Item>
-                <LiteLLMModelNameField
+                <SilinexModelNameField
                   selectedProvider={selectedProvider}
                   providerModels={providerModels}
                   getPlaceholder={getPlaceholder}

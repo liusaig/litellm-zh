@@ -19,7 +19,7 @@ describe("APIReferenceView", () => {
   });
 
   it("falls back to the proxy base url when the docs url is missing", () => {
-    const proxyUrl = "https://proxy.litellm.test";
+    const proxyUrl = "https://proxy.silinex.test";
     const { getAllByTestId } = render(<APIReferenceView proxySettings={{ PROXY_BASE_URL: proxyUrl }} />);
 
     const codeBlocks = getAllByTestId(codeBlockTestId);
@@ -27,7 +27,7 @@ describe("APIReferenceView", () => {
   });
 
   it("prefers the docs url when both urls are provided", () => {
-    const apiDocUrl = "https://docs-preferred.litellm.test";
+    const apiDocUrl = "https://docs-preferred.silinex.test";
     const proxyUrl = "https://proxy-backup.litellm.test";
 
     const { getAllByTestId } = render(

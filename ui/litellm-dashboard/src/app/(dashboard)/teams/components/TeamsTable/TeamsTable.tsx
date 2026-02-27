@@ -8,6 +8,7 @@ import { Member, Organization } from "@/components/networking";
 import ModelsCell from "@/app/(dashboard)/teams/components/TeamsTable/ModelsCell";
 import YourRoleCell from "@/app/(dashboard)/teams/components/TeamsTable/YourRoleCell/YourRoleCell";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 type TeamsTableProps = {
   teams: Team[] | null;
@@ -44,15 +45,15 @@ const TeamsTable = ({
     <Table>
       <TableHead>
         <TableRow>
-          <TableHeaderCell>{t("teams.table.teamName")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.teamId")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.createdAt")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.spend")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.budget")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.models")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.organization")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.yourRole")}</TableHeaderCell>
-          <TableHeaderCell>{t("teams.table.info")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.teamName")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.teamId")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.createdAt")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.spend")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.budget")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.models")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.organization")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.yourRole")}</TableHeaderCell>
+          <TableHeaderCell>{teamT(t, "teams.table.info")}</TableHeaderCell>
         </TableRow>
       </TableHead>
 
@@ -99,7 +100,7 @@ const TeamsTable = ({
                       overflow: "hidden",
                     }}
                   >
-                    {team.created_at ? new Date(team.created_at).toLocaleDateString() : t("teams.table.none")}
+                    {team.created_at ? new Date(team.created_at).toLocaleDateString() : teamT(t, "teams.table.none")}
                   </TableCell>
                   <TableCell
                     style={{
@@ -117,7 +118,7 @@ const TeamsTable = ({
                       overflow: "hidden",
                     }}
                   >
-                    {team["max_budget"] !== null && team["max_budget"] !== undefined ? team["max_budget"] : t("teams.table.unlimited")}
+                    {team["max_budget"] !== null && team["max_budget"] !== undefined ? team["max_budget"] : teamT(t, "teams.table.unlimited")}
                   </TableCell>
                   <ModelsCell team={team} />
                   <TableCell>{team.organization_id}</TableCell>
@@ -129,7 +130,7 @@ const TeamsTable = ({
                         perTeamInfo[team.team_id] &&
                         perTeamInfo[team.team_id].keys &&
                         perTeamInfo[team.team_id].keys.length}{" "}
-                      {t("teams.table.keys").trim()}
+                      {teamT(t, "teams.table.keys").trim()}
                     </Text>
                     <Text>
                       {perTeamInfo &&
@@ -138,7 +139,7 @@ const TeamsTable = ({
                         perTeamInfo[team.team_id].team_info &&
                         perTeamInfo[team.team_id].team_info.members_with_roles &&
                         perTeamInfo[team.team_id].team_info.members_with_roles.length}{" "}
-                      {t("teams.table.members").trim()}
+                      {teamT(t, "teams.table.members").trim()}
                     </Text>
                   </TableCell>
                   <TableCell>

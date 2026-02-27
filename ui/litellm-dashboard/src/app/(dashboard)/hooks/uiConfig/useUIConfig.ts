@@ -1,11 +1,11 @@
-import { getUiConfig, LiteLLMWellKnownUiConfig } from "@/components/networking";
+import { getUiConfig, SilinexWellKnownUiConfig } from "@/components/networking";
 import { useQuery } from "@tanstack/react-query";
 import { createQueryKeys } from "../common/queryKeysFactory";
 
 const uiConfigKeys = createQueryKeys("uiConfig");
 
 export const useUIConfig = () => {
-  return useQuery<LiteLLMWellKnownUiConfig>({
+  return useQuery<SilinexWellKnownUiConfig>({
     queryKey: uiConfigKeys.list({}),
     queryFn: async () => await getUiConfig(),
     staleTime: 24 * 60 * 60 * 1000, // 24 hours - data rarely changes

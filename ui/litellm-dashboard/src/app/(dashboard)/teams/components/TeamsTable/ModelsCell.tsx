@@ -4,6 +4,7 @@ import { getModelDisplayName } from "@/components/key_team_helpers/fetch_availab
 import React, { useState } from "react";
 import { Team } from "@/components/key_team_helpers/key_list";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 interface ModelsCellProps {
   team: Team;
@@ -27,7 +28,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
           <div className="flex flex-col">
             {team.models.length === 0 ? (
               <Badge size={"xs"} className="mb-1" color="red">
-                <Text>{t("teams.allProxyModels")}</Text>
+                <Text>{teamT(t, "teams.allProxyModels")}</Text>
               </Badge>
             ) : (
               <>
@@ -48,7 +49,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
                     {team.models.slice(0, 3).map((model: string, index: number) =>
                       model === "all-proxy-models" ? (
                         <Badge key={index} size={"xs"} color="red">
-                          <Text>{t("teams.allProxyModels")}</Text>
+                          <Text>{teamT(t, "teams.allProxyModels")}</Text>
                         </Badge>
                       ) : (
                         <Badge key={index} size={"xs"} color="blue">
@@ -63,7 +64,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
                     {team.models.length > 3 && !expandedAccordion && (
                       <Badge size={"xs"} color="gray" className="cursor-pointer">
                         <Text>
-                          +{team.models.length - 3} {t("teams.table.moreModels")}
+                          +{team.models.length - 3} {teamT(t, "teams.table.moreModels")}
                         </Text>
                       </Badge>
                     )}
@@ -72,7 +73,7 @@ const ModelsCell = ({ team }: ModelsCellProps) => {
                         {team.models.slice(3).map((model: string, index: number) =>
                           model === "all-proxy-models" ? (
                             <Badge key={index + 3} size={"xs"} color="red">
-                              <Text>{t("teams.allProxyModels")}</Text>
+                              <Text>{teamT(t, "teams.allProxyModels")}</Text>
                             </Badge>
                           ) : (
                             <Badge key={index + 3} size={"xs"} color="blue">

@@ -34,7 +34,7 @@ const APIReferenceView: React.FC<ApiRefProps> = ({ proxySettings }) => {
 
           <Text className="mt-2 mb-2">
             Silinex is OpenAI Compatible. This means your API Key works with the OpenAI SDK. Just replace the base_url
-            to point to your litellm proxy. Example Below{" "}
+            to point to your silinex proxy. Example Below{" "}
           </Text>
 
           <TabGroup>
@@ -77,10 +77,10 @@ from llama_index.embeddings import AzureOpenAIEmbedding
 from llama_index import VectorStoreIndex, SimpleDirectoryReader, ServiceContext
 
 llm = AzureOpenAI(
-    engine="azure-gpt-3.5",               # model_name on litellm proxy
+    engine="azure-gpt-3.5",               # model_name on silinex proxy
     temperature=0.0,
-    azure_endpoint="${base_url}", # litellm proxy endpoint
-    api_key="sk-1234",                    # litellm proxy API Key
+    azure_endpoint="${base_url}", # silinex proxy endpoint
+    api_key="sk-1234",                    # silinex proxy API Key
     api_version="2023-07-01-preview",
 )
 
@@ -123,7 +123,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from silinex. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)

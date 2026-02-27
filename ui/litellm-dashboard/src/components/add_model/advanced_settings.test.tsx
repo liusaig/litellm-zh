@@ -45,7 +45,7 @@ describe("AdvancedSettings", () => {
       fireEvent.click(getByText("Advanced Settings"));
     });
     await waitFor(() => {
-      expect(getByText("LiteLLM Params")).toBeInTheDocument();
+      expect(getByText("Silinex Params")).toBeInTheDocument();
     });
   });
 });

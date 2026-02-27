@@ -69,7 +69,7 @@ function ConnectTabContent({
       createdKeyValue.startsWith("Bearer ") ? createdKeyValue : `Bearer ${createdKeyValue}`
     : "Bearer sk-1234";
   const curlExample = `curl -L -X POST '${baseUrl}/v1/chat/completions' \\
--H 'x-litellm-api-key: ${apiKeyForCurl}' \\
+-H 'x-silinex-api-key: ${apiKeyForCurl}' \\
 -d '{
   "model": "${agentName}",
   "stream": true,

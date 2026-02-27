@@ -1,4 +1,4 @@
-const DEFAULT_HIDDEN_SIDEBAR_PAGES = ["api_ref", "model-hub-table", "experimental"];
+const DEFAULT_HIDDEN_SIDEBAR_PAGES = ["api_ref", "model-hub-table", "experimental", "access-groups", "budgets"];
 const DEFAULT_HIDDEN_SIDEBAR_GROUPS = ["开发者工具"];
 
 const normalize = (value: string): string => value.trim().toLowerCase();

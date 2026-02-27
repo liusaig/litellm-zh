@@ -5,13 +5,13 @@ import { Row, Col } from "antd";
 import { Providers } from "../provider_info_helpers";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface LiteLLMModelNameFieldProps {
+interface SilinexModelNameFieldProps {
   selectedProvider: Providers;
   providerModels: string[];
   getPlaceholder: (provider: Providers) => string;
 }
 
-const LiteLLMModelNameField: React.FC<LiteLLMModelNameFieldProps> = ({
+const SilinexModelNameField: React.FC<SilinexModelNameFieldProps> = ({
   selectedProvider,
   providerModels,
   getPlaceholder,
@@ -185,8 +185,8 @@ const LiteLLMModelNameField: React.FC<LiteLLMModelNameFieldProps> = ({
         <Col span={14}>
           <Text className="mb-3 mt-1">
             {selectedProvider === Providers.Azure
-              ? "Your deployment name will be saved as the public model name, and LiteLLM will use 'azure/deployment-name' internally"
-              : "The model name LiteLLM will send to the LLM API"}
+              ? "Your deployment name will be saved as the public model name, and Silinex will use 'azure/deployment-name' internally"
+              : "The model name Silinex will send to the LLM API"}
           </Text>
         </Col>
       </Row>
@@ -194,4 +194,4 @@ const LiteLLMModelNameField: React.FC<LiteLLMModelNameFieldProps> = ({
   );
 };
 
-export default LiteLLMModelNameField;
+export default SilinexModelNameField;

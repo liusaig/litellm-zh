@@ -420,7 +420,7 @@ const OrganizationInfoView: React.FC<OrganizationInfoProps> = ({
                         },
                       ]}
                     >
-                      <TextInput />
+                      <TextInput placeholder={t("organizations.modal.orgNamePlaceholder")} />
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.models")} name="models">
@@ -428,6 +428,7 @@ const OrganizationInfoView: React.FC<OrganizationInfoProps> = ({
                         value={form.getFieldValue("models")}
                         onChange={(values) => form.setFieldValue("models", values)}
                         context="organization"
+                        placeholder={t("organizations.modal.modelsPlaceholder")}
                         options={{
                           includeSpecialOptions: true,
                           showAllProxyModelsOverride: true,
@@ -436,11 +437,16 @@ const OrganizationInfoView: React.FC<OrganizationInfoProps> = ({
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.maxBudget")} name="max_budget">
-                      <NumericalInput step={0.01} precision={2} style={{ width: "100%" }} />
+                      <NumericalInput
+                        step={0.01}
+                        precision={2}
+                        style={{ width: "100%" }}
+                        placeholder={t("organizations.modal.maxBudgetPlaceholder")}
+                      />
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.resetBudget")} name="budget_duration">
-                      <Select placeholder={t("organizationDetail.settings.resetBudgetPlaceholder")}>
+                      <Select placeholder={t("organizations.modal.budgetDurationPlaceholder")}>
                         <Select.Option value="24h">{t("organizationDetail.settings.daily")}</Select.Option>
                         <Select.Option value="7d">{t("organizationDetail.settings.weekly")}</Select.Option>
                         <Select.Option value="30d">{t("organizationDetail.settings.monthly")}</Select.Option>
@@ -448,11 +454,19 @@ const OrganizationInfoView: React.FC<OrganizationInfoProps> = ({
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.tpmLimit")} name="tpm_limit">
-                      <NumericalInput step={1} style={{ width: "100%" }} />
+                      <NumericalInput
+                        step={1}
+                        style={{ width: "100%" }}
+                        placeholder={t("organizations.modal.tpmLimitPlaceholder")}
+                      />
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.rpmLimit")} name="rpm_limit">
-                      <NumericalInput step={1} style={{ width: "100%" }} />
+                      <NumericalInput
+                        step={1}
+                        style={{ width: "100%" }}
+                        placeholder={t("organizations.modal.rpmLimitPlaceholder")}
+                      />
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.vectorStores")} name="vector_stores">
@@ -460,7 +474,7 @@ const OrganizationInfoView: React.FC<OrganizationInfoProps> = ({
                         onChange={(values) => form.setFieldValue("vector_stores", values)}
                         value={form.getFieldValue("vector_stores")}
                         accessToken={accessToken || ""}
-                        placeholder={t("organizationDetail.settings.vectorStoresPlaceholder")}
+                        placeholder={t("organizations.modal.vectorStoresPlaceholder")}
                       />
                     </Form.Item>
 
@@ -469,12 +483,12 @@ const OrganizationInfoView: React.FC<OrganizationInfoProps> = ({
                         onChange={(values) => form.setFieldValue("mcp_servers_and_groups", values)}
                         value={form.getFieldValue("mcp_servers_and_groups")}
                         accessToken={accessToken || ""}
-                        placeholder={t("organizationDetail.settings.mcpServersPlaceholder")}
+                        placeholder={t("organizations.modal.mcpServersPlaceholder")}
                       />
                     </Form.Item>
 
                     <Form.Item label={t("organizationDetail.settings.metadata")} name="metadata">
-                      <Input.TextArea rows={4} />
+                      <Input.TextArea rows={4} placeholder={t("organizations.modal.metadata")} />
                     </Form.Item>
 
                     <div className="sticky z-10 bg-white p-4 border-t border-gray-200 bottom-[-1.5rem] inset-x-[-1.5rem]">

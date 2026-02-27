@@ -162,7 +162,7 @@ describe("Navbar", () => {
 
     renderWithProviders(<Navbar {...defaultProps} />);
 
-    const logoImg = screen.getByAltText("LiteLLM Brand");
+    const logoImg = screen.getByAltText("Silinex Brand");
     expect(logoImg).toHaveAttribute("src", "https://example.com/custom-logo.svg");
 
     // Reset mock
@@ -174,7 +174,7 @@ describe("Navbar", () => {
 
     renderWithProviders(<Navbar {...defaultProps} />);
 
-    const logoImg = screen.getByAltText("LiteLLM Brand");
+    const logoImg = screen.getByAltText("Silinex Brand");
     expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
   });
 
@@ -183,7 +183,7 @@ describe("Navbar", () => {
 
     renderWithProviders(<Navbar {...defaultProps} />);
 
-    const logoImg = screen.getByAltText("LiteLLM Brand");
+    const logoImg = screen.getByAltText("Silinex Brand");
     expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
 
     // Reset mock
@@ -198,7 +198,7 @@ describe("Navbar", () => {
 
     renderWithProviders(<Navbar {...defaultProps} />);
 
-    const logoImg = screen.getByAltText("LiteLLM Brand");
+    const logoImg = screen.getByAltText("Silinex Brand");
     expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
 
     // Reset mock
@@ -210,7 +210,7 @@ describe("Navbar", () => {
 
     renderWithProviders(<Navbar {...defaultProps} />);
 
-    const logoImg = screen.getByAltText("LiteLLM Brand");
+    const logoImg = screen.getByAltText("Silinex Brand");
     expect(logoImg).toHaveAttribute("src", DEFAULT_BRAND_LOGO_URL);
 
     // Reset mock

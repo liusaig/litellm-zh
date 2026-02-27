@@ -176,20 +176,20 @@ const menuGroups: MenuGroup[] = [
       {
         key: "users",
         page: "users",
-        label: "用户",
+        label: "用户管理",
         icon: <UserOutlined />,
         roles: all_admin_roles,
       },
       {
         key: "teams",
         page: "teams",
-        label: "分组",
+        label: "分组管理",
         icon: <TeamOutlined />,
       },
       {
         key: "organizations",
         page: "organizations",
-        label: "组织",
+        label: "组织管理",
         icon: <BankOutlined />,
         roles: all_admin_roles,
       },

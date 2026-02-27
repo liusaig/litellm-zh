@@ -18,6 +18,7 @@ import useFetchTeams from "@/app/(dashboard)/teams/hooks/useFetchTeams";
 import TeamsTable from "@/app/(dashboard)/teams/components/TeamsTable/TeamsTable";
 import DeleteTeamModal from "@/app/(dashboard)/teams/components/modals/DeleteTeamModal";
 import CreateTeamModal from "@/app/(dashboard)/teams/components/modals/CreateTeamModal";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 interface TeamProps {
   teams: Team[] | null;
@@ -249,7 +250,7 @@ const TeamsView: React.FC<TeamProps> = ({
         <Col numColSpan={1} className="flex flex-col gap-2">
           {(userRole == "Admin" || userRole == "Org Admin") && (
             <Button className="w-fit" onClick={() => setIsTeamModalVisible(true)}>
-              {t("teams.create")}
+              {teamT(t, "teams.create")}
             </Button>
           )}
           {selectedTeamId ? (
@@ -288,7 +289,7 @@ const TeamsView: React.FC<TeamProps> = ({
             <TeamsHeaderTabs lastRefreshed={lastRefreshed} onRefresh={handleRefreshClick} userRole={userRole}>
               <TabPanel>
                 <Text>
-                  {t("teams.clickToView")}
+                  {teamT(t, "teams.clickToView")}
                 </Text>
                 <Grid numItems={1} className="gap-2 pt-2 pb-2 h-[75vh] w-full mt-2">
                   <Col numColSpan={1}>
