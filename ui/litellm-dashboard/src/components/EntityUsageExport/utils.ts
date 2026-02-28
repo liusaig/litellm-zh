@@ -28,6 +28,78 @@ const extractTeamIdFromApiKeyBreakdown = (apiKeyBreakdown: Record<string, any> |
   return null;
 };
 
+const createEmptyMetrics = () => ({
+  spend: 0,
+  api_requests: 0,
+  successful_requests: 0,
+  failed_requests: 0,
+  total_tokens: 0,
+  prompt_tokens: 0,
+  completion_tokens: 0,
+});
+
+const mergeMetrics = (target: Record<string, number>, source: Record<string, any> | undefined) => {
+  if (!source) return;
+  target.spend += source.spend || 0;
+  target.api_requests += source.api_requests || 0;
+  target.successful_requests += source.successful_requests || 0;
+  target.failed_requests += source.failed_requests || 0;
+  target.total_tokens += source.total_tokens || 0;
+  target.prompt_tokens += source.prompt_tokens || 0;
+  target.completion_tokens += source.completion_tokens || 0;
+};
+
+const synthesizeEntityBreakdownFromApiKeys = (day: any): Record<string, any> => {
+  const synthesized: Record<string, any> = {};
+
+  Object.entries(day?.breakdown?.api_keys || {}).forEach(([keyId, keyData]: [string, any]) => {
+    const teamId = keyData?.metadata?.team_id || "Unassigned";
+
+    if (!synthesized[teamId]) {
+      synthesized[teamId] = {
+        metrics: createEmptyMetrics(),
+        api_key_breakdown: {},
+      };
+    }
+
+    mergeMetrics(synthesized[teamId].metrics, keyData?.metrics);
+
+    if (!synthesized[teamId].api_key_breakdown[keyId]) {
+      synthesized[teamId].api_key_breakdown[keyId] = {
+        metrics: createEmptyMetrics(),
+        metadata: keyData?.metadata || {},
+      };
+    }
+
+    mergeMetrics(synthesized[teamId].api_key_breakdown[keyId].metrics, keyData?.metrics);
+  });
+
+  if (Object.keys(synthesized).length === 0 && day?.metrics) {
+    synthesized.Unassigned = {
+      metrics: {
+        spend: day.metrics.spend || 0,
+        api_requests: day.metrics.api_requests || 0,
+        successful_requests: day.metrics.successful_requests || 0,
+        failed_requests: day.metrics.failed_requests || 0,
+        total_tokens: day.metrics.total_tokens || 0,
+        prompt_tokens: day.metrics.prompt_tokens || 0,
+        completion_tokens: day.metrics.completion_tokens || 0,
+      },
+      api_key_breakdown: {},
+    };
+  }
+
+  return synthesized;
+};
+
+const getEntitiesForExport = (day: any): Record<string, any> => {
+  const entities = day?.breakdown?.entities || {};
+  if (Object.keys(entities).length > 0) {
+    return entities;
+  }
+  return synthesizeEntityBreakdownFromApiKeys(day);
+};
+
 export const getEntityBreakdown = (
   spendData: EntitySpendData,
   teamAliasMap: Record<string, string> = {},
@@ -91,7 +163,7 @@ export const generateDailyData = (
   const dailyBreakdown: any[] = [];
 
   spendData.results.forEach((day) => {
-    Object.entries(day.breakdown.entities || {}).forEach(([entity, data]: [string, any]) => {
+    Object.entries(getEntitiesForExport(day)).forEach(([entity, data]: [string, any]) => {
       // Extract team_id from api_key_breakdown metadata (not data.metadata which is empty)
       const teamId = extractTeamIdFromApiKeyBreakdown(data.api_key_breakdown);
       const teamAlias = teamId ? teamAliasMap[teamId] || null : null;
@@ -140,7 +212,7 @@ export const generateDailyWithKeysData = (
   } = {};
 
   spendData.results.forEach((day) => {
-    Object.entries(day.breakdown.entities || {}).forEach(([entity, data]: [string, any]) => {
+    Object.entries(getEntitiesForExport(day)).forEach(([entity, data]: [string, any]) => {
       const apiKeyBreakdown = data.api_key_breakdown || {};
 
       // Iterate through each API key in the breakdown
@@ -211,6 +283,69 @@ export const generateDailyWithModelsData = (
   const dailyModelBreakdown: any[] = [];
 
   spendData.results.forEach((day) => {
+    if (Object.keys(day?.breakdown?.entities || {}).length === 0) {
+      const aggregatedByDateTeamModel: {
+        [key: string]: {
+          Date: string;
+          teamId: string;
+          teamAlias: string | null;
+          model: string;
+          metrics: {
+            spend: number;
+            requests: number;
+            successful: number;
+            failed: number;
+            tokens: number;
+          };
+        };
+      } = {};
+
+      Object.entries(day?.breakdown?.models || {}).forEach(([model, modelData]: [string, any]) => {
+        Object.entries(modelData?.api_key_breakdown || {}).forEach(([_apiKey, apiKeyData]: [string, any]) => {
+          const teamId = apiKeyData?.metadata?.team_id || "Unassigned";
+          const teamAlias = teamAliasMap[teamId] || null;
+          const uniqueKey = `${day.date}_${teamId}_${model}`;
+
+          if (!aggregatedByDateTeamModel[uniqueKey]) {
+            aggregatedByDateTeamModel[uniqueKey] = {
+              Date: day.date,
+              teamId,
+              teamAlias,
+              model,
+              metrics: {
+                spend: 0,
+                requests: 0,
+                successful: 0,
+                failed: 0,
+                tokens: 0,
+              },
+            };
+          }
+
+          aggregatedByDateTeamModel[uniqueKey].metrics.spend += apiKeyData?.metrics?.spend || 0;
+          aggregatedByDateTeamModel[uniqueKey].metrics.requests += apiKeyData?.metrics?.api_requests || 0;
+          aggregatedByDateTeamModel[uniqueKey].metrics.successful += apiKeyData?.metrics?.successful_requests || 0;
+          aggregatedByDateTeamModel[uniqueKey].metrics.failed += apiKeyData?.metrics?.failed_requests || 0;
+          aggregatedByDateTeamModel[uniqueKey].metrics.tokens += apiKeyData?.metrics?.total_tokens || 0;
+        });
+      });
+
+      Object.values(aggregatedByDateTeamModel).forEach((item) => {
+        dailyModelBreakdown.push({
+          Date: item.Date,
+          [entityLabel]: item.teamAlias || "-",
+          [`${entityLabel} ID`]: item.teamId || "-",
+          Model: item.model,
+          "Spend (¥)": formatNumberWithCommas(item.metrics.spend, 4),
+          Requests: item.metrics.requests,
+          Successful: item.metrics.successful,
+          Failed: item.metrics.failed,
+          "Total Tokens": item.metrics.tokens,
+        });
+      });
+      return;
+    }
+
     const dailyEntityModels: { [key: string]: { [key: string]: any } } = {};
 
     Object.entries(day.breakdown.entities || {}).forEach(([entity, entityData]: [string, any]) => {
@@ -317,7 +452,25 @@ export const handleExportCSV = (
   teamAliasMap: Record<string, string> = {},
 ): void => {
   const data = generateExportData(spendData, exportScope, entityLabel, teamAliasMap);
-  const csv = Papa.unparse(data);
+  const fallbackDate = dateRange.to ? dayjs(dateRange.to).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
+  const csvData =
+    data.length > 0
+      ? data
+      : [
+          {
+            Date: fallbackDate,
+            [entityLabel]: "-",
+            [`${entityLabel} ID`]: "-",
+            "Spend (¥)": formatNumberWithCommas(spendData?.metadata?.total_spend || 0, 4),
+            Requests: spendData?.metadata?.total_api_requests || 0,
+            "Successful Requests": spendData?.metadata?.total_successful_requests || 0,
+            "Failed Requests": spendData?.metadata?.total_failed_requests || 0,
+            "Total Tokens": spendData?.metadata?.total_tokens || 0,
+            "Prompt Tokens": 0,
+            "Completion Tokens": 0,
+          },
+        ];
+  const csv = Papa.unparse(csvData);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");

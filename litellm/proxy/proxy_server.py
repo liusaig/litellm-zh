@@ -644,15 +644,15 @@ else:
 ui_link = f"{server_root_path}/ui"
 fallback_login_link = f"{server_root_path}/fallback/login"
 model_hub_link = f"{server_root_path}/ui/model_hub_table"
-ui_message = f"👉 [```LiteLLM Admin Panel on /ui```]({ui_link}). Create, Edit Keys with SSO. Having issues? Try [```Fallback Login```]({fallback_login_link})"
-ui_message += "\n\n💸 [```LiteLLM Model Cost Map```](https://models.litellm.ai/)."
+ui_message = f"👉 [```Silinex Admin Panel on /ui```]({ui_link}). Create, Edit Keys with SSO. Having issues? Try [```Fallback Login```]({fallback_login_link})"
+ui_message += "\n\n💸 [```Silinex Model Cost Map```](https://models.litellm.ai/)."
 
-ui_message += f"\n\n🔎 [```LiteLLM Model Hub```]({model_hub_link}). See available models on the proxy. [**Docs**](https://docs.litellm.ai/docs/proxy/ai_hub)"
+ui_message += f"\n\n🔎 [```Silinex Model Hub```]({model_hub_link}). See available models on the proxy. [**Docs**](https://docs.litellm.ai/docs/proxy/ai_hub)"
 
 custom_swagger_message = "[**Customize Swagger Docs**](https://docs.litellm.ai/docs/proxy/enterprise#swagger-docs---custom-routes--branding)"
 
 ### CUSTOM BRANDING [ENTERPRISE FEATURE] ###
-_title = os.getenv("DOCS_TITLE", "LiteLLM API") if premium_user else "LiteLLM API"
+_title = os.getenv("DOCS_TITLE", "Silinex API") if premium_user else "Silinex API"
 _description = (
     os.getenv(
         "DOCS_DESCRIPTION",
@@ -1122,11 +1122,33 @@ try:
         if not os.path.isdir(ui_dir):
             return False
 
-        # Primary signal: marker file created by Dockerfile
+        def _has_restructured_routes(target_dir: str) -> bool:
+            """
+            Return True if any non-internal route directory contains index.html.
+            """
+            try:
+                for entry in os.scandir(target_dir):
+                    if entry.is_dir() and not entry.name.startswith("_"):
+                        index_path = os.path.join(entry.path, "index.html")
+                        if os.path.exists(index_path):
+                            return True
+            except (PermissionError, OSError) as e:
+                verbose_proxy_logger.debug(
+                    f"Could not scan {target_dir} for restructuring detection: {e}"
+                )
+            return False
+
+        # Primary signal: marker file created by Dockerfile.
+        # Validate it to avoid false positives on partially prepared UI directories.
         marker_file = os.path.join(ui_dir, ".litellm_ui_ready")
         if os.path.exists(marker_file):
-            verbose_proxy_logger.debug(f"Found UI ready marker: {marker_file}")
-            return True
+            if _has_restructured_routes(ui_dir):
+                verbose_proxy_logger.debug(f"Found UI ready marker: {marker_file}")
+                return True
+            verbose_proxy_logger.warning(
+                f"Found UI marker at {marker_file}, but no restructured routes were detected. "
+                f"Will attempt UI restructuring."
+            )
 
         # Fallback signal: Detect restructuring pattern
         # After restructuring, routes exist as directories with index.html inside
@@ -1137,21 +1159,11 @@ try:
 
         # Look for ANY subdirectory with index.html (proves restructuring happened)
         # Ignore directories starting with _ (Next.js internals like _next)
-        try:
-            for entry in os.scandir(ui_dir):
-                if entry.is_dir() and not entry.name.startswith("_"):
-                    index_path = os.path.join(entry.path, "index.html")
-                    if os.path.exists(index_path):
-                        # Found at least one restructured route - this proves the pattern
-                        verbose_proxy_logger.debug(
-                            f"Detected restructured UI via pattern: found {entry.name}/index.html"
-                        )
-                        return True
-        except (PermissionError, OSError) as e:
+        if _has_restructured_routes(ui_dir):
             verbose_proxy_logger.debug(
-                f"Could not scan {ui_dir} for restructuring detection: {e}"
+                "Detected restructured UI via pattern: found route directory with index.html"
             )
-            return False
+            return True
 
         # No restructured routes found
         return False
@@ -1416,13 +1428,57 @@ def mount_swagger_ui():
     app.mount("/swagger", StaticFiles(directory=swagger_directory), name="swagger")
 
     def swagger_monkey_patch(*args, **kwargs):
-        return get_swagger_ui_html(
+        docs_cache_bust = os.getenv(
+            "LITELLM_DOCS_CACHE_BUST", str(int(time.time()))
+        )
+        openapi_url = kwargs.get("openapi_url")
+        if isinstance(openapi_url, str) and "LITELLM_DOCS_CACHE_BUST" not in openapi_url:
+            separator = "&" if "?" in openapi_url else "?"
+            kwargs["openapi_url"] = (
+                f"{openapi_url}{separator}LITELLM_DOCS_CACHE_BUST={docs_cache_bust}"
+            )
+
+        swagger_favicon_url = os.getenv(
+            "LITELLM_SWAGGER_FAVICON_URL",
+            "https://cloud.siliconflow.cn/favicon.ico",
+        )
+        if "LITELLM_DOCS_CACHE_BUST" not in swagger_favicon_url:
+            separator = "&" if "?" in swagger_favicon_url else "?"
+            swagger_favicon_url = (
+                f"{swagger_favicon_url}{separator}LITELLM_DOCS_CACHE_BUST={docs_cache_bust}"
+            )
+
+        swagger_html = get_swagger_ui_html(
             *args,
             **kwargs,
             swagger_js_url=f"{custom_root_path_swagger_path}/swagger-ui-bundle.js",
             swagger_css_url=f"{custom_root_path_swagger_path}/swagger-ui.css",
-            swagger_favicon_url=f"{custom_root_path_swagger_path}/favicon.png",
+            swagger_favicon_url=swagger_favicon_url,
         )
+
+        hide_swagger_spec_url = (
+            os.getenv("LITELLM_HIDE_SWAGGER_SPEC_URL", "true").lower()
+            in ("1", "true", "yes", "on")
+        )
+        if not hide_swagger_spec_url:
+            return swagger_html
+
+        try:
+            from fastapi.responses import HTMLResponse
+
+            body = swagger_html.body.decode("utf-8")
+            custom_css = (
+                "<style>"
+                ".swagger-ui .information-container .base-url,"
+                ".swagger-ui .information-container .url"
+                "{display:none !important;}"
+                "</style>"
+            )
+            if custom_css not in body:
+                body = body.replace("</head>", f"{custom_css}</head>")
+            return HTMLResponse(content=body, status_code=swagger_html.status_code)
+        except Exception:
+            return swagger_html
 
     applications.get_swagger_ui_html = swagger_monkey_patch
 
@@ -10998,14 +11054,14 @@ async def get_image():
 @app.get("/get_favicon", include_in_schema=False)
 async def get_favicon():
     """Get custom favicon for the admin UI."""
-    from fastapi.responses import Response
-
     current_dir = os.path.dirname(os.path.abspath(__file__))
     default_favicon = os.path.join(
         current_dir, "_experimental", "out", "favicon.ico"
     )
 
-    favicon_url = os.getenv("LITELLM_FAVICON_URL", "")
+    favicon_url = os.getenv(
+        "LITELLM_FAVICON_URL", "https://cloud.siliconflow.cn/favicon.ico"
+    )
 
     if not favicon_url:
         if os.path.exists(default_favicon):
@@ -11015,51 +11071,7 @@ async def get_favicon():
         )
 
     if favicon_url.startswith(("http://", "https://")):
-        try:
-            from litellm.llms.custom_httpx.http_handler import (
-                get_async_httpx_client,
-            )
-            from litellm.types.llms.custom_http import httpxSpecialProvider
-
-            async_client = get_async_httpx_client(
-                llm_provider=httpxSpecialProvider.UI,
-                params={"timeout": 5.0},
-            )
-            response = await async_client.get(favicon_url)
-            if response.status_code == 200:
-                content_type = response.headers.get(
-                    "content-type", "image/x-icon"
-                )
-                return Response(
-                    content=response.content,
-                    media_type=content_type,
-                )
-            else:
-                verbose_proxy_logger.warning(
-                    "Failed to fetch favicon from %s: status %s",
-                    favicon_url,
-                    response.status_code,
-                )
-                if os.path.exists(default_favicon):
-                    return FileResponse(
-                        default_favicon, media_type="image/x-icon"
-                    )
-                raise HTTPException(
-                    status_code=404, detail="Favicon not found"
-                )
-        except HTTPException:
-            raise
-        except Exception as e:
-            verbose_proxy_logger.debug(
-                "Error downloading favicon from %s: %s", favicon_url, e
-            )
-            if os.path.exists(default_favicon):
-                return FileResponse(
-                    default_favicon, media_type="image/x-icon"
-                )
-            raise HTTPException(
-                status_code=404, detail="Favicon not found"
-            )
+        return RedirectResponse(url=favicon_url, status_code=307)
     else:
         if os.path.exists(favicon_url):
             return FileResponse(favicon_url, media_type="image/x-icon")
@@ -11068,6 +11080,11 @@ async def get_favicon():
         raise HTTPException(
             status_code=404, detail="Favicon not found"
         )
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    return await get_favicon()
 
 
 #### INVITATION MANAGEMENT ####

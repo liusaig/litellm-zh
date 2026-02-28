@@ -627,6 +627,7 @@
       "tags": "标签",
       "spend": "花费",
       "tableView": "表格视图",
+      "chartView": "图表视图",
       "model": "模型"
     },
     "spendByProvider": {

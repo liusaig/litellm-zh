@@ -98,7 +98,7 @@ const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center gap-2">
               <Link href={baseUrl ? baseUrl : "/"} className="flex items-center">
                 <div className="relative">
-                  <div className="h-10 max-w-48 flex items-center justify-center overflow-hidden">
+                  <div className="h-8 max-w-40 flex items-center justify-center overflow-hidden">
                     <img
                       src={imageUrl}
                       alt="Silinex Brand"

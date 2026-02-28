@@ -22,6 +22,9 @@ interface TopModelViewProps {
 export default function TopModelView({ topModels, topModelsLimit, setTopModelsLimit }: TopModelViewProps) {
   const [modelViewMode, setModelViewMode] = useState<"chart" | "table">("table");
   const { t } = useLanguage();
+  const chartViewLabel = t("usagePage.topKeyView.chartView");
+  const resolvedChartViewLabel =
+    chartViewLabel === "usagePage.topKeyView.chartView" ? "图表视图" : chartViewLabel;
 
   const columns = [
     {
@@ -79,7 +82,7 @@ export default function TopModelView({ topModels, topModelsLimit, setTopModelsLi
             onClick={() => setModelViewMode("chart")}
             className={`px-3 py-1 text-sm rounded-md ${modelViewMode === "chart" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
           >
-            {t("usagePage.topKeyView.chartView")}
+            {resolvedChartViewLabel}
           </button>
         </div>
       </div>

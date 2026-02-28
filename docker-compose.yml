@@ -6,6 +6,9 @@ services:
         target: runtime
     image: docker.litellm.ai/berriai/litellm:main-stable
     volumes:
+      - ./litellm/proxy/proxy_server.py:/app/litellm/proxy/proxy_server.py
+      - ./litellm/proxy/proxy_server.py:/usr/lib/python3.13/site-packages/litellm/proxy/proxy_server.py
+      - ./litellm/proxy/_experimental/out:/app/litellm/proxy/_experimental/out
       - ./litellm/proxy/_experimental/out:/usr/lib/python3.13/site-packages/litellm/proxy/_experimental/out
       - ./siliconcloud-color.png:/app/siliconcloud-color.png:ro
       - ./model_prices_and_context_window.json:/usr/lib/python3.13/site-packages/litellm/model_prices_and_context_window.json:ro

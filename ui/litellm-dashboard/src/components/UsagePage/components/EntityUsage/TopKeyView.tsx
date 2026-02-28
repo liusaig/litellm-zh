@@ -27,6 +27,9 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
   const [keyData, setKeyData] = useState<any | undefined>(undefined);
   const [viewMode, setViewMode] = useState<"chart" | "table">("table");
   const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
+  const chartViewLabel = t("usagePage.topKeyView.chartView");
+  const resolvedChartViewLabel =
+    chartViewLabel === "usagePage.topKeyView.chartView" ? "图表视图" : chartViewLabel;
 
   const toggleTagsExpansion = (apiKey: string) => {
     setExpandedTags((prev) => {
@@ -203,7 +206,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
             onClick={() => setViewMode("chart")}
             className={`px-3 py-1 text-sm rounded-md ${viewMode === "chart" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
           >
-            {t("usagePage.topKeyView.chartView")}
+            {resolvedChartViewLabel}
           </button>
         </div>
       </div>

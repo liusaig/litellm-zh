@@ -36,14 +36,39 @@ if [ $? -eq 0 ]; then
 
   # Specify the destination directory
   destination_dir="../../litellm/proxy/_experimental/out"
+  build_output_dir="./out"
 
-  # Remove existing files in the destination directory
-  rm -rf "$destination_dir"/*
+  if [ ! -d "$build_output_dir" ]; then
+    echo "Build output directory not found: $build_output_dir"
+    exit 1
+  fi
+
+  echo "Restructuring exported UI routes..."
+  shopt -s nullglob
+  for html_file in "$build_output_dir"/*.html; do
+    html_name="$(basename "$html_file")"
+
+    if [ "$html_name" = "index.html" ]; then
+      continue
+    fi
+
+    route_name="${html_name%.html}"
+    mkdir -p "$build_output_dir/$route_name"
+    cp "$html_file" "$build_output_dir/$route_name/index.html"
+  done
+  shopt -u nullglob
+
+  # Marker used by proxy_server to detect pre-restructured UI
+  touch "$build_output_dir/.litellm_ui_ready"
+
+  # Remove existing files in the destination directory (including hidden files)
+  mkdir -p "$destination_dir"
+  find "$destination_dir" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
 
   # Copy the contents of the output directory to the specified destination
-  cp -r ./out/* "$destination_dir"
+  cp -r "$build_output_dir"/. "$destination_dir"/
 
-  rm -rf ./out
+  rm -rf "$build_output_dir"
 
   echo "Deployment completed."
 else

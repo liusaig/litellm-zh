@@ -1,4 +1,4 @@
-export const DEFAULT_BRAND_LOGO_URL = "/ui/assets/logos/silinex.svg";
+export const DEFAULT_BRAND_LOGO_URL = "/ui/assets/logos/image.png";
 export const LEGACY_LOGO_ENDPOINT_PATH = "/get_image";
 
 const LEGACY_DEFAULT_LOGO_URL_MARKERS = ["@lobehub/icons-static-png", "siliconcloud-color.png"];

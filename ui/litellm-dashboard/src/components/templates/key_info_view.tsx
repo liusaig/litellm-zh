@@ -5,7 +5,7 @@ import { formatNumberWithCommas } from "@/utils/dataUtils";
 import { mapEmptyStringToNull } from "@/utils/keyUpdateUtils";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { Badge, Button, Card, Grid, Tab, TabGroup, TabList, TabPanel, TabPanels, Text, Title } from "@tremor/react";
-import { Form, Tag } from "antd";
+import { Tag } from "antd";
 import { KeyInfoHeader } from "./KeyInfoHeader";
 import { useEffect, useState } from "react";
 import { isProxyAdminRole, isUserTeamAdminForSingleTeam } from "../../utils/roles";
@@ -57,7 +57,6 @@ export default function KeyInfoView({
   };
   const { teams: teamsData } = useTeams();
   const [isEditing, setIsEditing] = useState(false);
-  const [form] = Form.useForm();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
