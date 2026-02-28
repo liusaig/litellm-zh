@@ -6,6 +6,7 @@ import { getGuardrailsList, deleteGuardrailCall } from "./networking";
 import AddGuardrailForm from "./guardrails/add_guardrail_form";
 import GuardrailTable from "./guardrails/guardrail_table";
 import { isAdminRole } from "@/utils/roles";
+import { useLanguage } from "@/contexts/LanguageContext";
 import GuardrailInfoView from "./guardrails/guardrail_info";
 import GuardrailTestPlayground from "./guardrails/GuardrailTestPlayground";
 import NotificationsManager from "./molecules/notifications_manager";
@@ -39,6 +40,11 @@ interface GuardrailsResponse {
 }
 
 const GuardrailsPanel: React.FC<GuardrailsPanelProps> = ({ accessToken, userRole }) => {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string) => {
+    const value = t(key);
+    return value === key && locale === "zh-CN" ? zh : value;
+  };
   const [guardrailsList, setGuardrailsList] = useState<Guardrail[]>([]);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isCustomCodeModalVisible, setIsCustomCodeModalVisible] = useState(false);
@@ -110,11 +116,16 @@ const GuardrailsPanel: React.FC<GuardrailsPanelProps> = ({ accessToken, userRole
     setIsDeleting(true);
     try {
       await deleteGuardrailCall(accessToken, guardrailToDelete.guardrail_id);
-      NotificationsManager.success(`Guardrail "${guardrailToDelete.guardrail_name}" deleted successfully`);
+      NotificationsManager.success(
+        tr("guardrailsPage.notifications.deleteSuccess", "护栏 \"{name}\" 删除成功").replace(
+          "{name}",
+          guardrailToDelete.guardrail_name || ""
+        )
+      );
       await fetchGuardrails();
     } catch (error) {
       console.error("Error deleting guardrail:", error);
-      NotificationsManager.fromBackend("Failed to delete guardrail");
+      NotificationsManager.fromBackend(tr("guardrailsPage.notifications.deleteFailed", "删除护栏失败"));
     } finally {
       setIsDeleting(false);
       setIsDeleteModalOpen(false);
@@ -136,9 +147,11 @@ const GuardrailsPanel: React.FC<GuardrailsPanelProps> = ({ accessToken, userRole
     <div className="w-full mx-auto flex-auto overflow-y-auto m-8 p-2">
       <TabGroup index={activeTab} onIndexChange={setActiveTab}>
         <TabList className="mb-4">
-          <Tab>Guardrail Garden</Tab>
-          <Tab>Guardrails</Tab>
-          <Tab disabled={!accessToken || guardrailsList.length === 0}>Test Playground</Tab>
+          <Tab>{tr("guardrailsPage.tabs.garden", "护栏广场")}</Tab>
+          <Tab>{tr("guardrailsPage.tabs.guardrails", "护栏")}</Tab>
+          <Tab disabled={!accessToken || guardrailsList.length === 0}>
+            {tr("guardrailsPage.tabs.testPlayground", "测试操场")}
+          </Tab>
         </TabList>
 
         <TabPanels>
@@ -159,13 +172,13 @@ const GuardrailsPanel: React.FC<GuardrailsPanelProps> = ({ accessToken, userRole
                     {
                       key: "provider",
                       icon: <PlusOutlined />,
-                      label: "Add Provider Guardrail",
+                      label: tr("guardrailsPage.actions.addProviderGuardrail", "添加提供商护栏"),
                       onClick: handleAddGuardrail,
                     },
                     {
                       key: "custom_code",
                       icon: <CodeOutlined />,
-                      label: "Create Custom Code Guardrail",
+                      label: tr("guardrailsPage.actions.createCustomCodeGuardrail", "创建自定义代码护栏"),
                       onClick: handleAddCustomCodeGuardrail,
                     },
                   ],
@@ -174,7 +187,7 @@ const GuardrailsPanel: React.FC<GuardrailsPanelProps> = ({ accessToken, userRole
                 disabled={!accessToken}
               >
                 <Button disabled={!accessToken}>
-                  + Add New Guardrail <DownOutlined className="ml-2" />
+                  {tr("guardrailsPage.actions.addNewGuardrail", "+ 添加新护栏")} <DownOutlined className="ml-2" />
                 </Button>
               </Dropdown>
             </div>
@@ -214,17 +227,22 @@ const GuardrailsPanel: React.FC<GuardrailsPanelProps> = ({ accessToken, userRole
 
             <DeleteResourceModal
               isOpen={isDeleteModalOpen}
-              title="Delete Guardrail"
-              message={`Are you sure you want to delete guardrail: ${guardrailToDelete?.guardrail_name}? This action cannot be undone.`}
-              resourceInformationTitle="Guardrail Information"
+              title={tr("guardrailsPage.deleteModal.title", "删除护栏")}
+              message={tr("guardrailsPage.deleteModal.message", "确认删除护栏：{name}？此操作不可撤销。").replace(
+                "{name}",
+                guardrailToDelete?.guardrail_name || ""
+              )}
+              resourceInformationTitle={tr("guardrailsPage.deleteModal.resourceInformationTitle", "护栏信息")}
               resourceInformation={[
-                { label: "Name", value: guardrailToDelete?.guardrail_name },
-                { label: "ID", value: guardrailToDelete?.guardrail_id, code: true },
-                { label: "Provider", value: providerDisplayName },
-                { label: "Mode", value: guardrailToDelete?.litellm_params.mode },
+                { label: tr("guardrailsPage.deleteModal.fields.name", "名称"), value: guardrailToDelete?.guardrail_name },
+                { label: tr("guardrailsPage.deleteModal.fields.id", "ID"), value: guardrailToDelete?.guardrail_id, code: true },
+                { label: tr("guardrailsPage.deleteModal.fields.provider", "提供商"), value: providerDisplayName },
+                { label: tr("guardrailsPage.deleteModal.fields.mode", "模式"), value: guardrailToDelete?.litellm_params.mode },
                 {
-                  label: "Default On",
-                  value: guardrailToDelete?.litellm_params.default_on ? "Yes" : "No",
+                  label: tr("guardrailsPage.deleteModal.fields.defaultOn", "默认启用"),
+                  value: guardrailToDelete?.litellm_params.default_on
+                    ? tr("guardrailsPage.deleteModal.fields.yes", "是")
+                    : tr("guardrailsPage.deleteModal.fields.no", "否"),
                 },
               ]}
               onCancel={handleDeleteCancel}

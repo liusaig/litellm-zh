@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Col, Grid } from "@tremor/react";
 import { Button, Spin, Tabs } from "antd";
 import React, { useMemo, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   getGuardrailsUsageDetail,
   getGuardrailsUsageLogs,
@@ -41,6 +42,12 @@ export function GuardrailDetail({
   startDate,
   endDate,
 }: GuardrailDetailProps) {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string, en: string) => {
+    const value = t(key);
+    if (value !== key) return value;
+    return locale === "zh-CN" ? zh : en;
+  };
   const [activeTab, setActiveTab] = useState("overview");
   const [evaluationModalOpen, setEvaluationModalOpen] = useState(false);
   const [logsPage, setLogsPage] = useState(1);
@@ -114,9 +121,15 @@ export function GuardrailDetail({
     return (
       <div>
         <Button type="link" icon={<ArrowLeftOutlined />} onClick={onBack} className="pl-0 mb-4">
-          Back to Overview
+          {tr("guardrailsMonitor.detail.backToOverview", "返回总览", "Back to Overview")}
         </Button>
-        <p className="text-red-600">Failed to load guardrail details.</p>
+        <p className="text-red-600">
+          {tr(
+            "guardrailsMonitor.detail.loadFailed",
+            "加载护栏详情失败。",
+            "Failed to load guardrail details."
+          )}
+        </p>
       </div>
     );
   }
@@ -130,7 +143,7 @@ export function GuardrailDetail({
           onClick={onBack}
           className="pl-0 mb-4"
         >
-          Back to Overview
+          {tr("guardrailsMonitor.detail.backToOverview", "返回总览", "Back to Overview")}
         </Button>
 
         <div className="flex items-start justify-between">
@@ -142,7 +155,13 @@ export function GuardrailDetail({
                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
-                {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
+                {data.status === "healthy"
+                  ? tr("guardrailsMonitor.status.healthy", "健康", "Healthy")
+                  : data.status === "warning"
+                    ? tr("guardrailsMonitor.status.warning", "警告", "Warning")
+                    : data.status === "critical"
+                      ? tr("guardrailsMonitor.status.critical", "严重", "Critical")
+                      : data.status}
               </span>
             </div>
             <p className="text-sm text-gray-500 ml-8">{data.description}</p>
@@ -155,7 +174,7 @@ export function GuardrailDetail({
               type="default"
               icon={<SettingOutlined />}
               onClick={() => setEvaluationModalOpen(true)}
-              title="Evaluation settings"
+              title={tr("guardrailsMonitor.actions.evaluationSettings", "评估设置", "Evaluation settings")}
             />
           </div>
         </div>
@@ -165,8 +184,8 @@ export function GuardrailDetail({
         activeKey={activeTab}
         onChange={setActiveTab}
         items={[
-          { key: "overview", label: "Overview" },
-          { key: "logs", label: "Logs" },
+          { key: "overview", label: tr("guardrailsMonitor.detail.tabs.overview", "概览", "Overview") },
+          { key: "logs", label: tr("guardrailsMonitor.detail.tabs.logs", "日志", "Logs") },
         ]}
       />
 
@@ -174,22 +193,40 @@ export function GuardrailDetail({
         <div className="space-y-6 mt-4">
           <Grid numItems={2} numItemsMd={5} className="gap-4">
             <Col>
-              <MetricCard label="Requests Evaluated" value={data.requestsEvaluated.toLocaleString()} />
+              <MetricCard
+                label={tr(
+                  "guardrailsMonitor.detail.metrics.requestsEvaluated",
+                  "评估请求数",
+                  "Requests Evaluated"
+                )}
+                value={data.requestsEvaluated.toLocaleString()}
+              />
             </Col>
             <Col>
               <MetricCard
-                label="Fail Rate"
+                label={tr("guardrailsMonitor.detail.metrics.failRate", "失败率", "Fail Rate")}
                 value={`${data.failRate}%`}
                 valueColor={
                   data.failRate > 15 ? "text-red-600" : data.failRate > 5 ? "text-amber-600" : "text-green-600"
                 }
-                subtitle={`${Math.round((data.requestsEvaluated * data.failRate) / 100).toLocaleString()} blocked`}
+                subtitle={tr(
+                  "guardrailsMonitor.detail.metrics.blockedCount",
+                  `{count} 已拦截`,
+                  "{count} blocked"
+                ).replace(
+                  "{count}",
+                  Math.round((data.requestsEvaluated * data.failRate) / 100).toLocaleString()
+                )}
                 icon={data.failRate > 15 ? <WarningOutlined className="text-red-400" /> : undefined}
               />
             </Col>
             <Col>
               <MetricCard
-                label="Avg. latency added"
+                label={tr(
+                  "guardrailsMonitor.detail.metrics.avgLatencyAdded",
+                  "平均新增延迟",
+                  "Avg. latency added"
+                )}
                 value={
                   data.avgLatency != null ? `${Math.round(data.avgLatency)}ms` : "—"
                 }
@@ -202,7 +239,11 @@ export function GuardrailDetail({
                         : "text-green-600"
                     : "text-gray-500"
                 }
-                subtitle={data.avgLatency != null ? "Per request (avg)" : "No data"}
+                subtitle={
+                  data.avgLatency != null
+                    ? tr("guardrailsMonitor.detail.metrics.perRequestAvg", "每请求（平均）", "Per request (avg)")
+                    : tr("guardrailsMonitor.detail.metrics.noData", "暂无数据", "No data")
+                }
               />
             </Col>
           </Grid>

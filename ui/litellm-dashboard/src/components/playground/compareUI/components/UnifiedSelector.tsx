@@ -24,7 +24,7 @@ export function UnifiedSelector({
   return (
     <Select
       value={value || undefined}
-      placeholder={loading ? `Loading ${config.selectorLabel.toLowerCase()}s...` : config.selectorPlaceholder}
+      placeholder={loading ? `正在加载${config.selectorLabel}...` : config.selectorPlaceholder}
       onChange={onChange}
       loading={loading}
       showSearch
@@ -39,10 +39,9 @@ export function UnifiedSelector({
             <Spin size="small" />
           </div>
         ) : (
-          `No ${config.selectorLabel.toLowerCase()}s available`
+          `暂无可用${config.selectorLabel}`
         )
       }
     />
   );
 }
-

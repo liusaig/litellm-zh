@@ -87,13 +87,21 @@ describe("EntityUsageExportModal", () => {
     const { getByRole } = renderWithProviders(<EntityUsageExportModal {...baseProps} />);
 
     // Default primary action reflects CSV export
-    expect(getByRole("button", { name: /Export CSV/i })).toBeInTheDocument();
+    expect(getByRole("button", { name: /Export CSV|导出 CSV/i })).toBeInTheDocument();
 
     // Click export
-    await user.click(getByRole("button", { name: /Export CSV/i }));
+    await user.click(getByRole("button", { name: /Export CSV|导出 CSV/i }));
 
     // Verifies export function was invoked with correct parameters
-    expect(handleExportCSV).toHaveBeenCalledWith(baseProps.spendData, "daily", "Tag", "tag", {});
+    expect(handleExportCSV).toHaveBeenCalledWith(
+      baseProps.spendData,
+      "daily",
+      "Tag",
+      "tag",
+      baseProps.dateRange,
+      undefined,
+      {},
+    );
 
     // Modal closes after export
     expect(baseProps.onClose).toHaveBeenCalled();
@@ -111,15 +119,23 @@ describe("EntityUsageExportModal", () => {
     const { getByText, getByRole } = renderWithProviders(<EntityUsageExportModal {...baseProps} />);
 
     // Choose the alternate export type - click the label to trigger radio
-    const dailyModelLabel = getByText(/Day-by-day by tag and model/i);
+    const dailyModelLabel = getByText(/Day-by-day by tag and model|按标签与模型逐日明细/i);
     await user.click(dailyModelLabel);
 
     // Export with default CSV format
-    const exportBtn = getByRole("button", { name: /Export CSV/i });
+    const exportBtn = getByRole("button", { name: /Export CSV|导出 CSV/i });
     await user.click(exportBtn);
 
     // Ensure the selected scope flowed through
-    expect(handleExportCSV).toHaveBeenCalledWith(baseProps.spendData, "daily_with_models", "Tag", "tag", {});
+    expect(handleExportCSV).toHaveBeenCalledWith(
+      baseProps.spendData,
+      "daily_with_models",
+      "Tag",
+      "tag",
+      baseProps.dateRange,
+      undefined,
+      {},
+    );
 
     // Modal closes after export
     expect(baseProps.onClose).toHaveBeenCalled();

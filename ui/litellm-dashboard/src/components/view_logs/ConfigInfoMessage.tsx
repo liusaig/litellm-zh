@@ -32,17 +32,19 @@ export const ConfigInfoMessage: React.FC<ConfigInfoMessageProps> = ({ show, onOp
       <div>
         <h4 className="text-sm font-medium text-blue-800">{t("logs.details.requestNotFound")}</h4>
         <p className="text-sm text-blue-700 mt-1">
-          To view request and response details, enable prompt storage in your Silinex configuration by adding the
-          following to your <code className="bg-blue-100 px-1 py-0.5 rounded">proxy_config.yaml</code> file
+          {t("logs.details.requestNotFoundDescription")}
+          {" "}
+          <code className="bg-blue-100 px-1 py-0.5 rounded">proxy_config.yaml</code>
+          {t("logs.details.requestNotFoundDescriptionSuffix")}
           {onOpenSettings && (
-            <> or{" "}
+            <> {t("logs.details.or")}{" "}
               <button
                 onClick={onOpenSettings}
                 className="text-blue-600 hover:text-blue-800 underline font-medium"
               >
-                open the settings
+                {t("logs.details.openSettings")}
               </button>
-              {" "}to configure this directly.
+              {" "}{t("logs.details.configureDirectly")}
             </>
           )}
         </p>
@@ -52,7 +54,7 @@ export const ConfigInfoMessage: React.FC<ConfigInfoMessageProps> = ({ show, onOp
   store_prompts_in_spend_logs: true`}
         </pre>
         <p className="text-xs text-blue-700 mt-2">
-          Note: This will only affect new requests after the configuration change.
+          {t("logs.details.configNote")}
         </p>
       </div>
     </div>

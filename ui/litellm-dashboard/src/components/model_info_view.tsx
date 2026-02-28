@@ -63,6 +63,10 @@ export default function ModelInfoView({
   modelAccessGroups,
 }: ModelInfoViewProps) {
   const { t } = useLanguage();
+  const tf = (key: string, fallback: string): string => {
+    const translated = t(key);
+    return translated === key ? fallback : translated;
+  };
   const [form] = Form.useForm();
   const [localModelData, setLocalModelData] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -316,9 +320,9 @@ export default function ModelInfoView({
     return (
       <div className="p-4">
         <TremorButton icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-          Back to Models
+          {tf("models.modelInfo.backToModels", "Back to Models")}
         </TremorButton>
-        <Text>Loading...</Text>
+        <Text>{tf("models.modelInfo.loading", "Loading...")}</Text>
       </div>
     );
   }
@@ -328,9 +332,9 @@ export default function ModelInfoView({
     return (
       <div className="p-4">
         <TremorButton icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-          Back to Models
+          {tf("models.modelInfo.backToModels", "Back to Models")}
         </TremorButton>
-        <Text>Model not found</Text>
+        <Text>{tf("models.modelInfo.notFound", "Model not found")}</Text>
       </div>
     );
   }
@@ -338,7 +342,7 @@ export default function ModelInfoView({
   const handleTestConnection = async () => {
     if (!accessToken) return;
     try {
-      NotificationsManager.info("Testing connection...");
+      NotificationsManager.info(tf("models.modelInfo.notifications.testingConnection", "Testing connection..."));
       const response = await testConnectionRequest(
         accessToken,
         {
@@ -413,9 +417,11 @@ export default function ModelInfoView({
       <div className="flex justify-between items-center mb-6">
         <div>
           <TremorButton icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-            Back to Models
+            {tf("models.modelInfo.backToModels", "Back to Models")}
           </TremorButton>
-          <Title>Public Model Name: {getDisplayModelName(modelData)}</Title>
+          <Title>
+            {tf("models.modelInfo.publicModelName", "Public Model Name")}: {getDisplayModelName(modelData)}
+          </Title>
           <div className="flex items-center cursor-pointer">
             <Text className="text-gray-500 font-mono">{modelData.model_info.id}</Text>
             <Button
@@ -438,7 +444,7 @@ export default function ModelInfoView({
             className="flex items-center gap-2"
             data-testid="test-connection-button"
           >
-            Test Connection
+            {tf("models.modelInfo.testConnection", "Test Connection")}
           </TremorButton>
 
           <TremorButton
@@ -449,7 +455,7 @@ export default function ModelInfoView({
             disabled={!isAdmin}
             data-testid="reuse-credentials-button"
           >
-            Re-use Credentials
+            {tf("models.modelInfo.reuseCredentials", "Re-use Credentials")}
           </TremorButton>
           <TremorButton
             icon={TrashIcon}
@@ -459,15 +465,15 @@ export default function ModelInfoView({
             disabled={!canEditModel}
             data-testid="delete-model-button"
           >
-            Delete Model
+            {tf("models.modelInfo.deleteModel", "Delete Model")}
           </TremorButton>
         </div>
       </div>
 
       <TabGroup>
         <TabList className="mb-6">
-          <Tab>Overview</Tab>
-          <Tab>Raw JSON</Tab>
+          <Tab>{tf("models.modelInfo.overview", "Overview")}</Tab>
+          <Tab>{tf("models.modelInfo.rawJson", "Raw JSON")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -475,7 +481,7 @@ export default function ModelInfoView({
             {/* Overview Grid */}
             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6 mb-6">
               <Card>
-                <Text>Provider</Text>
+                <Text>{tf("models.modelInfo.provider", "Provider")}</Text>
                 <div className="mt-2 flex items-center space-x-2">
                   {modelData.provider && (
                     <img
@@ -501,24 +507,24 @@ export default function ModelInfoView({
                       }}
                     />
                   )}
-                  <Title>{modelData.provider || "Not Set"}</Title>
+                  <Title>{modelData.provider || tf("models.modelInfo.notSet", "Not Set")}</Title>
                 </div>
               </Card>
               <Card>
-                <Text>Silinex Model</Text>
+                <Text>{tf("models.modelInfo.silinexModel", "Silinex Model")}</Text>
                 <div className="mt-2 overflow-hidden">
-                  <Tooltip title={modelData.litellm_model_name || "Not Set"}>
+                  <Tooltip title={modelData.litellm_model_name || tf("models.modelInfo.notSet", "Not Set")}>
                     <div className="break-all text-sm font-medium leading-relaxed cursor-pointer">
-                      {modelData.litellm_model_name || "Not Set"}
+                      {modelData.litellm_model_name || tf("models.modelInfo.notSet", "Not Set")}
                     </div>
                   </Tooltip>
                 </div>
               </Card>
               <Card>
-                <Text>Pricing</Text>
+                <Text>{tf("models.modelInfo.pricing", "Pricing")}</Text>
                 <div className="mt-2">
-                  <Text>Input: ${modelData.input_cost}/1M tokens</Text>
-                  <Text>Output: ${modelData.output_cost}/1M tokens</Text>
+                  <Text>{tf("models.modelInfo.input", "Input")}: ¥{modelData.input_cost}/1M tokens</Text>
+                  <Text>{tf("models.modelInfo.output", "Output")}: ¥{modelData.output_cost}/1M tokens</Text>
                 </div>
               </Card>
             </Grid>
@@ -534,14 +540,10 @@ export default function ModelInfoView({
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Created At{" "}
+                {tf("models.modelInfo.createdAt", "Created At")}{" "}
                 {modelData.model_info.created_at
-                  ? new Date(modelData.model_info.created_at).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })
-                  : "Not Set"}
+                  ? new Date(modelData.model_info.created_at).toLocaleDateString()
+                  : tf("models.modelInfo.notSet", "Not Set")}
               </div>
               <div className="flex items-center gap-x-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -552,28 +554,34 @@ export default function ModelInfoView({
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                Created By {modelData.model_info.created_by || "Not Set"}
+                {tf("models.modelInfo.createdBy", "Created By")}{" "}
+                {modelData.model_info.created_by || tf("models.modelInfo.notSet", "Not Set")}
               </div>
             </div>
 
             {/* Settings Card */}
             <Card>
               <div className="flex justify-between items-center mb-4">
-                <Title>Model Settings</Title>
+                <Title>{tf("models.modelInfo.modelSettings", "Model Settings")}</Title>
                 <div className="flex gap-2">
                   {isAutoRouter && canEditModel && !isEditing && (
                     <TremorButton onClick={() => setIsAutoRouterModalOpen(true)} className="flex items-center">
-                      Edit Auto Router
+                      {tf("models.modelInfo.editAutoRouter", "Edit Auto Router")}
                     </TremorButton>
                   )}
                   {canEditModel ? (
                     !isEditing && (
                       <TremorButton onClick={() => setIsEditing(true)} className="flex items-center">
-                        Edit Settings
+                        {tf("models.modelInfo.editSettings", "Edit Settings")}
                       </TremorButton>
                     )
                   ) : (
-                    <Tooltip title="Only DB models can be edited. You must be an admin or the creator of the model to edit it.">
+                    <Tooltip
+                      title={tf(
+                        "models.modelInfo.editPermissionTooltip",
+                        "Only DB models can be edited. You must be an admin or the creator of the model to edit it.",
+                      )}
+                    >
                       <InfoCircleOutlined />
                     </Tooltip>
                   )}
@@ -618,10 +626,10 @@ export default function ModelInfoView({
                   <div className="space-y-4">
                     <div className="space-y-4">
                       <div>
-                        <Text className="font-medium">Model Name</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.modelName", "模型名称")}</Text>
                         {isEditing ? (
                           <Form.Item name="model_name" className="mb-0">
-                            <TextInput placeholder="Enter model name" />
+                            <TextInput placeholder={tf("models.modelInfo.placeholders.modelName", "请输入模型名称")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">{localModelData.model_name}</div>
@@ -629,10 +637,12 @@ export default function ModelInfoView({
                       </div>
 
                       <div>
-                        <Text className="font-medium">Silinex Model Name</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.silinexModelName", "Silinex 模型名称")}</Text>
                         {isEditing ? (
                           <Form.Item name="litellm_model_name" className="mb-0">
-                            <TextInput placeholder="Enter Silinex model name" />
+                            <TextInput
+                              placeholder={tf("models.modelInfo.placeholders.silinexModelName", "请输入 Silinex 模型名称")}
+                            />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">{localModelData.litellm_model_name}</div>
@@ -640,10 +650,10 @@ export default function ModelInfoView({
                       </div>
 
                       <div>
-                        <Text className="font-medium">Input Cost (per 1M tokens)</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.inputCost", "输入成本（每 1M tokens）")}</Text>
                         {isEditing ? (
                           <Form.Item name="input_cost" className="mb-0">
-                            <NumericalInput placeholder="Enter input cost" />
+                            <NumericalInput placeholder={tf("models.modelInfo.placeholders.inputCost", "请输入输入成本")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
@@ -651,16 +661,16 @@ export default function ModelInfoView({
                               ? (localModelData.litellm_params?.input_cost_per_token * 1_000_000).toFixed(4)
                               : localModelData?.model_info?.input_cost_per_token
                                 ? (localModelData.model_info.input_cost_per_token * 1_000_000).toFixed(4)
-                                : "Not Set"}
+                                : tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Output Cost (per 1M tokens)</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.outputCost", "输出成本（每 1M tokens）")}</Text>
                         {isEditing ? (
                           <Form.Item name="output_cost" className="mb-0">
-                            <NumericalInput placeholder="Enter output cost" />
+                            <NumericalInput placeholder={tf("models.modelInfo.placeholders.outputCost", "请输入输出成本")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
@@ -668,123 +678,132 @@ export default function ModelInfoView({
                               ? (localModelData.litellm_params.output_cost_per_token * 1_000_000).toFixed(4)
                               : localModelData?.model_info?.output_cost_per_token
                                 ? (localModelData.model_info.output_cost_per_token * 1_000_000).toFixed(4)
-                                : "Not Set"}
+                                : tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">API Base</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.apiBase", "API Base")}</Text>
                         {isEditing ? (
                           <Form.Item name="api_base" className="mb-0">
-                            <TextInput placeholder="Enter API base" />
+                            <TextInput placeholder={tf("models.modelInfo.placeholders.apiBase", "请输入 API Base")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.api_base || "Not Set"}
+                            {localModelData.litellm_params?.api_base || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Custom LLM Provider</Text>
+                        <Text className="font-medium">
+                          {tf("models.modelInfo.fields.customLLMProvider", "自定义 LLM 提供商")}
+                        </Text>
                         {isEditing ? (
                           <Form.Item name="custom_llm_provider" className="mb-0">
-                            <TextInput placeholder="Enter custom LLM provider" />
+                            <TextInput
+                              placeholder={tf("models.modelInfo.placeholders.customLLMProvider", "请输入自定义 LLM 提供商")}
+                            />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.custom_llm_provider || "Not Set"}
+                            {localModelData.litellm_params?.custom_llm_provider || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Organization</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.organization", "Organization")}</Text>
                         {isEditing ? (
                           <Form.Item name="organization" className="mb-0">
-                            <TextInput placeholder="Enter organization" />
+                            <TextInput placeholder={tf("models.modelInfo.placeholders.organization", "请输入 Organization")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.organization || "Not Set"}
+                            {localModelData.litellm_params?.organization || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">TPM (Tokens per Minute)</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.tpm", "TPM（每分钟 Tokens）")}</Text>
                         {isEditing ? (
                           <Form.Item name="tpm" className="mb-0">
-                            <NumericalInput placeholder="Enter TPM" />
+                            <NumericalInput placeholder={tf("models.modelInfo.placeholders.tpm", "请输入 TPM")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.tpm || "Not Set"}
+                            {localModelData.litellm_params?.tpm || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">RPM (Requests per Minute)</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.rpm", "RPM（每分钟请求数）")}</Text>
                         {isEditing ? (
                           <Form.Item name="rpm" className="mb-0">
-                            <NumericalInput placeholder="Enter RPM" />
+                            <NumericalInput placeholder={tf("models.modelInfo.placeholders.rpm", "请输入 RPM")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.rpm || "Not Set"}
+                            {localModelData.litellm_params?.rpm || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Max Retries</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.maxRetries", "最大重试次数")}</Text>
                         {isEditing ? (
                           <Form.Item name="max_retries" className="mb-0">
-                            <NumericalInput placeholder="Enter max retries" />
+                            <NumericalInput placeholder={tf("models.modelInfo.placeholders.maxRetries", "请输入最大重试次数")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.max_retries || "Not Set"}
+                            {localModelData.litellm_params?.max_retries || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Timeout (seconds)</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.timeout", "超时（秒）")}</Text>
                         {isEditing ? (
                           <Form.Item name="timeout" className="mb-0">
-                            <NumericalInput placeholder="Enter timeout" />
+                            <NumericalInput placeholder={tf("models.modelInfo.placeholders.timeout", "请输入超时时间")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.timeout || "Not Set"}
+                            {localModelData.litellm_params?.timeout || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Stream Timeout (seconds)</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.streamTimeout", "流式超时（秒）")}</Text>
                         {isEditing ? (
                           <Form.Item name="stream_timeout" className="mb-0">
-                            <NumericalInput placeholder="Enter stream timeout" />
+                            <NumericalInput
+                              placeholder={tf("models.modelInfo.placeholders.streamTimeout", "请输入流式超时时间")}
+                            />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.stream_timeout || "Not Set"}
+                            {localModelData.litellm_params?.stream_timeout || tf("models.modelInfo.notSet", "未设置")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Model Access Groups</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.modelAccessGroups", "模型访问组")}</Text>
                         {isEditing ? (
                           <Form.Item name="model_access_group" className="mb-0">
                             <Select
                               mode="tags"
                               showSearch
-                              placeholder="Select existing groups or type to create new ones"
+                              placeholder={tf(
+                                "models.modelInfo.placeholders.modelAccessGroups",
+                                "选择已有分组或输入创建新分组",
+                              )}
                               optionFilterProp="children"
                               tokenSeparators={[","]}
                               maxTagCount="responsive"
@@ -812,13 +831,13 @@ export default function ModelInfoView({
                                     ))}
                                   </div>
                                 ) : (
-                                  "No groups assigned"
+                                  tf("models.modelInfo.messages.noGroupsAssigned", "未分配分组")
                                 )
                               ) : (
                                 localModelData.model_info.access_groups
                               )
                             ) : (
-                              "Not Set"
+                              tf("models.modelInfo.notSet", "未设置")
                             )}
                           </div>
                         )}
@@ -826,8 +845,13 @@ export default function ModelInfoView({
 
                       <div>
                         <Text className="font-medium">
-                          Guardrails
-                          <Tooltip title="Apply safety guardrails to this model to filter content or enforce policies">
+                          {tf("models.modelInfo.fields.guardrails", "防护栏")}
+                          <Tooltip
+                            title={tf(
+                              "models.modelInfo.tooltips.guardrails",
+                              "为该模型应用安全防护栏，用于内容过滤或策略约束",
+                            )}
+                          >
                             <a
                               href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
                               target="_blank"
@@ -843,7 +867,10 @@ export default function ModelInfoView({
                             <Select
                               mode="tags"
                               showSearch
-                              placeholder="Select existing guardrails or type to create new ones"
+                              placeholder={tf(
+                                "models.modelInfo.placeholders.guardrails",
+                                "选择已有防护栏或输入创建新防护栏",
+                              )}
                               optionFilterProp="children"
                               tokenSeparators={[","]}
                               maxTagCount="responsive"
@@ -873,26 +900,26 @@ export default function ModelInfoView({
                                     )}
                                   </div>
                                 ) : (
-                                  "No guardrails assigned"
+                                  tf("models.modelInfo.messages.noGuardrailsAssigned", "未分配防护栏")
                                 )
                               ) : (
                                 localModelData.litellm_params.guardrails
                               )
                             ) : (
-                              "Not Set"
+                              tf("models.modelInfo.notSet", "未设置")
                             )}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Tags</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.tags", "标签")}</Text>
                         {isEditing ? (
                           <Form.Item name="tags" className="mb-0">
                             <Select
                               mode="tags"
                               showSearch
-                              placeholder="Select existing tags or type to create new ones"
+                              placeholder={tf("models.modelInfo.placeholders.tags", "选择已有标签或输入创建新标签")}
                               optionFilterProp="children"
                               tokenSeparators={[","]}
                               maxTagCount="responsive"
@@ -921,13 +948,13 @@ export default function ModelInfoView({
                                     ))}
                                   </div>
                                 ) : (
-                                  "No tags assigned"
+                                  tf("models.modelInfo.messages.noTagsAssigned", "未分配标签")
                                 )
                               ) : (
                                 localModelData.litellm_params.tags
                               )
                             ) : (
-                              "Not Set"
+                              tf("models.modelInfo.notSet", "未设置")
                             )}
                           </div>
                         )}
@@ -935,12 +962,12 @@ export default function ModelInfoView({
 
                       {isWildcardModel && (
                         <div>
-                          <Text className="font-medium">Health Check Model</Text>
+                          <Text className="font-medium">{tf("models.modelInfo.fields.healthCheckModel", "健康检查模型")}</Text>
                           {isEditing ? (
                             <Form.Item name="health_check_model" className="mb-0">
                               <Select
                                 showSearch
-                                placeholder="Select existing health check model"
+                                placeholder={tf("models.modelInfo.placeholders.healthCheckModel", "选择健康检查模型")}
                                 optionFilterProp="children"
                                 allowClear
                                 options={(() => {
@@ -962,7 +989,7 @@ export default function ModelInfoView({
                             </Form.Item>
                           ) : (
                             <div className="mt-1 p-2 bg-gray-50 rounded">
-                              {localModelData.model_info?.health_check_model || "Not Set"}
+                              {localModelData.model_info?.health_check_model || tf("models.modelInfo.notSet", "未设置")}
                             </div>
                           )}
                         </div>
@@ -977,31 +1004,32 @@ export default function ModelInfoView({
                         />
                       ) : (
                         <div>
-                          <Text className="font-medium">Cache Control</Text>
+                          <Text className="font-medium">{tf("models.modelInfo.fields.cacheControl", "缓存控制")}</Text>
                           <div className="mt-1 p-2 bg-gray-50 rounded">
                             {localModelData.litellm_params?.cache_control_injection_points ? (
                               <div>
-                                <p>Enabled</p>
+                                <p>{tf("models.modelInfo.messages.enabled", "已启用")}</p>
                                 <div className="mt-2">
                                   {localModelData.litellm_params.cache_control_injection_points.map(
                                     (point: any, i: number) => (
                                       <div key={i} className="text-sm text-gray-600 mb-1">
-                                        Location: {point.location},{point.role && <span> Role: {point.role}</span>}
-                                        {point.index !== undefined && <span> Index: {point.index}</span>}
+                                        {tf("models.modelInfo.messages.location", "位置")}: {point.location},
+                                        {point.role && <span> {tf("models.modelInfo.messages.role", "角色")}: {point.role}</span>}
+                                        {point.index !== undefined && <span> {tf("models.modelInfo.messages.index", "索引")}: {point.index}</span>}
                                       </div>
                                     ),
                                   )}
                                 </div>
                               </div>
                             ) : (
-                              "Disabled"
+                              tf("models.modelInfo.messages.disabled", "未启用")
                             )}
                           </div>
                         </div>
                       )}
 
                       <div>
-                        <Text className="font-medium">Model Info</Text>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.modelInfo", "模型信息")}</Text>
                         {isEditing ? (
                           <Form.Item name="model_info" className="mb-0">
                             <Input.TextArea
@@ -1020,8 +1048,13 @@ export default function ModelInfoView({
                       </div>
                       <div>
                         <Text className="font-medium">
-                          Silinex Params
-                          <Tooltip title="Optional litellm params used for making a litellm.completion() call. Some params are automatically added by Silinex.">
+                          {tf("models.modelInfo.fields.silinexParams", "Silinex 参数")}
+                          <Tooltip
+                            title={tf(
+                              "models.modelInfo.tooltips.silinexParams",
+                              "用于 litellm.completion() 调用的可选参数。部分参数会被 Silinex 自动追加。",
+                            )}
+                          >
                             <a
                               href="https://docs.litellm.ai/docs/completion/input"
                               target="_blank"
@@ -1052,8 +1085,10 @@ export default function ModelInfoView({
                         )}
                       </div>
                       <div>
-                        <Text className="font-medium">Team ID</Text>
-                        <div className="mt-1 p-2 bg-gray-50 rounded">{modelData.model_info.team_id || "Not Set"}</div>
+                        <Text className="font-medium">{tf("models.modelInfo.fields.teamId", "团队 ID")}</Text>
+                        <div className="mt-1 p-2 bg-gray-50 rounded">
+                          {modelData.model_info.team_id || tf("models.modelInfo.notSet", "未设置")}
+                        </div>
                       </div>
                     </div>
 
@@ -1068,17 +1103,17 @@ export default function ModelInfoView({
                           }}
                           disabled={isSaving}
                         >
-                          Cancel
+                          {tf("models.common.cancel", "Cancel")}
                         </TremorButton>
                         <TremorButton variant="primary" onClick={() => form.submit()} loading={isSaving}>
-                          Save Changes
+                          {tf("models.modelInfo.saveChanges", "Save Changes")}
                         </TremorButton>
                       </div>
                     )}
                   </div>
                 </Form>
               ) : (
-                <Text>Loading...</Text>
+                <Text>{tf("models.modelInfo.loading", "Loading...")}</Text>
               )}
             </Card>
           </TabPanel>

@@ -256,7 +256,7 @@ export default function UserInfoView({
             label: "总花费",
             value:
               userData.user_info?.spend !== null && userData.user_info?.spend !== undefined
-                ? userData.user_info.spend.toFixed(2)
+                ? `¥${userData.user_info.spend.toFixed(2)}`
                 : undefined,
           },
         ]}

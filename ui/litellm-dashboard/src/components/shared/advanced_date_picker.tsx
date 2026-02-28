@@ -2,6 +2,7 @@ import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { Button, DateRangePickerValue, Text } from "@tremor/react";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AdvancedDatePickerProps {
   value: DateRangePickerValue;
@@ -12,14 +13,14 @@ interface AdvancedDatePickerProps {
 }
 
 interface RelativeTimeOption {
-  label: string;
+  key: string;
   shortLabel: string;
   getValue: () => { from: Date; to: Date };
 }
 
 const relativeTimeOptions: RelativeTimeOption[] = [
   {
-    label: "Today",
+    key: "today",
     shortLabel: "today",
     getValue: () => ({
       from: moment().startOf("day").toDate(),
@@ -27,7 +28,7 @@ const relativeTimeOptions: RelativeTimeOption[] = [
     }),
   },
   {
-    label: "Last 7 days",
+    key: "last7Days",
     shortLabel: "7d",
     getValue: () => ({
       from: moment().subtract(7, "days").startOf("day").toDate(),
@@ -35,7 +36,7 @@ const relativeTimeOptions: RelativeTimeOption[] = [
     }),
   },
   {
-    label: "Last 30 days",
+    key: "last30Days",
     shortLabel: "30d",
     getValue: () => ({
       from: moment().subtract(30, "days").startOf("day").toDate(),
@@ -43,7 +44,7 @@ const relativeTimeOptions: RelativeTimeOption[] = [
     }),
   },
   {
-    label: "Month to date",
+    key: "monthToDate",
     shortLabel: "MTD",
     getValue: () => ({
       from: moment().startOf("month").toDate(),
@@ -51,7 +52,7 @@ const relativeTimeOptions: RelativeTimeOption[] = [
     }),
   },
   {
-    label: "Year to date",
+    key: "yearToDate",
     shortLabel: "YTD",
     getValue: () => ({
       from: moment().startOf("year").toDate(),
@@ -66,9 +67,15 @@ const relativeTimeOptions: RelativeTimeOption[] = [
 const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
   value,
   onValueChange,
-  label = "Select Time Range",
+  label,
   showTimeRange = true,
 }) => {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string, en: string) => {
+    const value = t(key);
+    if (value !== key) return value;
+    return locale === "zh-CN" ? zh : en;
+  };
   const [isOpen, setIsOpen] = useState(false);
   const [tempValue, setTempValue] = useState<DateRangePickerValue>(value);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -76,6 +83,7 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
   // Custom date inputs only - removed time inputs
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const displayLabel = label ?? tr("datePicker.selectTimeRange", "选择时间范围", "Select Time Range");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -114,15 +122,25 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
     const end = moment(endDate, "YYYY-MM-DD");
 
     if (!start.isValid() || !end.isValid()) {
-      return { isValid: false, error: "Invalid date format" };
+      return {
+        isValid: false,
+        error: tr("datePicker.errors.invalidDateFormat", "日期格式无效", "Invalid date format"),
+      };
     }
 
     if (end.isBefore(start)) {
-      return { isValid: false, error: "End date cannot be before start date" };
+      return {
+        isValid: false,
+        error: tr(
+          "datePicker.errors.endBeforeStart",
+          "结束日期不能早于开始日期",
+          "End date cannot be before start date"
+        ),
+      };
     }
 
     return { isValid: true, error: "" };
-  }, [startDate, endDate]);
+  }, [startDate, endDate, t, locale]);
 
   const validation = validateDateRange();
 
@@ -155,14 +173,16 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
   }, [isOpen]);
 
   const formatDisplayRange = useCallback((from: Date | undefined, to: Date | undefined) => {
-    if (!from || !to) return "Select date range";
+    if (!from || !to) return tr("datePicker.selectDateRange", "选择日期范围", "Select date range");
 
     const formatDateTime = (date: Date) => {
-      return moment(date).format("D MMM, HH:mm");
+      return locale === "zh-CN"
+        ? moment(date).format("YYYY/MM/DD HH:mm")
+        : moment(date).format("D MMM, HH:mm");
     };
 
     return `${formatDateTime(from)} - ${formatDateTime(to)}`;
-  }, []);
+  }, [tr, locale]);
 
   // CRITICAL: Apply the same date adjustment logic as the original component
   const adjustDateRange = useCallback((newValue: DateRangePickerValue): DateRangePickerValue => {
@@ -274,17 +294,19 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
 
   return (
     <div className="flex items-center gap-3">
-      {label && <Text className="text-sm font-medium text-gray-700 whitespace-nowrap">{label}</Text>}
+      {displayLabel && <Text className="text-sm font-medium text-gray-700 whitespace-nowrap">{displayLabel}</Text>}
       <div className="relative" ref={dropdownRef}>
         {/* Main input display */}
         <div
-          className="w-[300px] px-3 py-2 text-sm border border-gray-300 rounded-md bg-white cursor-pointer hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          className="w-[480px] max-w-[70vw] px-3 py-2 text-sm border border-gray-300 rounded-md bg-white cursor-pointer hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           onClick={() => setIsOpen(!isOpen)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ClockCircleOutlined className="text-gray-600" />
-              <span className="text-gray-900">{formatDisplayRange(value.from, value.to)}</span>
+              <span className="text-gray-900 whitespace-nowrap">
+                {formatDisplayRange(value.from, value.to)}
+              </span>
             </div>
             <svg
               className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -304,21 +326,33 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
               {/* Left side - Relative time options */}
               <div className="w-1/2 border-r border-gray-200">
                 <div className="p-3 border-b border-gray-200">
-                  <span className="text-sm font-semibold text-gray-900">Relative time</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {tr("datePicker.relativeTime", "相对时间", "Relative time")}
+                  </span>
                 </div>
                 <div className="h-[350px] overflow-y-auto">
                   {relativeTimeOptions.map((option) => {
                     const isSelected = selectedOption === option.shortLabel;
+                    const optionLabel =
+                      option.key === "today"
+                        ? tr("datePicker.relative.today", "今天", "Today")
+                        : option.key === "last7Days"
+                          ? tr("datePicker.relative.last7Days", "最近 7 天", "Last 7 days")
+                          : option.key === "last30Days"
+                            ? tr("datePicker.relative.last30Days", "最近 30 天", "Last 30 days")
+                            : option.key === "monthToDate"
+                              ? tr("datePicker.relative.monthToDate", "本月至今", "Month to date")
+                              : tr("datePicker.relative.yearToDate", "今年至今", "Year to date");
                     return (
                       <div
-                        key={option.label}
+                        key={option.key}
                         className={`flex items-center justify-between px-5 py-4 cursor-pointer border-b border-gray-100 transition-colors ${
                           isSelected ? "bg-blue-50 hover:bg-blue-100 border-blue-200" : "hover:bg-gray-50"
                         }`}
                         onClick={() => handleRelativeTimeSelect(option)}
                       >
                         <span className={`text-sm ${isSelected ? "text-blue-700 font-medium" : "text-gray-700"}`}>
-                          {option.label}
+                          {optionLabel}
                         </span>
                         <span
                           className={`text-xs px-2 py-1 rounded capitalize ${
@@ -338,14 +372,18 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
                 <div className="p-3.5 border-b border-gray-200">
                   <div className="flex items-center gap-2">
                     <CalendarOutlined className="text-gray-600" />
-                    <span className="text-sm font-semibold text-gray-900">Start and end dates</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {tr("datePicker.startAndEndDates", "开始和结束日期", "Start and end dates")}
+                    </span>
                   </div>
                 </div>
 
                 <div className="p-6 space-y-6 pb-20">
                   {/* Start date */}
                   <div>
-                    <label className="text-sm text-gray-700 mb-1 block">Start date</label>
+                    <label className="text-sm text-gray-700 mb-1 block">
+                      {tr("datePicker.startDate", "开始日期", "Start date")}
+                    </label>
                     <input
                       type="date"
                       value={startDate}
@@ -360,7 +398,9 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
 
                   {/* End date */}
                   <div>
-                    <label className="text-sm text-gray-700 mb-1 block">End date</label>
+                    <label className="text-sm text-gray-700 mb-1 block">
+                      {tr("datePicker.endDate", "结束日期", "End date")}
+                    </label>
                     <input
                       type="date"
                       value={endDate}
@@ -394,12 +434,20 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
                   {tempValue.from && tempValue.to && validation.isValid && (
                     <div className="bg-blue-50 p-3 rounded-md space-y-1">
                       <div className="text-xs text-blue-800">
-                        <span className="font-medium">From:</span>{" "}
-                        {moment(tempValue.from).format("MMM D, YYYY [at] HH:mm:ss")}
+                        <span className="font-medium">
+                          {tr("datePicker.from", "开始：", "From:")}
+                        </span>{" "}
+                        {locale === "zh-CN"
+                          ? moment(tempValue.from).format("YYYY年MM月DD日 HH:mm:ss")
+                          : moment(tempValue.from).format("MMM D, YYYY [at] HH:mm:ss")}
                       </div>
                       <div className="text-xs text-blue-800">
-                        <span className="font-medium">To:</span>{" "}
-                        {moment(tempValue.to).format("MMM D, YYYY [at] HH:mm:ss")}
+                        <span className="font-medium">
+                          {tr("datePicker.to", "结束：", "To:")}
+                        </span>{" "}
+                        {locale === "zh-CN"
+                          ? moment(tempValue.to).format("YYYY年MM月DD日 HH:mm:ss")
+                          : moment(tempValue.to).format("MMM D, YYYY [at] HH:mm:ss")}
                       </div>
                     </div>
                   )}
@@ -408,10 +456,10 @@ const AdvancedDatePicker: React.FC<AdvancedDatePickerProps> = ({
                 <div className="absolute bottom-4 right-4">
                   <div className="flex gap-2">
                     <Button variant="secondary" onClick={handleCancel}>
-                      Cancel
+                      {tr("datePicker.cancel", "取消", "Cancel")}
                     </Button>
                     <Button onClick={handleApply} disabled={!tempValue.from || !tempValue.to || !validation.isValid}>
-                      Apply
+                      {tr("datePicker.apply", "应用", "Apply")}
                     </Button>
                   </div>
                 </div>

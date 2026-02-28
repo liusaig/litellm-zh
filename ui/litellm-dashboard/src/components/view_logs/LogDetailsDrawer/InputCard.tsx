@@ -10,6 +10,7 @@ import { SectionHeader } from './SectionHeader';
 import { CollapsibleMessage } from './CollapsibleMessage';
 import { HistoryTree } from './HistoryTree';
 import { SimpleMessageBlock } from './SimpleMessageBlock';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface InputCardProps {
   messages: ParsedMessage[];
@@ -18,6 +19,7 @@ interface InputCardProps {
 }
 
 export function InputCard({ messages, promptTokens, inputCost }: InputCardProps) {
+  const { t } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (messages.length === 0) {
@@ -33,7 +35,7 @@ export function InputCard({ messages, promptTokens, inputCost }: InputCardProps)
   const handleCopy = () => {
     const content = lastMessage?.content || '';
     navigator.clipboard.writeText(content);
-    message.success('Input copied');
+    message.success(t("logs.details.inputCopied"));
   };
 
   return (

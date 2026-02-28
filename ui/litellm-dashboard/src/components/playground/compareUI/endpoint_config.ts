@@ -36,21 +36,21 @@ export const ENDPOINT_CONFIGS: Record<EndpointIdType, EndpointConfig> = {
     id: EndpointId.CHAT_COMPLETIONS,
     label: "/v1/chat/completions",
     selectorType: "model",
-    selectorLabel: "Model",
-    selectorPlaceholder: "Select a model",
-    inputPlaceholder: "Send a prompt to compare models",
-    loadingMessage: "Gathering responses from all models...",
-    validationMessage: "Select a model before sending a message.",
+    selectorLabel: "模型",
+    selectorPlaceholder: "选择模型",
+    inputPlaceholder: "发送提示词以对比模型",
+    loadingMessage: "正在汇总所有模型的响应...",
+    validationMessage: "发送消息前请先选择模型。",
   },
   [EndpointId.A2A_AGENTS]: {
     id: EndpointId.A2A_AGENTS,
-    label: "/a2a (Agents)",
+    label: "/a2a（智能体）",
     selectorType: "agent",
-    selectorLabel: "Agent",
-    selectorPlaceholder: "Select an agent",
-    inputPlaceholder: "Send a message to compare agents",
-    loadingMessage: "Gathering responses from all agents...",
-    validationMessage: "Select an agent before sending a message.",
+    selectorLabel: "智能体",
+    selectorPlaceholder: "选择智能体",
+    inputPlaceholder: "发送消息以对比智能体",
+    loadingMessage: "正在汇总所有智能体的响应...",
+    validationMessage: "发送消息前请先选择智能体。",
   },
 };
 
@@ -135,4 +135,3 @@ export const hasValidSelection = (
  *   validationMessage: "Select a model before sending.",
  * }
  */
-

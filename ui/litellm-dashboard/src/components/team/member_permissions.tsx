@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import NotificationsManager from "../molecules/notifications_manager";
 import { getPermissionInfo } from "./permission_definitions";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamPermissionDescription, teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 interface MemberPermissionsProps {
   teamId: string;
@@ -32,7 +33,7 @@ const MemberPermissions: React.FC<MemberPermissionsProps> = ({ teamId, accessTok
       setSelectedPermissions(teamPermissions);
       setHasChanges(false);
     } catch (error) {
-      NotificationsManager.fromBackend(t("teamDetail.memberPermissions.loadFailed"));
+      NotificationsManager.fromBackend(teamT(t, "teamDetail.memberPermissions.loadFailed"));
       console.error("Error fetching permissions:", error);
     } finally {
       setLoading(false);
@@ -56,10 +57,10 @@ const MemberPermissions: React.FC<MemberPermissionsProps> = ({ teamId, accessTok
       if (!accessToken) return;
       setSaving(true);
       await teamPermissionsUpdateCall(accessToken, teamId, selectedPermissions);
-      NotificationsManager.success(t("teamDetail.memberPermissions.updateSuccess"));
+      NotificationsManager.success(teamT(t, "teamDetail.memberPermissions.updateSuccess"));
       setHasChanges(false);
     } catch (error) {
-      NotificationsManager.fromBackend(t("teamDetail.memberPermissions.updateFailed"));
+      NotificationsManager.fromBackend(teamT(t, "teamDetail.memberPermissions.updateFailed"));
       console.error("Error updating permissions:", error);
     } finally {
       setSaving(false);
@@ -71,7 +72,7 @@ const MemberPermissions: React.FC<MemberPermissionsProps> = ({ teamId, accessTok
   };
 
   if (loading) {
-    return <div className="p-6 text-center">{t("teamDetail.memberPermissions.loading")}</div>;
+    return <div className="p-6 text-center">{teamT(t, "teamDetail.memberPermissions.loading")}</div>;
   }
 
   const hasPermissions = permissions.length > 0;
@@ -79,31 +80,31 @@ const MemberPermissions: React.FC<MemberPermissionsProps> = ({ teamId, accessTok
   return (
     <Card className="bg-white shadow-md rounded-md p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6">
-        <Title className="mb-2 sm:mb-0">{t("teamDetail.memberPermissions.title")}</Title>
+        <Title className="mb-2 sm:mb-0">{teamT(t, "teamDetail.memberPermissions.title")}</Title>
         {canEditTeam && hasChanges && (
           <div className="flex gap-3">
             <Button icon={<ReloadOutlined />} onClick={handleReset}>
-              {t("teamDetail.memberPermissions.reset")}
+              {teamT(t, "teamDetail.memberPermissions.reset")}
             </Button>
             <Button onClick={handleSave} loading={saving} type="primary">
-              <SaveOutlined /> {t("teamDetail.memberPermissions.saveChanges")}
+              <SaveOutlined /> {teamT(t, "teamDetail.memberPermissions.saveChanges")}
             </Button>
           </div>
         )}
       </div>
 
-      <Text className="mb-6 text-gray-600">{t("teamDetail.memberPermissions.description")}</Text>
+      <Text className="mb-6 text-gray-600">{teamT(t, "teamDetail.memberPermissions.description")}</Text>
 
       {hasPermissions ? (
         <div className="overflow-x-auto">
           <Table className=" min-w-full">
             <TableHead>
               <TableRow>
-                <TableHeaderCell>{t("teamDetail.memberPermissions.table.method")}</TableHeaderCell>
-                <TableHeaderCell>{t("teamDetail.memberPermissions.table.endpoint")}</TableHeaderCell>
-                <TableHeaderCell>{t("teamDetail.memberPermissions.table.description")}</TableHeaderCell>
+                <TableHeaderCell>{teamT(t, "teamDetail.memberPermissions.table.method")}</TableHeaderCell>
+                <TableHeaderCell>{teamT(t, "teamDetail.memberPermissions.table.endpoint")}</TableHeaderCell>
+                <TableHeaderCell>{teamT(t, "teamDetail.memberPermissions.table.description")}</TableHeaderCell>
                 <TableHeaderCell className="sticky right-0 bg-white shadow-[-4px_0_4px_-4px_rgba(0,0,0,0.1)] text-center">
-                  {t("teamDetail.memberPermissions.table.allowAccess")}
+                  {teamT(t, "teamDetail.memberPermissions.table.allowAccess")}
                 </TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -124,7 +125,7 @@ const MemberPermissions: React.FC<MemberPermissionsProps> = ({ teamId, accessTok
                     <TableCell>
                       <span className="font-mono text-sm text-gray-800">{permInfo.endpoint}</span>
                     </TableCell>
-                    <TableCell className="text-gray-700">{permInfo.description}</TableCell>
+                    <TableCell className="text-gray-700">{teamPermissionDescription(permission, permInfo.description)}</TableCell>
                     <TableCell className="sticky right-0 bg-white shadow-[-4px_0_4px_-4px_rgba(0,0,0,0.1)] text-center">
                       <Checkbox
                         checked={selectedPermissions.includes(permission)}
@@ -140,7 +141,7 @@ const MemberPermissions: React.FC<MemberPermissionsProps> = ({ teamId, accessTok
         </div>
       ) : (
         <div className="py-12">
-          <Empty description="No permissions available" />
+          <Empty description={teamT(t, "teamDetail.memberPermissions.noPermissions")} />
         </div>
       )}
     </Card>

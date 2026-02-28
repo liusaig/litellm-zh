@@ -3,6 +3,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GuardrailTestPanel } from "./GuardrailTestPanel";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    t: (key: string) =>
+      ({
+        "guardrailsPage.testPanel.input.placeholder": "Enter text to test with guardrails...",
+      }[key] || key),
+  }),
+}));
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
@@ -57,4 +66,3 @@ describe("GuardrailTestPanel", () => {
     });
   });
 });
-

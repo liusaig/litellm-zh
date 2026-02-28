@@ -4,6 +4,39 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "../../tests/test-utils";
 import { UserEditView } from "./user_edit_view";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    locale: "en-US",
+    setLocale: vi.fn(),
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "users.userEdit.userId": "User ID",
+        "users.userEdit.email": "Email",
+        "users.userEdit.userAlias": "User Alias",
+        "users.userEdit.globalProxyRole": "Global Proxy Role",
+        "users.userEdit.globalProxyRoleTooltip":
+          "This is the role that the user will have globally on the proxy. This role is independent of any team/org specific roles.",
+        "users.userEdit.personalModels": "Personal Models",
+        "users.userEdit.personalModelsTooltip":
+          "Select which models this user can access outside of team scope. Choose 'All Proxy Models' to grant access to all models available on the proxy.",
+        "users.userEdit.personalModelsPlaceholder": "Select models",
+        "users.userEdit.allProxyModels": "All Proxy Models",
+        "users.userEdit.noDefaultModels": "No Default Models",
+        "users.userEdit.maxBudget": "Max Budget",
+        "users.userEdit.unlimitedBudget": "Unlimited Budget",
+        "users.userEdit.maxBudgetValidation": "Please enter a budget or select Unlimited Budget",
+        "users.userEdit.resetBudget": "Reset Budget",
+        "users.userEdit.metadata": "Metadata",
+        "users.userEdit.metadataPlaceholder": "Enter metadata as JSON",
+        "users.userEdit.inputPlaceholder": "Type...",
+        "users.userEdit.cancel": "Cancel",
+        "users.userEdit.saveChanges": "Save Changes",
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
 vi.mock("./key_team_helpers/fetch_available_models_team_key", () => ({
   getModelDisplayName: vi.fn((model: string) => model),
 }));
@@ -235,7 +268,7 @@ describe("UserEditView", () => {
     renderWithProviders(<UserEditView {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("最大预算")).toBeInTheDocument();
+      expect(screen.getByText("Max Budget")).toBeInTheDocument();
     });
   });
 
@@ -406,7 +439,7 @@ describe("UserEditView", () => {
     renderWithProviders(<UserEditView {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("最大预算")).toBeInTheDocument();
+      expect(screen.getByText("Max Budget")).toBeInTheDocument();
     });
 
     const budgetInput = screen.getByRole("spinbutton", { name: /max budget/i });

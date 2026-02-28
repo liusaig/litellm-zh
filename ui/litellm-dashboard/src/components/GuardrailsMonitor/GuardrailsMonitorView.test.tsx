@@ -4,6 +4,13 @@ import { describe, expect, it, vi } from "vitest";
 import GuardrailsMonitorView from "./GuardrailsMonitorView";
 import * as networking from "@/components/networking";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    locale: "en-US",
+    t: (key: string) => key,
+  }),
+}));
+
 vi.mock("@/components/networking", () => ({
   getGuardrailsUsageOverview: vi.fn(),
   formatDate: vi.fn((d: Date) => d.toISOString().slice(0, 10)),

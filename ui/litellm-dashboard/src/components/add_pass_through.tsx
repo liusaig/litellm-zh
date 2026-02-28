@@ -29,6 +29,7 @@ import RoutePreview from "./route_preview";
 import NotificationsManager from "./molecules/notifications_manager";
 import PassThroughSecuritySection from "./common_components/PassThroughSecuritySection";
 import PassThroughGuardrailsSection from "./common_components/PassThroughGuardrailsSection";
+import { useLanguage } from "@/contexts/LanguageContext";
 const { Option } = Select2;
 
 const HTTP_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"];
@@ -47,6 +48,7 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
   passThroughItems,
   premiumUser = false,
 }) => {
+  const { t } = useLanguage();
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -106,7 +108,7 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
       const updatedPassThroughSettings = [...passThroughItems, createdEndpoint];
       setPassThroughItems(updatedPassThroughSettings);
 
-      NotificationsManager.success("Pass-through endpoint created successfully");
+      NotificationsManager.success(t("models.passThrough.createdSuccessfully"));
       form.resetFields();
       setPathValue("");
       setTargetValue("");
@@ -115,7 +117,7 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
       setGuardrails({});
       setIsModalVisible(false);
     } catch (error) {
-      NotificationsManager.fromBackend("Error creating pass-through endpoint: " + error);
+      NotificationsManager.fromBackend(t("models.passThrough.createError") + error);
     } finally {
       setIsLoading(false);
     }
@@ -123,19 +125,19 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    NotificationsManager.success("Copied to clipboard!");
+    NotificationsManager.success(t("models.passThrough.copied"));
   };
 
   return (
     <div>
       <Button className="mx-auto mb-4 mt-4" onClick={() => setIsModalVisible(true)}>
-        + Add Pass-Through Endpoint
+        {t("models.passThrough.addButton")}
       </Button>
       <Modal
         title={
           <div className="flex items-center space-x-3 pb-4 border-b border-gray-100">
             <ApiOutlined className="text-xl text-blue-500" />
-            <h2 className="text-xl font-semibold text-gray-900">Add Pass-Through Endpoint</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t("models.passThrough.addTitle")}</h2>
           </div>
         }
         open={isModalVisible}
@@ -150,8 +152,8 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
       >
         <div className="mt-6">
           <Alert
-            message="What is a Pass-Through Endpoint?"
-            description="Route requests from your Silinex proxy to any external API. Perfect for custom models, image generation APIs, or any service you want to proxy through Silinex."
+            message={t("models.passThrough.whatIsTitle")}
+            description={t("models.passThrough.whatIsDescription")}
             type="info"
             showIcon
             className="mb-6"
@@ -368,7 +370,7 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
 
             <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-100">
               <Button variant="secondary" onClick={handleCancel}>
-                Cancel
+                {t("models.common.cancel")}
               </Button>
               <Button
                 variant="primary"
@@ -378,7 +380,7 @@ const AddPassThroughEndpoint: React.FC<AddFallbacksProps> = ({
                   form.submit();
                 }}
               >
-                {isLoading ? "Creating..." : "Add Pass-Through Endpoint"}
+                {isLoading ? t("models.passThrough.creating") : t("models.passThrough.addTitle")}
               </Button>
             </div>
           </Form>

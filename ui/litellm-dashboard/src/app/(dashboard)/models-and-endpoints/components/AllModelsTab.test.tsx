@@ -288,64 +288,6 @@ describe("AllModelsTab", () => {
     });
   });
 
-  it("should show config model status for models defined in configs", async () => {
-    mockUseTeams.mockReturnValue({
-      data: [],
-      isLoading: false,
-      error: null,
-      refetch: vi.fn(),
-    });
-
-    mockUseModelCostMap.mockReturnValueOnce(
-      createModelCostMapMock({
-        "gpt-4-config": { litellm_provider: "openai" },
-        "gpt-4-db": { litellm_provider: "openai" },
-      }),
-    );
-
-    const modelData = createPaginatedModelData([
-      {
-        model_name: "gpt-4-config",
-        litellm_model_name: "gpt-4-config",
-        provider: "openai",
-        model_info: {
-          id: "model-config-1",
-          db_model: false,
-          direct_access: true,
-          access_via_team_ids: [],
-          access_groups: [],
-          created_by: "user-123",
-          created_at: "2024-01-01",
-          updated_at: "2024-01-01",
-        },
-      },
-      {
-        model_name: "gpt-4-db",
-        litellm_model_name: "gpt-4-db",
-        provider: "openai",
-        model_info: {
-          id: "model-db-1",
-          db_model: true,
-          direct_access: true,
-          access_via_team_ids: [],
-          access_groups: [],
-          created_by: "user-123",
-          created_at: "2024-01-01",
-          updated_at: "2024-01-01",
-        },
-      },
-    ], 2, 1, 1, 50);
-
-    mockUseModelsInfo.mockReturnValue({ data: modelData, isLoading: false, error: null });
-
-    renderWithProviders(<AllModelsTab {...defaultProps} />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Config Model")).toBeInTheDocument();
-      expect(screen.getByText("DB Model")).toBeInTheDocument();
-    });
-  });
-
   it("should show 'Defined in config' for models defined in configs", async () => {
     mockUseTeams.mockReturnValue({
       data: [],

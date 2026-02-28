@@ -35,7 +35,7 @@ export const columns = (
       ),
     },
     {
-      header: "邮箱",
+      header: "用户名",
       accessorKey: "user_email",
       enableSorting: true,
       cell: ({ row }) => <span className="text-xs">{row.original.user_email || "-"}</span>,
@@ -47,18 +47,13 @@ export const columns = (
       cell: ({ row }) => <span className="text-xs">{possibleUIRoles?.[row.original.user_role]?.ui_label || "-"}</span>,
     },
     {
-      header: "用户别名",
-      accessorKey: "user_alias",
-      enableSorting: false,
-      cell: ({ row }) => <span className="text-xs">{row.original.user_alias || "-"}</span>,
-    },
-    {
       header: "花费",
       accessorKey: "spend",
       enableSorting: true,
-      cell: ({ row }) => (
-        <span className="text-xs">{row.original.spend ? formatNumberWithCommas(row.original.spend, 4) : "-"}</span>
-      ),
+      cell: ({ row }) => {
+        const spend = row.original.spend;
+        return <span className="text-xs">{spend !== null && spend !== undefined ? `¥${formatNumberWithCommas(spend, 4)}` : "-"}</span>;
+      },
     },
     {
       header: "预算",

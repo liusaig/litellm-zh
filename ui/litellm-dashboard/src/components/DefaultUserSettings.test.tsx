@@ -3,6 +3,58 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import DefaultUserSettings from "./DefaultUserSettings";
 import * as networking from "./networking";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    locale: "en-US",
+    setLocale: vi.fn(),
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "users.defaultSettings.title": "Default User Settings",
+        "users.defaultSettings.editSettings": "Edit Settings",
+        "users.defaultSettings.cancel": "Cancel",
+        "users.defaultSettings.saveChanges": "Save Changes",
+        "users.defaultSettings.schemaDescription":
+          "Default parameters to apply when a new user signs in via SSO or is created on the /user/new API endpoint",
+        "users.defaultSettings.fieldLabels.userRole": "User Role",
+        "users.defaultSettings.fieldLabels.maxBudget": "Max Budget",
+        "users.defaultSettings.fieldLabels.budgetDuration": "Budget Duration",
+        "users.defaultSettings.fieldLabels.models": "Models",
+        "users.defaultSettings.fieldLabels.teams": "Teams",
+        "users.defaultSettings.fieldDescriptions.userRole": "Default role assigned to new users created",
+        "users.defaultSettings.fieldDescriptions.maxBudget": "Default maximum budget (in USD) for new users created",
+        "users.defaultSettings.fieldDescriptions.budgetDuration":
+          "Default budget duration for new users (e.g. 'daily', 'weekly', 'monthly')",
+        "users.defaultSettings.fieldDescriptions.models": "Default allowed models for new users",
+        "users.defaultSettings.fieldDescriptions.teams": "Default team assignments for new users",
+        "users.defaultSettings.notSet": "Not Set",
+        "users.defaultSettings.noTeamsAssigned": "No teams assigned",
+        "users.defaultSettings.teamIdLabel": "Team ID:",
+        "users.defaultSettings.notSpecified": "Not Specified",
+        "users.defaultSettings.noLimit": "No Limit",
+        "users.defaultSettings.role": "Role",
+        "users.defaultSettings.enabled": "Enabled",
+        "users.defaultSettings.disabled": "Disabled",
+        "users.defaultSettings.none": "None",
+        "users.defaultSettings.notAvailable": "Default user settings are not available",
+        "users.defaultSettings.noSchema": "Schema not available",
+        "users.defaultSettings.noDescription": "No description",
+        "users.defaultSettings.team": "Team",
+        "users.defaultSettings.remove": "Remove",
+        "users.defaultSettings.teamId": "Team ID",
+        "users.defaultSettings.teamIdPlaceholder": "Enter team ID",
+        "users.defaultSettings.maxBudget": "Max Budget",
+        "users.defaultSettings.userRole": "User Role",
+        "users.defaultSettings.userRoleUser": "User",
+        "users.defaultSettings.userRoleAdmin": "Admin",
+        "users.defaultSettings.addTeam": "Add Team",
+        "users.defaultSettings.noDefaultModels": "No Default Models",
+        "users.defaultSettings.allProxyModels": "All Proxy Models",
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
 vi.mock("./networking", () => ({
   getInternalUserSettings: vi.fn(),
   updateInternalUserSettings: vi.fn(),

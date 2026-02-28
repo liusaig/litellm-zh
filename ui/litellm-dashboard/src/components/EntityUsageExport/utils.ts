@@ -1,7 +1,18 @@
 import { formatNumberWithCommas } from "@/utils/dataUtils";
 import type { DateRangePickerValue } from "@tremor/react";
+import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
 import Papa from "papaparse";
-import type { EntityBreakdown, EntitySpendData, EntityType, ExportMetadata, ExportScope } from "./types";
+import type {
+  EntityBreakdown,
+  EntitySpendData,
+  EntityType,
+  ExportMetadata,
+  ExportScope,
+  UsageTimeRangeType,
+} from "./types";
+
+dayjs.extend(weekOfYear);
 
 // Helper function to extract team_id from api_key_breakdown
 const extractTeamIdFromApiKeyBreakdown = (apiKeyBreakdown: Record<string, any> | undefined): string | null => {
@@ -89,7 +100,7 @@ export const generateDailyData = (
         Date: day.date,
         [entityLabel]: teamAlias || "-",
         [`${entityLabel} ID`]: teamId || "-",
-        "Spend ($)": formatNumberWithCommas(data.metrics.spend, 4),
+        "Spend (¥)": formatNumberWithCommas(data.metrics.spend, 4),
         Requests: data.metrics.api_requests,
         "Successful Requests": data.metrics.successful_requests,
         "Failed Requests": data.metrics.failed_requests,
@@ -180,7 +191,7 @@ export const generateDailyWithKeysData = (
     [`${entityLabel} ID`]: item.teamId || "-",
     "Key Alias": item.keyAlias || "-",
     "Key ID": item.keyId,
-    "Spend ($)": formatNumberWithCommas(item.metrics.spend, 4),
+    "Spend (¥)": formatNumberWithCommas(item.metrics.spend, 4),
     Requests: item.metrics.api_requests,
     "Successful Requests": item.metrics.successful_requests,
     "Failed Requests": item.metrics.failed_requests,
@@ -241,7 +252,7 @@ export const generateDailyWithModelsData = (
           [entityLabel]: teamAlias || "-",
           [`${entityLabel} ID`]: teamId || "-",
           Model: model,
-          "Spend ($)": formatNumberWithCommas(metrics.spend, 4),
+          "Spend (¥)": formatNumberWithCommas(metrics.spend, 4),
           Requests: metrics.requests,
           Successful: metrics.successful,
           Failed: metrics.failed,
@@ -301,6 +312,8 @@ export const handleExportCSV = (
   exportScope: ExportScope,
   entityLabel: string,
   entityType: EntityType,
+  dateRange: DateRangePickerValue,
+  timeRangeType: UsageTimeRangeType | undefined,
   teamAliasMap: Record<string, string> = {},
 ): void => {
   const data = generateExportData(spendData, exportScope, entityLabel, teamAliasMap);
@@ -309,7 +322,7 @@ export const handleExportCSV = (
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  const fileName = `${entityType}_usage_${exportScope}_${new Date().toISOString().split("T")[0]}.csv`;
+  const fileName = `${getExportFileName(exportScope, dateRange, timeRangeType)}.csv`;
   a.download = fileName;
   document.body.appendChild(a);
   a.click();
@@ -323,6 +336,7 @@ export const handleExportJSON = (
   entityLabel: string,
   entityType: EntityType,
   dateRange: DateRangePickerValue,
+  timeRangeType: UsageTimeRangeType | undefined,
   selectedFilters: string[],
   teamAliasMap: Record<string, string> = {},
 ): void => {
@@ -337,10 +351,67 @@ export const handleExportJSON = (
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  const fileName = `${entityType}_usage_${exportScope}_${new Date().toISOString().split("T")[0]}.json`;
+  const fileName = `${getExportFileName(exportScope, dateRange, timeRangeType)}.json`;
   a.download = fileName;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
+};
+
+const inferTimeRangeType = (dateRange: DateRangePickerValue): UsageTimeRangeType => {
+  const from = dateRange.from ? dayjs(dateRange.from) : null;
+  const to = dateRange.to ? dayjs(dateRange.to) : null;
+
+  if (from && to) {
+    if (
+      from.startOf("month").isSame(from, "day") &&
+      to.endOf("month").startOf("day").isSame(to.startOf("day"), "day")
+    ) {
+      return "month";
+    }
+    if (
+      from.startOf("week").isSame(from, "day") &&
+      to.endOf("week").startOf("day").isSame(to.startOf("day"), "day")
+    ) {
+      return "week";
+    }
+  }
+
+  return "day";
+};
+
+const getTimeLabel = (type: UsageTimeRangeType): string => {
+  if (type === "week") return "周账单";
+  if (type === "month") return "月账单";
+  return "日账单";
+};
+
+const getScopeLabel = (scope: ExportScope): string => {
+  if (scope === "daily_with_keys") return "分组与API密钥明细";
+  if (scope === "daily_with_models") return "分组与模型明细";
+  return "分组明细";
+};
+
+const getTimeValue = (type: UsageTimeRangeType, dateRange: DateRangePickerValue): string => {
+  const from = dateRange.from ? dayjs(dateRange.from) : null;
+  const to = dateRange.to ? dayjs(dateRange.to) : null;
+  const anchor = type === "day" ? to || from || dayjs() : from || to || dayjs();
+
+  if (type === "week") {
+    return `${anchor.year()}年${anchor.week()}周`;
+  }
+  if (type === "month") {
+    return `${anchor.year()}年${anchor.month() + 1}月`;
+  }
+  return `${anchor.year()}年${anchor.month() + 1}月${anchor.date()}日`;
+};
+
+const getExportFileName = (
+  exportScope: ExportScope,
+  dateRange: DateRangePickerValue,
+  timeRangeType?: UsageTimeRangeType,
+): string => {
+  const resolvedType = timeRangeType || inferTimeRangeType(dateRange);
+  return `${getTimeLabel(resolvedType)}-${getTimeValue(resolvedType, dateRange)}-${getScopeLabel(exportScope)}`;
 };

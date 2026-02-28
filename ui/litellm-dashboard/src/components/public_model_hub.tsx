@@ -608,7 +608,7 @@ const PublicModelHub: React.FC<PublicModelHubProps> = ({ accessToken, isEmbedded
       },
     },
     {
-      header: "Input $/1M",
+      header: "Input ¥/1M",
       accessorKey: "input_cost_per_token",
       enableSorting: true,
       cell: ({ row }) => {
@@ -621,7 +621,7 @@ const PublicModelHub: React.FC<PublicModelHubProps> = ({ accessToken, isEmbedded
       },
     },
     {
-      header: "Output $/1M",
+      header: "Output ¥/1M",
       accessorKey: "output_cost_per_token",
       enableSorting: true,
       cell: ({ row }) => {
@@ -1782,7 +1782,7 @@ send_message_payload: dict[str, Any] = {
     'message': {
         'role': 'user',
         'parts': [
-            {'kind': 'text', 'text': 'how much is 10 USD in INR?'}
+            {'kind': 'text', 'text': 'how much is 10 CNY in INR?'}
         ],
         'messageId': uuid4().hex,
     },
@@ -1806,7 +1806,7 @@ send_message_payload: dict[str, Any] = {
     'message': {
         'role': 'user',
         'parts': [
-            {'kind': 'text', 'text': 'how much is 10 USD in INR?'}
+            {'kind': 'text', 'text': 'how much is 10 CNY in INR?'}
         ],
         'messageId': uuid4().hex,
     },

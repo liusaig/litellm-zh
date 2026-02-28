@@ -64,17 +64,17 @@ describe("TopKeyView", () => {
 
   it("should render", () => {
     render(<TopKeyView {...baseProps} />);
-    expect(screen.getByRole("button", { name: "Table View" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Table View|表格视图|usagePage\.topKeyView\.tableView/ })).toBeInTheDocument();
   });
 
   it("should display table view button", () => {
     render(<TopKeyView {...baseProps} />);
-    expect(screen.getByRole("button", { name: "Table View" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Table View|表格视图|usagePage\.topKeyView\.tableView/ })).toBeInTheDocument();
   });
 
   it("should display chart view button", () => {
     render(<TopKeyView {...baseProps} />);
-    expect(screen.getByRole("button", { name: "Chart View" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Chart View|图表视图|usagePage\.topKeyView\.chartView/ })).toBeInTheDocument();
   });
 
   it("should display base table column headers", () => {
@@ -122,7 +122,7 @@ describe("TopKeyView", () => {
     const user = userEvent.setup();
     render(<TopKeyView {...baseProps} />);
 
-    const chartViewButton = screen.getByRole("button", { name: "Chart View" });
+    const chartViewButton = screen.getByRole("button", { name: /Chart View|图表视图|usagePage\.topKeyView\.chartView/ });
     await user.click(chartViewButton);
 
     expect(chartViewButton).toHaveClass("bg-blue-100");
@@ -132,8 +132,8 @@ describe("TopKeyView", () => {
     const user = userEvent.setup();
     render(<TopKeyView {...baseProps} />);
 
-    const chartViewButton = screen.getByRole("button", { name: "Chart View" });
-    const tableViewButton = screen.getByRole("button", { name: "Table View" });
+    const chartViewButton = screen.getByRole("button", { name: /Chart View|图表视图|usagePage\.topKeyView\.chartView/ });
+    const tableViewButton = screen.getByRole("button", { name: /Table View|表格视图|usagePage\.topKeyView\.tableView/ });
 
     await user.click(chartViewButton);
     await user.click(tableViewButton);

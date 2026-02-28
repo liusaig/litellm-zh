@@ -23,6 +23,7 @@ import {
 } from "@tremor/react";
 import { Alert, Segmented, Select, Tooltip, Typography } from "antd";
 import { useDebouncedState } from "@tanstack/react-pacer/debouncer";
+import dayjs from "dayjs";
 import React, { useCallback, useEffect, useMemo, useState, type UIEvent } from "react";
 
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -38,7 +39,7 @@ import { ActivityMetrics, processActivityData } from "../../activity_metrics";
 import CloudZeroExportModal from "../../cloudzero_export_modal";
 import EntityUsageExportModal from "../../EntityUsageExport";
 import { Team } from "../../key_team_helpers/key_list";
-import { Organization, tagListCall, userDailyActivityAggregatedCall, userDailyActivityCall } from "../../networking";
+import { Organization, tagListCall, userDailyActivityAggregatedCall, userDailyActivityCall, userInfoCall } from "../../networking";
 import AdvancedUsageDatePicker, { TimeRangeType } from "../../shared/AdvancedUsageDatePicker";
 import { ChartLoader } from "../../shared/chart_loader";
 import { Tag } from "../../tag_management/types";
@@ -48,7 +49,6 @@ import { DailyData, KeyMetricWithMetadata, MetricWithMetadata } from "../types";
 import { valueFormatterSpend } from "../utils/value_formatters";
 import EndpointUsage from "./EndpointUsage/EndpointUsage";
 import EntityUsage, { EntityList } from "./EntityUsage/EntityUsage";
-import SpendByProvider from "./EntityUsage/SpendByProvider";
 import TopKeyView from "./EntityUsage/TopKeyView";
 import { UsageOption, UsageViewSelect } from "./UsageViewSelect/UsageViewSelect";
 import UsageAIChatPanel from "./UsageAIChatPanel";
@@ -71,8 +71,8 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
   const [isDateChanging, setIsDateChanging] = useState(false);
 
   // Create initial dates outside of state to prevent recreation
-  const initialFromDate = useMemo(() => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), []);
-  const initialToDate = useMemo(() => new Date(), []);
+  const initialFromDate = useMemo(() => dayjs().startOf("week").startOf("day").toDate(), []);
+  const initialToDate = useMemo(() => dayjs().endOf("week").endOf("day").toDate(), []);
 
   // Single date state that directly triggers data fetching
   const [dateValue, setDateValue] = useState<DateRangePickerValue>({
@@ -84,8 +84,9 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
   const { data: customers = [] } = useCustomers();
   const { data: agentsResponse } = useAgents();
   const { data: currentUser } = useCurrentUser();
+  const currentUserMaxBudget = (currentUser as any)?.max_budget ?? (currentUser as any)?.litellm_budget_table?.max_budget ?? null;
   console.log(`currentUser: ${JSON.stringify(currentUser)}`);
-  console.log(`currentUser max budget: ${currentUser?.max_budget}`);
+  console.log(`currentUser max budget: ${currentUserMaxBudget}`);
   const isAdmin = all_admin_roles.includes(userRole || "");
 
   // Debounced search for user selector
@@ -143,13 +144,16 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
     isAdmin ? null : (userID || null)
   );
   const [modelViewType, setModelViewType] = useState<"groups" | "individual">("groups");
+  const [selectedUserMaxBudget, setSelectedUserMaxBudget] = useState<number | null>(null);
   const [isCloudZeroModalOpen, setIsCloudZeroModalOpen] = useState(false);
   const [isGlobalExportModalOpen, setIsGlobalExportModalOpen] = useState(false);
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
   const [usageView, setUsageView] = useState<UsageOption>("global");
+  const [timeRangeType, setTimeRangeType] = useState<TimeRangeType>("week");
   const [showCredentialBanner, setShowCredentialBanner] = useState(true);
   const [topKeysLimit, setTopKeysLimit] = useState<number>(5);
   const [topModelsLimit, setTopModelsLimit] = useState<number>(5);
+  const formatZhDate = (date: Date) => `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
   const getAllTags = async () => {
     if (!accessToken) {
       return;
@@ -173,6 +177,27 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
       setSelectedUserId(userID);
     }
   }, [isAdmin, userID]);
+
+  // For admin-filtered view, budget should follow the selected user
+  useEffect(() => {
+    const fetchSelectedUserBudget = async () => {
+      if (!isAdmin || !selectedUserId || !accessToken || !userRole) {
+        setSelectedUserMaxBudget(null);
+        return;
+      }
+      try {
+        const data = await userInfoCall(accessToken, selectedUserId, userRole, false, null, null, true);
+        const selectedUser = (data?.user_info ?? data) as any;
+        const maxBudget = selectedUser?.max_budget ?? selectedUser?.litellm_budget_table?.max_budget ?? null;
+        setSelectedUserMaxBudget(maxBudget);
+      } catch (error) {
+        console.error("Failed to fetch selected user budget:", error);
+        setSelectedUserMaxBudget(null);
+      }
+    };
+
+    fetchSelectedUserBudget();
+  }, [isAdmin, selectedUserId, accessToken, userRole]);
 
   // Derived states from userSpendData
   const totalSpend = userSpendData.metadata?.total_spend || 0;
@@ -429,6 +454,9 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
 
     // Update date immediately for UI responsiveness
     setDateValue(newValue);
+    if (type) {
+      setTimeRangeType(type);
+    }
   }, []);
 
   // Debounced effect for data fetching with shorter delay
@@ -447,7 +475,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
   const mcpServerMetrics = processActivityData(userSpendData, "mcp_servers", teams);
 
   return (
-    <div style={{ width: "100%" }} className="p-8 relative">
+    <div style={{ width: "100%" }} className="p-8 md:p-10 relative bg-slate-50/40">
       {/* Export Data Button - Positioned in top right corner */}
       {/* {all_admin_roles.includes(userRole || "") && (
         <div className="absolute top-4 right-4 z-10">
@@ -487,8 +515,8 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
       )} */}
 
       {/* Global controls and tabs */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+      <div className="mb-8">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
           <div className="flex-1 min-w-[280px]">
             <UsageViewSelect
               value={usageView}
@@ -501,17 +529,8 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
             {usageView === "global" && (
               <div className="flex items-center gap-2 ml-auto">
                 <Button
-                  onClick={() => setIsAiChatOpen(true)}
-                  icon={() => (
-                    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11 6.5 7.5 3 6l3.5-1.5L8 1zm4 7l.75 1.75L14.5 10.5l-1.75.75L12 13l-.75-1.75L9.5 10.5l1.75-.75L12 8zM4 9l.75 1.75L6.5 11.5l-1.75.75L4 14l-.75-1.75L1.5 11.5l1.75-.75L4 9z" />
-                    </svg>
-                  )}
-                >
-                  Ask AI
-                </Button>
-                <Button
                   onClick={() => setIsGlobalExportModalOpen(true)}
+                  className="shadow-sm"
                   icon={() => (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -523,7 +542,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
                     </svg>
                   )}
                 >
-                  Export Data
+                  导出数据
                 </Button>
               </div>
             )}
@@ -535,36 +554,28 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
             <>
             <TabGroup>
               <div className="flex justify-between items-center">
-                <TabList variant="solid" className="mt-1">
-                  <Tab>Cost</Tab>
-                  <Tab>Model Activity</Tab>
-                  <Tab>Key Activity</Tab>
-                  <Tab>MCP Server Activity</Tab>
-                  <Tab>Endpoint Activity</Tab>
+                <TabList variant="solid" className="mt-1 bg-gray-100/90 rounded-xl p-1 shadow-inner">
+                  <Tab>花费</Tab>
+                  <Tab>{t("usagePage.modelActivity")}</Tab>
+                  <Tab>{t("usagePage.keyActivity")}</Tab>
+                  <Tab>MCP 服务器活动</Tab>
+                  <Tab>{t("usagePage.endpointActivity")}</Tab>
                 </TabList>
               </div>
               <TabPanels>
                 {/* Cost Panel */}
                 <TabPanel>
-                  <Grid numItems={2} className="gap-2 w-full">
+                  <Grid numItems={2} className="gap-6 w-full">
                     {/* Total Spend Card */}
                     <Col numColSpan={2}>
-                      <div className="flex items-center gap-4 mt-2 mb-2">
-                        <Text className="text-tremor-default text-tremor-content dark:text-dark-tremor-content text-lg">
-                          Project Spend{" "}
+                      <div className="flex items-center gap-4 mt-2 mb-3 rounded-2xl border border-gray-200/80 bg-white px-5 py-4 shadow-sm">
+                        <Text className="text-slate-600 text-[16px] md:text-[18px] font-semibold tracking-tight">
+                          时间范围{" "}
                           {dateValue.from && dateValue.to && (
                             <>
-                              {dateValue.from.toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                                year: dateValue.from.getFullYear() !== dateValue.to.getFullYear() ? "numeric" : undefined,
-                              })}
+                              {formatZhDate(dateValue.from)}
                               {" - "}
-                              {dateValue.to.toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
+                              {formatZhDate(dateValue.to)}
                             </>
                           )}
                         </Text>
@@ -608,47 +619,47 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
                       <ViewUserSpend
                         userSpend={totalSpend}
                         selectedTeam={null}
-                        userMaxBudget={currentUser?.max_budget || null}
+                        userMaxBudget={isAdmin && selectedUserId ? selectedUserMaxBudget : currentUserMaxBudget}
                       />
                     </Col>
 
                     <Col numColSpan={2}>
-                      <Card>
-                        <Title>{t("usagePage.usageMetrics")}</Title>
-                        <Grid numItems={5} className="gap-4 mt-4">
-                          <Card>
-                            <Title>{t("usagePage.totalRequests")}</Title>
-                            <Text className="text-2xl font-bold mt-2">
+                      <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white">
+                        <Title className="text-slate-800 text-[16px] md:text-[18px] tracking-tight">{t("usagePage.usageMetrics")}</Title>
+                        <Grid numItems={5} className="gap-5 mt-5">
+                          <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-slate-50/60">
+                            <Title className="text-slate-700 text-sm">{t("usagePage.totalRequests")}</Title>
+                            <Text className="text-[24px] md:text-[26px] font-semibold mt-2 text-slate-700 leading-tight">
                               {userSpendData.metadata?.total_api_requests?.toLocaleString() || 0}
                             </Text>
                           </Card>
-                          <Card>
-                            <Title>{t("usagePage.successfulRequests")}</Title>
-                            <Text className="text-2xl font-bold mt-2 text-green-600">
+                          <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-slate-50/60">
+                            <Title className="text-slate-700 text-sm">{t("usagePage.successfulRequests")}</Title>
+                            <Text className="text-[24px] md:text-[26px] font-semibold mt-2 text-emerald-600 leading-tight">
                               {userSpendData.metadata?.total_successful_requests?.toLocaleString() || 0}
                             </Text>
                           </Card>
-                          <Card>
+                          <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-slate-50/60">
                             <div className="flex items-center gap-2">
-                              <Title>{t("usagePage.failedRequests")}</Title>
+                              <Title className="text-slate-700 text-sm">{t("usagePage.failedRequests")}</Title>
                               <Tooltip title={t("usagePage.failedRequestsTooltip")}>
                                 <InfoCircleOutlined className="text-gray-400 hover:text-gray-600" />
                               </Tooltip>
                             </div>
-                            <Text className="text-2xl font-bold mt-2 text-red-600">
+                            <Text className="text-[24px] md:text-[26px] font-semibold mt-2 text-rose-600 leading-tight">
                               {userSpendData.metadata?.total_failed_requests?.toLocaleString() || 0}
                             </Text>
                           </Card>
-                          <Card>
-                            <Title>{t("usagePage.totalTokens")}</Title>
-                            <Text className="text-2xl font-bold mt-2">
+                          <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-slate-50/60">
+                            <Title className="text-slate-700 text-sm">{t("usagePage.totalTokens")}</Title>
+                            <Text className="text-[24px] md:text-[26px] font-semibold mt-2 text-slate-600 leading-tight">
                               {userSpendData.metadata?.total_tokens?.toLocaleString() || 0}
                             </Text>
                           </Card>
-                          <Card>
-                            <Title>{t("usagePage.averageCostPerRequest")}</Title>
-                            <Text className="text-2xl font-bold mt-2">
-                              $
+                          <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-slate-50/60">
+                            <Title className="text-slate-700 text-sm">{t("usagePage.averageCostPerRequest")}</Title>
+                            <Text className="text-[24px] md:text-[26px] font-semibold mt-2 text-slate-600 leading-tight">
+                              ¥
                               {formatNumberWithCommas(
                                 (totalSpend || 0) / (userSpendData.metadata?.total_api_requests || 1),
                                 4,
@@ -661,8 +672,8 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
 
                     {/* Daily Spend Chart */}
                     <Col numColSpan={2}>
-                      <Card>
-                        <Title>{t("usagePage.dailySpend")}</Title>
+                      <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white">
+                        <Title className="text-slate-800 text-[16px] md:text-[18px] tracking-tight">{t("usagePage.dailySpend")}</Title>
                         {loading ? (
                           <ChartLoader isDateChanging={isDateChanging} />
                         ) : (
@@ -683,7 +694,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
                                 <div className="bg-white p-4 shadow-lg rounded-lg border">
                                   <p className="font-bold">{data.date}</p>
                                   <p className="text-cyan-500">
-                                    {t("usagePage.spend")}: ${formatNumberWithCommas(data.metrics.spend, 2)}
+                                    {t("usagePage.spend")}: ¥{formatNumberWithCommas(data.metrics.spend, 2)}
                                   </p>
                                   <p className="text-gray-600">{t("usagePage.requests")}: {data.metrics.api_requests}</p>
                                   <p className="text-gray-600">{t("usagePage.successful")}: {data.metrics.successful_requests}</p>
@@ -772,7 +783,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
                                     return (
                                       <div className="bg-white p-4 shadow-lg rounded-lg border">
                                         <p className="font-bold">{data.key}</p>
-                                        <p className="text-cyan-500">{t("usagePage.spend")}: ${formatNumberWithCommas(data.spend, 2)}</p>
+                                        <p className="text-cyan-500">{t("usagePage.spend")}: ¥{formatNumberWithCommas(data.spend, 2)}</p>
                                         <p className="text-gray-600">
                                           {t("usagePage.totalRequests")}: {data.requests.toLocaleString()}
                                         </p>
@@ -790,15 +801,6 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
                           </div>
                         )}
                       </Card>
-                    </Col>
-
-                    {/* Spend by Provider */}
-                    <Col numColSpan={2}>
-                      <SpendByProvider
-                        loading={loading}
-                        isDateChanging={isDateChanging}
-                        providerSpend={getProviderSpend()}
-                      />
                     </Col>
 
                     {/* Usage Metrics */}
@@ -942,6 +944,7 @@ const UsagePage: React.FC<UsagePageProps> = ({ teams, organizations }) => {
           metadata: userSpendData.metadata,
         }}
         dateRange={dateValue}
+        timeRangeType={timeRangeType}
         selectedFilters={[]}
         customTitle={t("usagePage.exportUsageData")}
       />

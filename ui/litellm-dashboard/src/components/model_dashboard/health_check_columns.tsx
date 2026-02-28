@@ -32,6 +32,7 @@ interface HealthStatus {
 }
 
 export const healthCheckColumns = (
+  t: (key: string) => string,
   modelHealthStatuses: { [key: string]: HealthStatus },
   selectedModelsForHealth: string[],
   allModelsSelected: boolean,
@@ -54,7 +55,7 @@ export const healthCheckColumns = (
           onChange={(e) => handleSelectAll(e.target.checked)}
           onClick={(e) => e.stopPropagation()}
         />
-        <span>Model ID</span>
+        <span>{t("models.healthCheck.modelId")}</span>
       </div>
     ),
     accessorKey: "model_info.id",
@@ -85,7 +86,7 @@ export const healthCheckColumns = (
     },
   },
   {
-    header: "Model Name",
+    header: t("models.healthCheck.modelName"),
     accessorKey: "model_name",
     enableSorting: true,
     sortingFn: "alphanumeric",
@@ -103,7 +104,7 @@ export const healthCheckColumns = (
     },
   },
   {
-    header: "Team Alias",
+    header: t("models.healthCheck.teamAlias"),
     accessorKey: "model_info.team_id",
     enableSorting: true,
     sortingFn: "alphanumeric",
@@ -112,7 +113,7 @@ export const healthCheckColumns = (
       const teamId = model.model_info?.team_id;
 
       if (!teamId) {
-        return <span className="text-gray-400 text-sm">-</span>;
+        return <span className="text-gray-400 text-sm">{t("models.healthCheck.na")}</span>;
       }
 
       const team = teams?.find((t) => t.team_id === teamId);
@@ -128,7 +129,7 @@ export const healthCheckColumns = (
     },
   },
   {
-    header: "Health Status",
+    header: t("models.healthCheck.healthStatus"),
     accessorKey: "health_status",
     enableSorting: true,
     sortingFn: (rowA, rowB, columnId) => {
@@ -164,7 +165,7 @@ export const healthCheckColumns = (
                 style={{ animationDelay: "0.4s" }}
               ></div>
             </div>
-            <Text className="text-gray-600 text-sm">Checking...</Text>
+            <Text className="text-gray-600 text-sm">{t("models.healthCheck.checking")}</Text>
           </div>
         );
       }
@@ -177,7 +178,7 @@ export const healthCheckColumns = (
         <div className="flex items-center space-x-2">
           {getStatusBadge(healthStatus.status)}
           {hasSuccessResponse && showSuccessModal && (
-            <Tooltip title="View response details" placement="top">
+            <Tooltip title={t("models.healthCheck.viewResponseDetails")} placement="top">
               <button
                 onClick={() => showSuccessModal(displayName, modelHealthStatuses[modelId]?.successResponse)}
                 className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded cursor-pointer transition-colors"
@@ -191,7 +192,7 @@ export const healthCheckColumns = (
     },
   },
   {
-    header: "Error Details",
+    header: t("models.healthCheck.errorDetails"),
     accessorKey: "health_error",
     enableSorting: false,
     cell: ({ row }) => {
@@ -201,7 +202,7 @@ export const healthCheckColumns = (
       const healthStatus = modelHealthStatuses[modelId];
 
       if (!healthStatus?.error) {
-        return <Text className="text-gray-400 text-sm">No errors</Text>;
+        return <Text className="text-gray-400 text-sm">{t("models.healthCheck.noErrors")}</Text>;
       }
 
       const cleanedError = healthStatus.error;
@@ -215,7 +216,7 @@ export const healthCheckColumns = (
             </Tooltip>
           </div>
           {showErrorModal && fullError !== cleanedError && (
-            <Tooltip title="View full error details" placement="top">
+            <Tooltip title={t("models.healthCheck.viewFullErrorDetails")} placement="top">
               <button
                 onClick={() => showErrorModal(displayName, cleanedError, fullError)}
                 className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded cursor-pointer transition-colors"
@@ -229,20 +230,24 @@ export const healthCheckColumns = (
     },
   },
   {
-    header: "Last Check",
+    header: t("models.healthCheck.lastCheck"),
     accessorKey: "last_check",
     enableSorting: true,
     sortingFn: (rowA, rowB, columnId) => {
-      const lastCheckA = (rowA.getValue("last_check") as string) || "Never checked";
-      const lastCheckB = (rowB.getValue("last_check") as string) || "Never checked";
+      const lastCheckA = (rowA.getValue("last_check") as string) || t("models.healthCheck.neverChecked");
+      const lastCheckB = (rowB.getValue("last_check") as string) || t("models.healthCheck.neverChecked");
 
       // Handle special cases
-      if (lastCheckA === "Never checked" && lastCheckB === "Never checked") return 0;
-      if (lastCheckA === "Never checked") return 1; // Never checked goes to bottom
-      if (lastCheckB === "Never checked") return -1;
-      if (lastCheckA === "Check in progress..." && lastCheckB === "Check in progress...") return 0;
-      if (lastCheckA === "Check in progress...") return -1; // In progress goes to top
-      if (lastCheckB === "Check in progress...") return 1;
+      if (lastCheckA === t("models.healthCheck.neverChecked") && lastCheckB === t("models.healthCheck.neverChecked")) return 0;
+      if (lastCheckA === t("models.healthCheck.neverChecked")) return 1;
+      if (lastCheckB === t("models.healthCheck.neverChecked")) return -1;
+      if (
+        lastCheckA === t("models.healthCheck.checkInProgress") &&
+        lastCheckB === t("models.healthCheck.checkInProgress")
+      )
+        return 0;
+      if (lastCheckA === t("models.healthCheck.checkInProgress")) return -1;
+      if (lastCheckB === t("models.healthCheck.checkInProgress")) return 1;
 
       // Parse dates for comparison
       const dateA = new Date(lastCheckA);
@@ -261,26 +266,26 @@ export const healthCheckColumns = (
 
       return (
         <Text className="text-gray-600 text-sm">
-          {model.health_loading ? "Check in progress..." : model.last_check}
+          {model.health_loading ? t("models.healthCheck.checkInProgress") : model.last_check}
         </Text>
       );
     },
   },
   {
-    header: "Last Success",
+    header: t("models.healthCheck.lastSuccess"),
     accessorKey: "last_success",
     enableSorting: true,
     sortingFn: (rowA, rowB, columnId) => {
-      const lastSuccessA = (rowA.getValue("last_success") as string) || "Never succeeded";
-      const lastSuccessB = (rowB.getValue("last_success") as string) || "Never succeeded";
+      const lastSuccessA = (rowA.getValue("last_success") as string) || t("models.healthCheck.neverSucceeded");
+      const lastSuccessB = (rowB.getValue("last_success") as string) || t("models.healthCheck.neverSucceeded");
 
       // Handle special cases
-      if (lastSuccessA === "Never succeeded" && lastSuccessB === "Never succeeded") return 0;
-      if (lastSuccessA === "Never succeeded") return 1; // Never succeeded goes to bottom
-      if (lastSuccessB === "Never succeeded") return -1;
-      if (lastSuccessA === "None" && lastSuccessB === "None") return 0;
-      if (lastSuccessA === "None") return 1; // None goes to bottom
-      if (lastSuccessB === "None") return -1;
+      if (lastSuccessA === t("models.healthCheck.neverSucceeded") && lastSuccessB === t("models.healthCheck.neverSucceeded")) return 0;
+      if (lastSuccessA === t("models.healthCheck.neverSucceeded")) return 1;
+      if (lastSuccessB === t("models.healthCheck.neverSucceeded")) return -1;
+      if (lastSuccessA === t("models.healthCheck.none") && lastSuccessB === t("models.healthCheck.none")) return 0;
+      if (lastSuccessA === t("models.healthCheck.none")) return 1;
+      if (lastSuccessB === t("models.healthCheck.none")) return -1;
 
       // Parse dates for comparison
       const dateA = new Date(lastSuccessA);
@@ -298,13 +303,13 @@ export const healthCheckColumns = (
       const model = row.original;
       const modelId = model.model_info?.id ?? "";
       const healthStatus = modelHealthStatuses[modelId];
-      const lastSuccess = healthStatus?.lastSuccess || "None";
+      const lastSuccess = healthStatus?.lastSuccess || t("models.healthCheck.none");
 
       return <Text className="text-gray-600 text-sm">{lastSuccess}</Text>;
     },
   },
   {
-    header: "Actions",
+    header: t("models.healthCheck.actions"),
     id: "actions",
     cell: ({ row }) => {
       const model = row.original;
@@ -312,10 +317,10 @@ export const healthCheckColumns = (
 
       const hasExistingStatus = model.health_status && model.health_status !== "none";
       const tooltipText = model.health_loading
-        ? "Checking..."
+        ? t("models.healthCheck.checking")
         : hasExistingStatus
-          ? "Re-run Health Check"
-          : "Run Health Check";
+          ? t("models.healthCheck.rerunHealthCheck")
+          : t("models.healthCheck.runHealthCheck");
 
       return (
         <Tooltip title={tooltipText} placement="top">

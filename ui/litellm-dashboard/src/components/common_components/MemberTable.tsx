@@ -5,6 +5,7 @@ import type { ColumnsType } from "antd/es/table";
 import React from "react";
 import TableIconActionButton from "./IconActionButton/TableIconActionButtons/TableIconActionButton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 const { Text } = Typography;
 
@@ -34,21 +35,28 @@ export default function MemberTable({
   emptyText,
 }: MemberTableProps) {
   const { t } = useLanguage();
+  const formatRoleLabel = (role: string | undefined): string => {
+    const normalized = (role || "").toLowerCase();
+    if (normalized === "admin" || normalized === "org_admin") {
+      return teamT(t, "teams.memberTab.roleAdmin");
+    }
+    return teamT(t, "teams.memberTab.roleUser");
+  };
 
   const baseColumns: ColumnsType<Member> = [
     {
-      title: t("teamDetail.memberPermissions.modal.userEmail"),
+      title: teamT(t, "teamDetail.memberPermissions.modal.userEmail"),
       dataIndex: "user_email",
       key: "user_email",
       render: (email: string | null) => <Text>{email || "-"}</Text>,
     },
     {
-      title: t("teamDetail.memberPermissions.modal.userId"),
+      title: teamT(t, "teamDetail.memberPermissions.modal.userId"),
       dataIndex: "user_id",
       key: "user_id",
       render: (userId: string | null) =>
         userId === "default_user_id" ? (
-          <Tag color="blue">{t("memberTable.defaultProxyAdmin")}</Tag>
+          <Tag color="blue">{teamT(t, "memberTable.defaultProxyAdmin")}</Tag>
         ) : (
           <Text>{userId || "-"}</Text>
         ),
@@ -73,13 +81,13 @@ export default function MemberTable({
           ) : (
             <UserOutlined />
           )}
-          <Text style={{ textTransform: "capitalize" }}>{role || "-"}</Text>
+          <Text>{formatRoleLabel(role)}</Text>
         </Space>
       ),
     },
     ...extraColumns,
     {
-      title: t("memberTable.actions"),
+      title: teamT(t, "memberTable.actions"),
       key: "actions",
       fixed: "right" as const,
       width: 120,
@@ -88,14 +96,14 @@ export default function MemberTable({
           <Space>
             <TableIconActionButton
               variant="Edit"
-              tooltipText={t("memberTable.editMember")}
+              tooltipText={teamT(t, "memberTable.editMember")}
               dataTestId="edit-member"
               onClick={() => onEdit(record)}
             />
             {(!showDeleteForMember || showDeleteForMember(record)) && (
               <TableIconActionButton
                 variant="Delete"
-                tooltipText={t("memberTable.deleteMember")}
+                tooltipText={teamT(t, "memberTable.deleteMember")}
                 dataTestId="delete-member"
                 onClick={() => onDelete(record)}
               />
@@ -118,7 +126,7 @@ export default function MemberTable({
       />
       {onAddMember && canEdit && (
         <Button icon={<UserAddOutlined />} type="primary" onClick={onAddMember}>
-          {t("memberTable.addMember")}
+          {teamT(t, "memberTable.addMember")}
         </Button>
       )}
     </Space>

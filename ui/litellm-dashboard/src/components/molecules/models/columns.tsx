@@ -8,6 +8,24 @@ import { ProviderLogo } from "./ProviderLogo";
 
 const { Text, Title } = Typography;
 
+const formatDate = (value?: string | null): string => {
+  if (!value) return "-";
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? "-" : parsed.toLocaleDateString("zh-CN");
+};
+
+const formatCnyCost = (value?: number | string | null): string => {
+  if (value === null || value === undefined) return "-";
+  const amount = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(amount)) return "-";
+  return new Intl.NumberFormat("zh-CN", {
+    style: "currency",
+    currency: "CNY",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
+
 const credentialsInfoPopoverContent = (
   <Space direction="vertical" size={12}>
     <Text strong style={{ fontSize: 13 }}>
@@ -52,7 +70,7 @@ export const columns = (
   handleRefreshClick: () => void,
   expandedRows: Set<string>,
   setExpandedRows: (expandedRows: Set<string>) => void,
-  t: (key: string) => string,
+  t: (key: string) => string = (key: string) => key,
 ): ColumnDef<ModelData>[] => [
     {
       header: () => <span className="text-sm font-semibold">{t("models.columns.modelId")}</span>,
@@ -62,16 +80,18 @@ export const columns = (
       minSize: 80,
       cell: ({ row }) => {
         const model = row.original;
+        const modelId = model.model_info.id;
         return (
-          <Tooltip title={model.model_info.id}>
-            <Text
-              ellipsis
-              className="text-blue-500 bg-blue-50 hover:bg-blue-100 text-xs cursor-pointer w-full block"
-              style={{ fontSize: 14, padding: '1px 8px' }}
-              onClick={() => setSelectedModelId(model.model_info.id)}
+          <Tooltip title={modelId}>
+            <button
+              type="button"
+              className="text-blue-500 bg-blue-50 hover:bg-blue-100 text-xs cursor-pointer w-full block text-left rounded"
+              style={{ fontSize: 14, padding: "1px 8px" }}
+              onClick={() => setSelectedModelId(modelId)}
+              aria-label={`${t("models.columns.modelId")}: ${modelId}`}
             >
-              {model.model_info.id}
-            </Text>
+              <Text ellipsis>{modelId}</Text>
+            </button>
           </Tooltip>
         );
       },
@@ -214,24 +234,24 @@ export const columns = (
       cell: ({ row }) => {
         const model = row.original;
         const isConfigModel = !model.model_info?.db_model;
-        const createdBy = model.model_info.created_by;
-        const createdAt = model.model_info.created_at ? new Date(model.model_info.created_at).toLocaleDateString() : null;
+        const createdBy = model.model_info.created_by?.trim();
+        const createdAt = formatDate(model.model_info.created_at);
 
         return (
           <div className="flex flex-col min-w-0 w-full">
             {/* Created By - Primary */}
             <div
               className="text-xs font-medium text-gray-900 truncate"
-              title={isConfigModel ? "Defined in config" : createdBy || "Unknown"}
+              title={isConfigModel ? "配置文件" : createdBy || "-"}
             >
-              {isConfigModel ? "Defined in config" : createdBy || "Unknown"}
+              {isConfigModel ? "配置文件" : createdBy || "-"}
             </div>
             {/* Created At - Secondary */}
             <div
               className="text-xs text-gray-500 truncate mt-0.5"
-              title={isConfigModel ? "Config file" : createdAt || "Unknown date"}
+              title={isConfigModel ? "-" : createdAt}
             >
-              {isConfigModel ? "-" : createdAt || "Unknown date"}
+              {isConfigModel ? "-" : createdAt}
             </div>
           </div>
         );
@@ -245,9 +265,10 @@ export const columns = (
       minSize: 80,
       cell: ({ row }) => {
         const model = row.original;
+        const displayDate = formatDate(model.model_info.updated_at || model.model_info.created_at);
         return (
           <span className="text-xs">
-            {model.model_info.updated_at ? new Date(model.model_info.updated_at).toLocaleDateString() : "-"}
+            {displayDate}
           </span>
         );
       },
@@ -272,12 +293,10 @@ export const columns = (
         }
 
         return (
-          <Tooltip title="Cost per 1M tokens">
+          <Tooltip title="每 1M Tokens 费用">
             <div className="flex flex-col min-w-0 w-full">
-              {/* Input Cost - Primary */}
-              {inputCost != null && <div className="text-xs font-medium text-gray-900 truncate">In: ${inputCost}</div>}
-              {/* Output Cost - Secondary */}
-              {outputCost != null && <div className="text-xs text-gray-500 truncate mt-0.5">Out: ${outputCost}</div>}
+              {inputCost != null && <div className="text-xs font-medium text-gray-900 truncate">输入: {formatCnyCost(inputCost)}</div>}
+              {outputCost != null && <div className="text-xs text-gray-500 truncate mt-0.5">输出: {formatCnyCost(outputCost)}</div>}
             </div>
           </Tooltip>
         );
@@ -366,25 +385,6 @@ export const columns = (
                 {isExpanded ? "−" : `+${accessGroups.length - 1}`}
               </button>
             )}
-          </div>
-        );
-      },
-    },
-    {
-      header: () => <span className="text-sm font-semibold">{t("models.columns.status")}</span>,
-      accessorKey: "model_info.db_model",
-      size: 120,
-      minSize: 80,
-      cell: ({ row }) => {
-        const model = row.original;
-        return (
-          <div
-            className={`
-          inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-          ${model.model_info.db_model ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-600"}
-        `}
-          >
-            {model.model_info.db_model ? "DB Model" : "Config Model"}
           </div>
         );
       },

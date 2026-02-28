@@ -153,21 +153,21 @@ export const AGENT_FORM_CONFIG: {
     fields: [
       {
         name: "cost_per_query",
-        label: "Cost Per Query ($)",
+        label: "Cost Per Query (¥)",
         type: "text",
         placeholder: "0.0",
         tooltip: "Fixed cost per query",
       },
       {
         name: "input_cost_per_token",
-        label: "Input Cost Per Token ($)",
+        label: "Input Cost Per Token (¥)",
         type: "text",
         placeholder: "0.000001",
         tooltip: "Cost per input token",
       },
       {
         name: "output_cost_per_token",
-        label: "Output Cost Per Token ($)",
+        label: "Output Cost Per Token (¥)",
         type: "text",
         placeholder: "0.000002",
         tooltip: "Cost per output token",

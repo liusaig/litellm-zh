@@ -1,4 +1,5 @@
 import type { CustomTooltipProps } from "@tremor/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { SpendMetrics } from "../UsagePage/types";
 
 interface ChartDataPoint {
@@ -17,14 +18,33 @@ const colorNameToHex: { [key: string]: string } = {
 };
 
 export const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  const { locale } = useLanguage();
+  const isZh = locale === "zh-CN";
   if (active && payload && payload.length) {
-    const formatCategoryName = (name: string): string => {
+    const rawCategoryName = (name: string): string => {
       return name
         .replace("metrics.", "")
         .replace(/_/g, " ")
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
+    };
+
+    const formatCategoryName = (name: string): string => {
+      const normalized = name.replace("metrics.", "");
+      if (!isZh) return rawCategoryName(name);
+      const map: Record<string, string> = {
+        successful_requests: "成功请求数",
+        failed_requests: "失败请求数",
+        total_tokens: "总 Token 数",
+        prompt_tokens: "输入 Token 数",
+        completion_tokens: "输出 Token 数",
+        api_requests: "总请求数",
+        spend: "花费",
+        cache_read_input_tokens: "缓存读取输入 Token",
+        cache_creation_input_tokens: "缓存创建输入 Token",
+      };
+      return map[normalized] || rawCategoryName(name);
     };
 
     const getRawValue = (dataPoint: ChartDataPoint, key: string): number | undefined => {
@@ -48,7 +68,7 @@ export const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) =>
           const formattedValue =
             rawValue !== undefined
               ? isSpend
-                ? `$${rawValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                ? `¥${rawValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : rawValue.toLocaleString()
               : "N/A";
 
@@ -78,13 +98,31 @@ export const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) =>
 };
 
 export const CustomLegend = ({ categories, colors }: { categories: string[]; colors: string[] }) => {
-  const formatCategoryName = (name: string): string => {
+  const { locale } = useLanguage();
+  const isZh = locale === "zh-CN";
+  const rawCategoryName = (name: string): string => {
     return name
       .replace("metrics.", "")
       .replace(/_/g, " ")
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+  };
+  const formatCategoryName = (name: string): string => {
+    const normalized = name.replace("metrics.", "");
+    if (!isZh) return rawCategoryName(name);
+    const map: Record<string, string> = {
+      successful_requests: "成功请求数",
+      failed_requests: "失败请求数",
+      total_tokens: "总 Token 数",
+      prompt_tokens: "输入 Token 数",
+      completion_tokens: "输出 Token 数",
+      api_requests: "总请求数",
+      spend: "花费",
+      cache_read_input_tokens: "缓存读取输入 Token",
+      cache_creation_input_tokens: "缓存创建输入 Token",
+    };
+    return map[normalized] || rawCategoryName(name);
   };
 
   return (

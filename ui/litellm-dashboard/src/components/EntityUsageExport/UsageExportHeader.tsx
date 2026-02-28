@@ -3,11 +3,12 @@ import { Button, Text } from "@tremor/react";
 import { Select } from "antd";
 import React, { useState } from "react";
 import EntityUsageExportModal from "./EntityUsageExportModal";
-import type { EntitySpendData, EntityType } from "./types";
+import type { EntitySpendData, EntityType, UsageTimeRangeType } from "./types";
 import type { Team } from "@/components/key_team_helpers/key_list";
 
 interface UsageExportHeaderProps {
   dateValue: DateRangePickerValue;
+  timeRangeType?: UsageTimeRangeType;
   entityType: EntityType;
   spendData: EntitySpendData;
   // Optional filter props
@@ -24,6 +25,7 @@ interface UsageExportHeaderProps {
 
 const UsageExportHeader: React.FC<UsageExportHeaderProps> = ({
   dateValue,
+  timeRangeType,
   entityType,
   spendData,
   showFilters = false,
@@ -96,6 +98,7 @@ const UsageExportHeader: React.FC<UsageExportHeaderProps> = ({
         entityType={entityType}
         spendData={spendData}
         dateRange={dateValue}
+        timeRangeType={timeRangeType}
         selectedFilters={selectedFilters}
         customTitle={customTitle}
         teams={teams}

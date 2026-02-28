@@ -2,9 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Locale, defaultLocale } from "@/i18n/locales";
-
-// Translation type
-type Translations = Record<string, any>;
+import { Translations, buildTranslationsForLocale } from "@/i18n/translations";
 
 // Context type
 interface LanguageContextType {
@@ -16,9 +14,6 @@ interface LanguageContextType {
 // Create context
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Storage key
-const STORAGE_KEY = "silinex-language";
-
 // Provider props
 interface LanguageProviderProps {
   children: ReactNode;
@@ -27,61 +22,44 @@ interface LanguageProviderProps {
 // Provider component
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
-  const [translations, setTranslations] = useState<Translations>({});
+  const [translations, setTranslations] = useState<Translations>(() =>
+    buildTranslationsForLocale(defaultLocale),
+  );
+  const [fallbackTranslations] = useState<Translations>(() => buildTranslationsForLocale("en-US"));
 
-  // Load locale from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
-    console.log("[LanguageContext] loadLocaleFromStorage", { stored });
-    if (stored && (stored === "zh-CN" || stored === "en-US")) {
-      setLocaleState(stored);
-      console.log("[LanguageContext] locale set from storage", stored);
-    } else {
-      console.log("[LanguageContext] using default locale", defaultLocale);
-    }
-  }, []);
-
-  // Load translations when locale changes
-  useEffect(() => {
-    const loadTranslations = async () => {
-      console.log(`[LanguageContext] loading translations for locale=${locale}`);
-      try {
-        const module = await import(`@/i18n/translations/${locale}.json`);
-        const data = (module as any).default ?? module;
-        setTranslations(data);
-        console.log(`[LanguageContext] translations loaded for locale=${locale}, keys=${Object.keys(data || {})}`);
-      } catch (error) {
-        console.error(`Failed to load translations for ${locale}:`, error);
-        setTranslations({});
-      }
-    };
-    loadTranslations();
+    setTranslations(buildTranslationsForLocale(locale));
   }, [locale]);
 
-  // Set locale and persist to localStorage
-  const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
-    localStorage.setItem(STORAGE_KEY, newLocale);
+  // Keep locale fixed to default (zh-CN)
+  const setLocale = (_newLocale: Locale) => {
+    setLocaleState(defaultLocale);
   };
 
   // Translation function with nested key support
   const t = (key: string): string => {
-    const keys = key.split(".");
-    let value: any = translations;
+    const resolveKey = (source: Translations): string | null => {
+      const keys = key.split(".");
+      let value: any = source;
 
-    for (const k of keys) {
-      if (value && typeof value === "object" && k in value) {
-        value = value[k];
-      } else {
-        // Translation missing for this key
-        console.warn(`[LanguageContext] translation missing: key="${key}", locale="${locale}"`);
-        return key; // Return key if translation not found
+      for (const k of keys) {
+        if (value && typeof value === "object" && k in value) {
+          value = value[k];
+        } else {
+          return null;
+        }
       }
-    }
 
-    const finalValue = typeof value === "string" ? value : key;
-    console.log(`[LanguageContext] t() request: key="${key}", locale="${locale}" -> ${typeof finalValue === 'string' ? finalValue : 'NON-STRING'}`);
-    return finalValue;
+      return typeof value === "string" ? value : null;
+    };
+
+    const localized = resolveKey(translations);
+    if (localized) return localized;
+
+    const fallback = resolveKey(fallbackTranslations);
+    if (fallback) return fallback;
+
+    return key;
   };
 
   return (

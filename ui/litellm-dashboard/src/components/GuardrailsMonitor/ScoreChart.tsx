@@ -1,5 +1,6 @@
 import { BarChart, Card, Title } from "@tremor/react";
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 /**
  * Overview chart: Request Outcomes Over Time (passed vs blocked).
@@ -10,11 +11,21 @@ interface ScoreChartProps {
 }
 
 export function ScoreChart({ data }: ScoreChartProps) {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string, en: string) => {
+    const value = t(key);
+    if (value !== key) return value;
+    return locale === "zh-CN" ? zh : en;
+  };
   const chartData = data && data.length > 0 ? data : [];
   return (
     <Card className="bg-white border border-gray-200">
       <Title className="text-base font-semibold text-gray-900 mb-4">
-        Request Outcomes Over Time
+        {tr(
+          "guardrailsMonitor.chart.requestOutcomes",
+          "请求结果趋势",
+          "Request Outcomes Over Time"
+        )}
       </Title>
       <div className="h-80 min-h-[280px]">
         {chartData.length > 0 ? (
@@ -30,7 +41,11 @@ export function ScoreChart({ data }: ScoreChartProps) {
           />
         ) : (
           <div className="flex items-center justify-center h-full text-sm text-gray-500">
-            No chart data for this period
+            {tr(
+              "guardrailsMonitor.chart.noData",
+              "该时间段暂无图表数据",
+              "No chart data for this period"
+            )}
           </div>
         )}
       </div>

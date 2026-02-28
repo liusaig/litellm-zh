@@ -9,6 +9,22 @@ import type { CredentialItem } from "../networking";
 import { Providers } from "../provider_info_helpers";
 import AddModelTab from "./add_model_tab";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    t: (key: string) =>
+      (
+        {
+          "models.addModel.tab": "Add Model",
+          "models.addModel.autoRouterTab": "Add Auto Router",
+          "models.addModel.provider": "Provider",
+          "models.addModel.selectTeam": "Select Team",
+          "models.addModel.addModelButton": "Add Model",
+          "models.addModel.testConnect": "Test Connect",
+        } as Record<string, string>
+      )[key] ?? key,
+  }),
+}));
+
 vi.mock("../molecules/models/ProviderLogo", () => ({
   ProviderLogo: ({ provider, className }: { provider: string; className?: string }) => (
     <div className={className} data-testid={`provider-logo-${provider}`}>

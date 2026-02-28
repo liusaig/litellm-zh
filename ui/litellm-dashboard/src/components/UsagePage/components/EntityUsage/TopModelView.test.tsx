@@ -12,17 +12,17 @@ describe("TopModelView", () => {
 
   it("should render", () => {
     render(<TopModelView topModels={[]} topModelsLimit={5} setTopModelsLimit={mockSetTopModelsLimit} />);
-    expect(screen.getByText("Table View")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Table View|表格视图|usagePage\.topKeyView\.tableView/ })).toBeInTheDocument();
   });
 
   it("should display table view button", () => {
     render(<TopModelView topModels={[]} topModelsLimit={5} setTopModelsLimit={mockSetTopModelsLimit} />);
-    expect(screen.getByRole("button", { name: "Table View" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Table View|表格视图|usagePage\.topKeyView\.tableView/ })).toBeInTheDocument();
   });
 
   it("should display chart view button", () => {
     render(<TopModelView topModels={[]} topModelsLimit={5} setTopModelsLimit={mockSetTopModelsLimit} />);
-    expect(screen.getByRole("button", { name: "Chart View" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Chart View|图表视图|usagePage\.topKeyView\.chartView/ })).toBeInTheDocument();
   });
 
   it("should display all table column headers", () => {
@@ -64,7 +64,7 @@ describe("TopModelView", () => {
     const user = userEvent.setup();
     render(<TopModelView topModels={[]} topModelsLimit={5} setTopModelsLimit={mockSetTopModelsLimit} />);
 
-    const chartViewButton = screen.getByRole("button", { name: "Chart View" });
+    const chartViewButton = screen.getByRole("button", { name: /Chart View|图表视图|usagePage\.topKeyView\.chartView/ });
     await user.click(chartViewButton);
 
     expect(chartViewButton).toHaveClass("bg-blue-100");
@@ -74,8 +74,8 @@ describe("TopModelView", () => {
     const user = userEvent.setup();
     render(<TopModelView topModels={[]} topModelsLimit={5} setTopModelsLimit={mockSetTopModelsLimit} />);
 
-    const chartViewButton = screen.getByRole("button", { name: "Chart View" });
-    const tableViewButton = screen.getByRole("button", { name: "Table View" });
+    const chartViewButton = screen.getByRole("button", { name: /Chart View|图表视图|usagePage\.topKeyView\.chartView/ });
+    const tableViewButton = screen.getByRole("button", { name: /Table View|表格视图|usagePage\.topKeyView\.tableView/ });
 
     await user.click(chartViewButton);
     await user.click(tableViewButton);

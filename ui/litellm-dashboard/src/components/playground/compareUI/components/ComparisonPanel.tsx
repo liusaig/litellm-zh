@@ -104,7 +104,7 @@ export function ComparisonPanel({
         {/* Sync Checkbox */}
         <div className="flex items-center gap-2">
           <Checkbox checked={comparison.applyAcrossModels} onChange={(e) => handleSyncChange(e.target.checked)}>
-            <span className="text-xs font-medium">Sync Settings Across Models</span>
+            <span className="text-xs font-medium">跨模型同步设置</span>
           </Checkbox>
         </div>
 
@@ -112,10 +112,10 @@ export function ComparisonPanel({
 
         {/* General Settings */}
         <div>
-          <h4 className="text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">General Settings</h4>
+          <h4 className="text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">通用设置</h4>
           <div className="space-y-2">
             <div>
-              <label className="text-xs font-medium text-gray-600 block mb-0.5">Tags</label>
+              <label className="text-xs font-medium text-gray-600 block mb-0.5">标签</label>
               <TagSelector
                 value={comparison.tags}
                 onChange={(value) => handleSettingChange("tags", value)}
@@ -123,7 +123,7 @@ export function ComparisonPanel({
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600 block mb-0.5">Vector Stores</label>
+              <label className="text-xs font-medium text-gray-600 block mb-0.5">向量库</label>
               <VectorStoreSelector
                 value={comparison.vectorStores}
                 onChange={(value) => handleSettingChange("vectorStores", value)}
@@ -131,7 +131,7 @@ export function ComparisonPanel({
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600 block mb-0.5">Guardrails</label>
+              <label className="text-xs font-medium text-gray-600 block mb-0.5">护栏</label>
               <GuardrailSelector
                 value={comparison.guardrails}
                 onChange={(value) => handleSettingChange("guardrails", value)}
@@ -142,20 +142,20 @@ export function ComparisonPanel({
         </div>
         {/* Advanced Settings */}
         <div>
-          <h4 className="text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Advanced Settings</h4>
+          <h4 className="text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">高级设置</h4>
           <div className="space-y-2">
             <div className="flex items-center gap-2 pb-1">
               <Checkbox
                 checked={comparison.useAdvancedParams}
                 onChange={(e) => handleAdvancedParamsChange(e.target.checked)}
               >
-                <span className="text-sm font-medium">Use Advanced Parameters</span>
+                <span className="text-sm font-medium">启用高级参数</span>
               </Checkbox>
             </div>
             <div className="space-y-2 transition-opacity duration-200" style={{ opacity: disabledOpacity }}>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className={`text-xs font-medium ${disabledTextColor}`}>Temperature</label>
+                  <label className={`text-xs font-medium ${disabledTextColor}`}>温度</label>
                   <span className={`text-xs ${disabledTextColor}`}>{comparison.temperature.toFixed(2)}</span>
                 </div>
                 <Slider
@@ -173,7 +173,7 @@ export function ComparisonPanel({
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className={`text-xs font-medium ${disabledTextColor}`}>Max Tokens</label>
+                  <label className={`text-xs font-medium ${disabledTextColor}`}>最大 Tokens</label>
                   <span className={`text-xs ${disabledTextColor}`}>{comparison.maxTokens}</span>
                 </div>
                 <Slider

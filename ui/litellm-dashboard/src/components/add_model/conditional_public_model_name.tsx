@@ -97,24 +97,24 @@ const ConditionalPublicModelName: React.FC = () => {
 
   const publicNameTooltipContent = (
     <>
-      <div className="mb-2 font-normal">The name you specify in your API calls to Silinex Proxy</div>
+      <div className="mb-2 font-normal">你在调用网关 API 时使用的模型名称。</div>
       <div className="mb-2 font-normal">
-        <strong>Example:</strong> If you name your public model{" "}
-        <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">example-name</code>, and choose{" "}
-        <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">openai/qwen-plus-latest</code> as the Silinex model
+        <strong>示例：</strong>如果你将公开模型命名为{" "}
+        <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">example-name</code>，并选择{" "}
+        <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">openai/qwen-plus-latest</code> 作为上游模型
       </div>
       <div className="mb-2 font-normal">
-        <strong>Usage:</strong> You make an API call to the Silinex proxy with{" "}
+        <strong>调用方式：</strong>你向网关发起请求时使用{" "}
         <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">model = &quot;example-name&quot;</code>
       </div>
       <div className="font-normal">
-        <strong>Result:</strong> Silinex sends{" "}
-        <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">qwen-plus-latest</code> to the provider
+        <strong>结果：</strong>网关会向上游提供商发送{" "}
+        <code className="bg-gray-700 px-1 py-0.5 rounded text-xs">qwen-plus-latest</code>
       </div>
     </>
   );
 
-  const liteLLMModelTooltipContent = <div>The model name Silinex will send to the LLM API</div>;
+  const liteLLMModelTooltipContent = <div>网关实际发送给上游 LLM API 的模型名称。</div>;
 
   const columns = [
     {
@@ -165,7 +165,7 @@ const ConditionalPublicModelName: React.FC = () => {
     {
       title: (
         <span className="flex items-center">
-          {t("models.addModel.litellmModelNameColumn")}
+          模型名称
           <Tooltip content={liteLLMModelTooltipContent} width="360px" />
         </span>
       ),

@@ -1,22 +1,18 @@
 import { useModelCostMap } from "@/app/(dashboard)/hooks/models/useModelCostMap";
-import { useTeams } from "@/app/(dashboard)/hooks/teams/useTeams";
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
-import { Team } from "@/components/key_team_helpers/key_list";
 import { AllModelsDataTable } from "@/components/model_dashboard/all_models_table";
 import { columns } from "@/components/molecules/models/columns";
 import { getDisplayModelName } from "@/components/view_model/model_name_display";
-import { InfoCircleOutlined, SettingOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
 import { PaginationState, SortingState } from "@tanstack/react-table";
 import { Grid, TabPanel } from "@tremor/react";
-import { Badge, Button, Select, Skeleton, Space, Typography } from "antd";
+import { Button, Select, Skeleton } from "antd";
 import ModelSettingsModal from "@/components/model_dashboard/ModelSettingsModal/ModelSettingsModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import debounce from "lodash/debounce";
 import { useEffect, useMemo, useState } from "react";
 import { useModelsInfo } from "../../hooks/models/useModels";
 import { transformModelData } from "../utils/modelDataTransformer";
-type ModelViewMode = "all" | "current_team";
-const { Text } = Typography;
 
 interface AllModelsTabProps {
   selectedModelGroup: string | null;
@@ -38,12 +34,9 @@ const AllModelsTab = ({
   const { t } = useLanguage();
   const { data: modelCostMapData, isLoading: isLoadingModelCostMap } = useModelCostMap();
   const { userId, userRole, premiumUser } = useAuthorized();
-  const { data: teams, isLoading: isLoadingTeams } = useTeams();
 
   const [modelNameSearch, setModelNameSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-  const [modelViewMode, setModelViewMode] = useState<ModelViewMode>("current_team");
-  const [currentTeam, setCurrentTeam] = useState<Team | "personal">("personal");
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [selectedModelAccessGroupFilter, setSelectedModelAccessGroupFilter] = useState<string | null>(null);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -75,9 +68,6 @@ const AllModelsTab = ({
     };
   }, [modelNameSearch, debouncedUpdateSearch]);
 
-  // Determine teamId to pass to the query - only pass if not "personal"
-  const teamIdForQuery = currentTeam === "personal" ? undefined : currentTeam.team_id;
-
   // Convert sorting state to sortBy and sortOrder for API
   const sortBy = useMemo(() => {
     if (sorting.length === 0) return undefined;
@@ -102,7 +92,7 @@ const AllModelsTab = ({
     pageSize,
     debouncedSearch || undefined,
     undefined,
-    teamIdForQuery,
+    undefined,
     sortBy,
     sortOrder
   );
@@ -158,7 +148,6 @@ const AllModelsTab = ({
         model.model_info["access_groups"]?.includes(selectedModelAccessGroupFilter) ||
         !selectedModelAccessGroupFilter;
 
-      // Team filtering is now handled server-side via teamId query parameter
       // Only apply client-side filtering for model groups and access groups
       return modelNameMatch && accessGroupMatch;
     });
@@ -168,12 +157,6 @@ const AllModelsTab = ({
     setPagination((prev: PaginationState) => ({ ...prev, pageIndex: 0 }));
     setCurrentPage(1);
   }, [selectedModelGroup, selectedModelAccessGroupFilter]);
-
-  // Reset pagination when team changes
-  useEffect(() => {
-    setCurrentPage(1);
-    setPagination((prev: PaginationState) => ({ ...prev, pageIndex: 0 }));
-  }, [teamIdForQuery]);
 
   // Reset pagination when sorting changes
   useEffect(() => {
@@ -185,8 +168,6 @@ const AllModelsTab = ({
     setModelNameSearch("");
     setSelectedModelGroup("all");
     setSelectedModelAccessGroupFilter(null);
-    setCurrentTeam("personal");
-    setModelViewMode("current_team");
     setCurrentPage(1);
     setPagination({ pageIndex: 0, pageSize: 50 });
     setSorting([]);
@@ -197,135 +178,6 @@ const AllModelsTab = ({
       <Grid>
         <div className="flex flex-col space-y-4">
           <div className="bg-white rounded-lg shadow">
-            {/* Current Team and View Mode Selector - Prominent Section */}
-            <div className="border-b px-6 py-4 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Text className="text-lg font-semibold text-gray-900">{t("models.allModels.currentTeam")}</Text>
-                  <div className="w-80">
-                    {isLoading ? (
-                      <Skeleton.Input active block size="large" />
-                    ) : (
-                      <Select
-                        style={{ width: "100%" }}
-                        size="large"
-                        defaultValue="personal"
-                        value={currentTeam === "personal" ? "personal" : currentTeam.team_id}
-                        onChange={(value) => {
-                          if (value === "personal") {
-                            setCurrentTeam("personal");
-                            // Reset to page 1 when team changes
-                            setCurrentPage(1);
-                            setPagination((prev: PaginationState) => ({ ...prev, pageIndex: 0 }));
-                          } else {
-                            const team = teams?.find((t) => t.team_id === value);
-                            if (team) {
-                              setCurrentTeam(team);
-                              // Reset to page 1 when team changes
-                              setCurrentPage(1);
-                              setPagination((prev: PaginationState) => ({ ...prev, pageIndex: 0 }));
-                            }
-                          }
-                        }}
-                        loading={isLoadingTeams}
-                        options={[
-                          {
-                            value: "personal",
-                            label: (
-                              <Space direction="horizontal" align="center">
-                                <Badge color="blue" size="small" />
-                                <Text style={{ fontSize: 16 }}>{t("models.allModels.personal")}</Text>
-                              </Space>
-                            ),
-                          },
-                          ...(teams
-                            ?.filter((team) => team.team_id)
-                            .map((team) => ({
-                              value: team.team_id,
-                              label: (
-                                <Space direction="horizontal" align="center">
-                                  <Badge color="green" size="small" />
-                                  <Text ellipsis style={{ fontSize: 16 }}>
-                                    {team.team_alias ? team.team_alias : team.team_id}
-                                  </Text>
-                                </Space>
-                              ),
-                            })) ?? []),
-                        ]}
-                      />
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Text className="text-lg font-semibold text-gray-900">{t("models.allModels.view")}</Text>
-                  <div className="w-64">
-                    {isLoading ? (
-                      <Skeleton.Input active block size="large" />
-                    ) : (
-                      <Select
-                        style={{ width: "100%" }}
-                        size="large"
-                        defaultValue="current_team"
-                        value={modelViewMode}
-                        onChange={(value) => setModelViewMode(value as "current_team" | "all")}
-                        options={[
-                          {
-                            value: "current_team",
-                            label: (
-                              <Space direction="horizontal" align="center">
-                                <Badge color="purple" size="small" />
-                                <Text style={{ fontSize: 16 }}>{t("models.allModels.currentTeamModels")}</Text>
-                              </Space>
-                            ),
-                          },
-                          {
-                            value: "all",
-                            label: (
-                              <Space direction="horizontal" align="center">
-                                <Badge color="gray" size="small" />
-                                <Text style={{ fontSize: 16 }}>{t("models.allModels.allAvailableModels")}</Text>
-                              </Space>
-                            ),
-                          },
-                        ]}
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {modelViewMode === "current_team" && (
-                <div className="flex items-start gap-2 mt-3">
-                  <InfoCircleOutlined className="text-gray-400 mt-0.5 flex-shrink-0 text-xs" />
-                  <div className="text-xs text-gray-500">
-                    {currentTeam === "personal" ? (
-                      <span>
-                        要访问这些模型：在
-                        <a
-                          href="/public?login=success&page=api-keys"
-                          className="text-gray-600 hover:text-gray-800 underline"
-                        >
-                          API密钥页面
-                        </a>
-                      </span>
-                    ) : (
-                      <span>
-                        要访问这些模型：创建一个API密钥并选择团队为“
-                        {typeof currentTeam !== "string" ? currentTeam.team_alias || currentTeam.team_id : ""}&quot; on
-                        页面上创建一个API密钥而不选择团队
-                        <a
-                          href="/public?login=success&page=api-keys"
-                          className="text-gray-600 hover:text-gray-800 underline"
-                        >
-                          API密钥页面
-                        </a>
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
             {/* Search and Filter Controls */}
             <div className="border-b px-6 py-4">
               <div className="flex flex-col space-y-4">

@@ -2,6 +2,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
 import AdvancedDatePicker from "./advanced_date_picker";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    locale: "en-US",
+    t: (key: string) => key,
+  }),
+}));
+
 // Polyfill requestIdleCallback for test environment
 beforeAll(() => {
   if (typeof window !== "undefined" && !window.requestIdleCallback) {

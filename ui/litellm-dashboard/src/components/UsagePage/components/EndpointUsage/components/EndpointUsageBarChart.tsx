@@ -1,6 +1,7 @@
 import React from "react";
 import { BarChart, Card, Title } from "@tremor/react";
 import { CustomLegend, CustomTooltip } from "@/components/common_components/chartUtils";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { MetricWithMetadata } from "../../../types";
 
 interface EndpointUsageBarChartProps {
@@ -8,6 +9,7 @@ interface EndpointUsageBarChartProps {
 }
 
 const EndpointUsageBarChart: React.FC<EndpointUsageBarChartProps> = ({ endpointData }) => {
+  const { locale } = useLanguage();
   const dataToUse = endpointData || {};
 
   // Transform endpoint data into chart format
@@ -28,7 +30,7 @@ const EndpointUsageBarChart: React.FC<EndpointUsageBarChartProps> = ({ endpointD
   return (
     <Card>
       <div className="flex justify-between items-center">
-        <Title>Success vs Failed Requests by Endpoint</Title>
+        <Title>{locale === "zh-CN" ? "各端点成功/失败请求对比" : "Success vs Failed Requests by Endpoint"}</Title>
         <CustomLegend
           categories={["metrics.successful_requests", "metrics.failed_requests"]}
           colors={["green", "red"]}

@@ -1,5 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@tremor/react";
 import BulkEditUserModal from "./BulkEditUsers";
@@ -26,6 +26,7 @@ import NotificationsManager from "./molecules/notifications_manager";
 import { modelAvailableCall, userDeleteCall } from "./networking";
 import DefaultUserSettings from "./DefaultUserSettings";
 import { columns } from "./view_users/columns";
+import { localizePossibleUIRoles } from "./view_users/roleLabelLocalization";
 import { UserDataTable } from "./view_users/table";
 import { UserInfo } from "./view_users/types";
 import { Skeleton } from "antd";
@@ -279,9 +280,10 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
     enabled: Boolean(accessToken && token && userRole && userID),
   });
   const possibleUIRoles = userRolesQuery.data;
+  const localizedPossibleUIRoles = useMemo(() => localizePossibleUIRoles(possibleUIRoles), [possibleUIRoles]);
 
   const tableColumns = columns(
-    possibleUIRoles,
+    localizedPossibleUIRoles || {},
     (user) => {
       setSelectedUser(user);
       setEditModalVisible(true);
@@ -303,7 +305,12 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
             </>
           ) : userID && accessToken ? (
             <>
-              <CreateUserButton userID={userID} accessToken={accessToken} teams={teams} possibleUIRoles={possibleUIRoles} />
+              <CreateUserButton
+                userID={userID}
+                accessToken={accessToken}
+                teams={teams}
+                possibleUIRoles={localizedPossibleUIRoles}
+              />
 
               <Button
                 onClick={handleToggleSelectionMode}
@@ -342,7 +349,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
                 sortBy: filters.sort_by,
                 sortOrder: filters.sort_order,
               }}
-              possibleUIRoles={possibleUIRoles}
+              possibleUIRoles={localizedPossibleUIRoles}
               handleEdit={(user) => {
                 setSelectedUser(user);
                 setEditModalVisible(true);
@@ -370,7 +377,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
             ) : (
               <DefaultUserSettings
                 accessToken={accessToken}
-                possibleUIRoles={possibleUIRoles}
+                possibleUIRoles={localizedPossibleUIRoles}
                 userID={userID}
                 userRole={userRole}
               />
@@ -382,7 +389,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
       {/* Existing Modals */}
       <EditUserModal
         visible={editModalVisible}
-        possibleUIRoles={possibleUIRoles}
+        possibleUIRoles={localizedPossibleUIRoles}
         onCancel={handleEditCancel}
         user={selectedUser}
         onSubmit={handleEditSubmit}
@@ -399,9 +406,17 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
           {
             label: "全局代理角色",
             value:
-              (userToDelete && possibleUIRoles?.[userToDelete.user_role]?.ui_label) || userToDelete?.user_role || "-",
+              (userToDelete && localizedPossibleUIRoles?.[userToDelete.user_role]?.ui_label) ||
+              userToDelete?.user_role ||
+              "-",
           },
-          { label: "总花费", value: userToDelete?.spend?.toFixed(2) },
+          {
+            label: "总花费",
+            value:
+              userToDelete?.spend !== null && userToDelete?.spend !== undefined
+                ? `¥${userToDelete.spend.toFixed(2)}`
+                : "¥0.00",
+          },
         ]}
         onCancel={cancelDelete}
         onOk={confirmDelete}
@@ -420,7 +435,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
         open={isBulkEditModalVisible}
         onCancel={() => setIsBulkEditModalVisible(false)}
         selectedUsers={selectedUsers}
-        possibleUIRoles={possibleUIRoles}
+        possibleUIRoles={localizedPossibleUIRoles}
         accessToken={accessToken}
         onSuccess={handleBulkEditSuccess}
         teams={teams}

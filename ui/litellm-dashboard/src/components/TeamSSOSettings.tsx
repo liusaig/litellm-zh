@@ -7,6 +7,11 @@ import { getModelDisplayName } from "./key_team_helpers/fetch_available_models_t
 import NotificationsManager from "./molecules/notifications_manager";
 import { ModelSelect } from "./ModelSelect/ModelSelect";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  teamDefaultSettingsFieldDescription,
+  teamDefaultSettingsFieldLabel,
+  teamT,
+} from "@/app/(dashboard)/teams/utils/teamI18n";
 
 interface TeamSSOSettingsProps {
   accessToken: string | null;
@@ -51,7 +56,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
         }
       } catch (error) {
         console.error("Error fetching team SSO settings:", error);
-        NotificationsManager.fromBackend(t("teams.defaultSettings.loadFailed"));
+        NotificationsManager.fromBackend(teamT(t, "teams.defaultSettings.loadFailed"));
       } finally {
         setLoading(false);
       }
@@ -68,10 +73,10 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
       const updatedSettings = await updateDefaultTeamSettings(accessToken, editedValues);
       setSettings({ ...settings, values: updatedSettings.settings });
       setIsEditing(false);
-      NotificationsManager.success(t("teams.defaultSettings.saveSuccess"));
+      NotificationsManager.success(teamT(t, "teams.defaultSettings.saveSuccess"));
     } catch (error) {
       console.error("Error updating team settings:", error);
-      NotificationsManager.fromBackend(t("teams.defaultSettings.updateFailed"));
+      NotificationsManager.fromBackend(teamT(t, "teams.defaultSettings.updateFailed"));
     } finally {
       setSaving(false);
     }
@@ -157,18 +162,18 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
   };
 
   const renderValue = (key: string, value: any): JSX.Element => {
-    if (value === null || value === undefined) return <span className="text-gray-400">{t("teams.defaultSettings.notSet")}</span>;
+    if (value === null || value === undefined) return <span className="text-gray-400">{teamT(t, "teams.defaultSettings.notSet")}</span>;
 
     if (key === "budget_duration") {
       return <span>{getBudgetDurationLabel(value)}</span>;
     }
 
     if (typeof value === "boolean") {
-      return <span>{value ? t("teams.defaultSettings.enabled") : t("teams.defaultSettings.disabled")}</span>;
+      return <span>{value ? teamT(t, "teams.defaultSettings.enabled") : teamT(t, "teams.defaultSettings.disabled")}</span>;
     }
 
     if (key === "models" && Array.isArray(value)) {
-      if (value.length === 0) return <span className="text-gray-400">{t("teams.defaultSettings.none")}</span>;
+      if (value.length === 0) return <span className="text-gray-400">{teamT(t, "teams.defaultSettings.none")}</span>;
 
       return (
         <div className="flex flex-wrap gap-2 mt-1">
@@ -183,7 +188,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
 
     if (typeof value === "object") {
       if (Array.isArray(value)) {
-        if (value.length === 0) return <span className="text-gray-400">{t("teams.defaultSettings.none")}</span>;
+        if (value.length === 0) return <span className="text-gray-400">{teamT(t, "teams.defaultSettings.none")}</span>;
 
         return (
           <div className="flex flex-wrap gap-2 mt-1">
@@ -213,28 +218,35 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
   if (!settings) {
     return (
       <Card>
-        <Text>{t("teams.defaultSettings.notAvailable")}</Text>
+        <Text>{teamT(t, "teams.defaultSettings.notAvailable")}</Text>
       </Card>
     );
   }
+
+  const schemaDescription = settings?.field_schema?.description as string | undefined;
+  const normalizedDescription =
+    schemaDescription && schemaDescription.includes("Default parameters to apply")
+      ? teamT(t, "teams.defaultSettings.description")
+      : schemaDescription || teamT(t, "teams.defaultSettings.description");
 
   // Dynamically render settings based on the schema
   const renderSettings = () => {
     const { values, field_schema } = settings;
 
     if (!field_schema || !field_schema.properties) {
-      return <Text>{t("teams.defaultSettings.noSchema")}</Text>;
+      return <Text>{teamT(t, "teams.defaultSettings.noSchema")}</Text>;
     }
 
     return Object.entries(field_schema.properties).map(([key, property]: [string, any]) => {
       const value = values[key];
-      const displayName = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+      const defaultDisplayName = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+      const displayName = teamDefaultSettingsFieldLabel(key, defaultDisplayName);
 
       return (
         <div key={key} className="mb-6 pb-6 border-b border-gray-200 last:border-0">
           <Text className="font-medium text-lg">{displayName}</Text>
           <Paragraph className="text-sm text-gray-500 mt-1">
-            {property.description || t("teams.defaultSettings.noDescription")}
+            {teamDefaultSettingsFieldDescription(key, property.description)}
           </Paragraph>
 
           {isEditing ? (
@@ -250,7 +262,7 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
   return (
     <Card>
       <div className="flex justify-between items-center mb-4">
-        <Title className="text-xl">{t("teams.defaultSettings.title")}</Title>
+        <Title className="text-xl">{teamT(t, "teams.defaultSettings.title")}</Title>
         {!loading &&
           settings &&
           (isEditing ? (
@@ -263,22 +275,18 @@ const TeamSSOSettings: React.FC<TeamSSOSettingsProps> = ({ accessToken, userID, 
                 }}
                 disabled={saving}
               >
-                {t("teams.defaultSettings.cancel")}
+                {teamT(t, "teams.defaultSettings.cancel")}
               </Button>
               <Button onClick={handleSaveSettings} loading={saving}>
-                {t("teams.defaultSettings.saveChanges")}
+                {teamT(t, "teams.defaultSettings.saveChanges")}
               </Button>
             </div>
           ) : (
-            <Button onClick={() => setIsEditing(true)}>{t("teams.defaultSettings.editSettings")}</Button>
+            <Button onClick={() => setIsEditing(true)}>{teamT(t, "teams.defaultSettings.editSettings")}</Button>
           ))}
       </div>
 
-      <Text>{t("teams.defaultSettings.description")}</Text>
-
-      {settings?.field_schema?.description && (
-        <Paragraph className="mb-4 mt-2">{settings.field_schema.description}</Paragraph>
-      )}
+      <Text>{normalizedDescription}</Text>
       <Divider />
 
       <div className="mt-4 space-y-4">{renderSettings()}</div>

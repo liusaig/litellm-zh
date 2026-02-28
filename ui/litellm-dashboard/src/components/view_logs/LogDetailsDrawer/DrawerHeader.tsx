@@ -14,6 +14,7 @@ import {
   FONT_FAMILY_MONO,
   SPACING_SMALL,
 } from "./constants";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 
@@ -40,6 +41,7 @@ export function DrawerHeader({
   statusColor,
   environment,
 }: DrawerHeaderProps) {
+  const { t } = useLanguage();
   const provider = log.custom_llm_provider || "";
   const providerInfo = provider ? getProviderLogoAndName(provider) : null;
 
@@ -112,12 +114,13 @@ function ModelProviderSection({
  * Request ID display with copy functionality
  */
 function RequestIdSection({ requestId }: { requestId: string }) {
+  const { t } = useLanguage();
   return (
     <div style={{ flex: 1, minWidth: 0 }}>
       <Tooltip title={requestId}>
         <Text
           strong
-          copyable={{ text: requestId, tooltips: ["Copy Request ID", "Copied!"] }}
+          copyable={{ text: requestId, tooltips: [t("logs.details.copyRequestId"), t("logs.details.copied")] }}
           style={{
             fontSize: FONT_SIZE_HEADER,
             fontFamily: FONT_FAMILY_MONO,
@@ -147,6 +150,7 @@ function NavigationSection({
   onNext: () => void;
   onClose: () => void;
 }) {
+  const { t } = useLanguage();
   const keyboardShortcutStyle = {
     border: "1px solid #d9d9d9",
     borderRadius: 4,
@@ -167,7 +171,7 @@ function NavigationSection({
         <DownOutlined />
         <span style={keyboardShortcutStyle}>J</span>
       </Button>
-      <Tooltip title="ESC to close">
+      <Tooltip title={t("logs.details.escToClose")}>
         <Button type="text" icon={<CloseOutlined />} onClick={onClose} />
       </Tooltip>
     </Space>
@@ -188,10 +192,11 @@ function StatusBar({
   statusColor: "error" | "success";
   environment: string;
 }) {
+  const { t } = useLanguage();
   return (
     <Space size={SPACING_LARGE}>
       <Tag color={statusColor}>{statusLabel}</Tag>
-      <Tag>Env: {environment}</Tag>
+      <Tag>{t("logs.details.env")}: {environment}</Tag>
       <Space size={SPACING_MEDIUM}>
         <Text type="secondary" style={{ fontSize: FONT_SIZE_MEDIUM }}>
           {moment(log.startTime).format("MMM D, YYYY h:mm:ss A")}

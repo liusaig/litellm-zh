@@ -692,14 +692,14 @@ export default function SpendLogsTable({
                           <button
                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                             disabled={logs.isLoading || currentPage === 1}
-                            className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
                           >
                             {t("logs.previous")}
                           </button>
                           <button
                             onClick={() => setCurrentPage((p) => Math.min(filteredLogs.total_pages || 1, p + 1))}
                             disabled={logs.isLoading || currentPage === (filteredLogs.total_pages || 1)}
-                            className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
                           >
                             {t("logs.next")}
                           </button>
@@ -710,13 +710,13 @@ export default function SpendLogsTable({
                   {isLiveTail && currentPage === 1 && isMainQueryEnabled && (
                     <div className="mb-4 px-4 py-2 bg-green-50 border border-greem-200 rounded-md flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-green-700">Auto-refreshing every 15 seconds</span>
+                        <span className="text-sm text-green-700">{t("logs.autoRefreshEvery15Seconds")}</span>
                       </div>
                       <button
                         onClick={() => setIsLiveTail(false)}
                         className="text-sm text-green-600 hover:text-green-800"
                       >
-                        Stop
+                        {t("logs.stop")}
                       </button>
                     </div>
                   )}

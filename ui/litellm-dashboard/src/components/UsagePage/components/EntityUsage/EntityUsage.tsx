@@ -465,7 +465,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
                       return (
                         <div className="bg-white p-4 shadow-lg rounded-lg border">
                           <p className="font-bold">{data.date}</p>
-                          <p className="text-cyan-500">Total Spend: ${formatNumberWithCommas(data.metrics.spend, 2)}</p>
+                          <p className="text-cyan-500">Total Spend: ¥{formatNumberWithCommas(data.metrics.spend, 2)}</p>
                           <p className="text-gray-600">Total Requests: {data.metrics.api_requests}</p>
                           <p className="text-gray-600">Successful: {data.metrics.successful_requests}</p>
                           <p className="text-gray-600">Failed: {data.metrics.failed_requests}</p>
@@ -486,7 +486,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
                                 const metrics = entityData as EntityMetrics;
                                 return (
                                   <p key={entity} className="text-sm text-gray-600">
-                                    {getEntityLabel(entity, metrics.metadata)}: $
+                                    {getEntityLabel(entity, metrics.metadata)}: ¥
                                     {formatNumberWithCommas(metrics.metrics.spend, 2)}
                                   </p>
                                 );
@@ -537,7 +537,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
                             return (
                               <div className="bg-white p-4 shadow-lg rounded-lg border">
                                 <p className="font-bold">{data.metadata.alias}</p>
-                                <p className="text-cyan-500">Spend: ${formatNumberWithCommas(data.metrics.spend, 4)}</p>
+                                <p className="text-cyan-500">Spend: ¥{formatNumberWithCommas(data.metrics.spend, 4)}</p>
                                 <p className="text-gray-600">Requests: {data.metrics.api_requests.toLocaleString()}</p>
                                 <p className="text-green-600">
                                   Successful: {data.metrics.successful_requests.toLocaleString()}
@@ -567,7 +567,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
                                 .map((entity) => (
                                   <TableRow key={entity.metadata.id}>
                                     <TableCell>{entity.metadata.alias}</TableCell>
-                                    <TableCell>${formatNumberWithCommas(entity.metrics.spend, 4)}</TableCell>
+                                    <TableCell>¥{formatNumberWithCommas(entity.metrics.spend, 4)}</TableCell>
                                     <TableCell className="text-green-600">
                                       {entity.metrics.successful_requests.toLocaleString()}
                                     </TableCell>
@@ -665,7 +665,7 @@ const EntityUsage: React.FC<EntityUsageProps> = ({ accessToken, entityType, enti
                                     <span>{provider.provider}</span>
                                   </div>
                                 </TableCell>
-                                <TableCell>${formatNumberWithCommas(provider.spend, 2)}</TableCell>
+                                <TableCell>¥{formatNumberWithCommas(provider.spend, 2)}</TableCell>
                                 <TableCell className="text-green-600">
                                   {provider.successful_requests.toLocaleString()}
                                 </TableCell>

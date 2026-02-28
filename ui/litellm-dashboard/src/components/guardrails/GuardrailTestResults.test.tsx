@@ -3,6 +3,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GuardrailTestResults } from "./GuardrailTestResults";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
@@ -55,4 +61,3 @@ describe("GuardrailTestResults", () => {
     expect(screen.getByText("This is a very long response text that should be collapsible")).toBeInTheDocument();
   });
 });
-

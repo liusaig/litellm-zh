@@ -1420,7 +1420,12 @@ describe("EntityUsageExport utils", () => {
       const appendChildSpy = vi.spyOn(document.body, "appendChild");
       const removeChildSpy = vi.spyOn(document.body, "removeChild");
 
-      handleExportCSV(mockSpendData, "daily", "Team", "team", mockTeamAliasMap);
+      const mockDateRange: DateRangePickerValue = {
+        from: new Date("2025-01-01"),
+        to: new Date("2025-01-31"),
+      };
+
+      handleExportCSV(mockSpendData, "daily", "Team", "team", mockDateRange, "month", mockTeamAliasMap);
 
       expect(Papa.unparse).toHaveBeenCalled();
       expect(createObjectURLSpy).toHaveBeenCalled();
@@ -1432,12 +1437,14 @@ describe("EntityUsageExport utils", () => {
     it("should generate correct filename", () => {
       const anchorElement = document.createElement("a");
       const createElementSpy = vi.spyOn(document, "createElement").mockReturnValue(anchorElement);
+      const mockDateRange: DateRangePickerValue = {
+        from: new Date("2025-01-01"),
+        to: new Date("2025-01-31"),
+      };
 
-      const today = new Date().toISOString().split("T")[0];
+      handleExportCSV(mockSpendData, "daily", "Team", "team", mockDateRange, "month", mockTeamAliasMap);
 
-      handleExportCSV(mockSpendData, "daily", "Team", "team", mockTeamAliasMap);
-
-      expect(anchorElement.download).toBe(`team_usage_daily_${today}.csv`);
+      expect(anchorElement.download).toBe("月账单-2025年1月-分组明细.csv");
     });
 
     it("should create blob with correct type", () => {
@@ -1453,7 +1460,12 @@ describe("EntityUsageExport utils", () => {
         }
       } as any;
 
-      handleExportCSV(mockSpendData, "daily", "Team", "team", mockTeamAliasMap);
+      const mockDateRange: DateRangePickerValue = {
+        from: new Date("2025-01-01"),
+        to: new Date("2025-01-31"),
+      };
+
+      handleExportCSV(mockSpendData, "daily", "Team", "team", mockDateRange, "month", mockTeamAliasMap);
 
       expect(blobType).toBe("text/csv;charset=utf-8;");
 
@@ -1484,7 +1496,7 @@ describe("EntityUsageExport utils", () => {
         to: new Date("2025-01-31"),
       };
 
-      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, [], mockTeamAliasMap);
+      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, "month", [], mockTeamAliasMap);
 
       expect(createObjectURLSpy).toHaveBeenCalled();
       expect(createElementSpy).toHaveBeenCalledWith("a");
@@ -1496,15 +1508,14 @@ describe("EntityUsageExport utils", () => {
       const anchorElement = document.createElement("a");
       const createElementSpy = vi.spyOn(document, "createElement").mockReturnValue(anchorElement);
 
-      const today = new Date().toISOString().split("T")[0];
       const mockDateRange: DateRangePickerValue = {
         from: new Date("2025-01-01"),
         to: new Date("2025-01-31"),
       };
 
-      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, [], mockTeamAliasMap);
+      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, "month", [], mockTeamAliasMap);
 
-      expect(anchorElement.download).toBe(`team_usage_daily_${today}.json`);
+      expect(anchorElement.download).toBe("月账单-2025年1月-分组明细.json");
     });
 
     it("should create blob with correct type", () => {
@@ -1525,7 +1536,7 @@ describe("EntityUsageExport utils", () => {
         to: new Date("2025-01-31"),
       };
 
-      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, [], mockTeamAliasMap);
+      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, "month", [], mockTeamAliasMap);
 
       expect(blobType).toBe("application/json");
 
@@ -1550,7 +1561,7 @@ describe("EntityUsageExport utils", () => {
         to: new Date("2025-01-31"),
       };
 
-      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, ["filter1"], mockTeamAliasMap);
+      handleExportJSON(mockSpendData, "daily", "Team", "team", mockDateRange, "month", ["filter1"], mockTeamAliasMap);
 
       const exportObject = JSON.parse(jsonString);
       expect(exportObject).toHaveProperty("metadata");

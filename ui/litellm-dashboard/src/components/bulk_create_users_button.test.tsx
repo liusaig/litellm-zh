@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import BulkCreateUsersButton from "./bulk_create_users_button";
 
@@ -22,7 +22,7 @@ vi.mock("./molecules/notifications_manager", () => ({
 
 describe("BulkCreateUsersButton", () => {
   it("should render", () => {
-    const { getByText } = render(<BulkCreateUsersButton accessToken="test-token" teams={[]} possibleUIRoles={null} />);
-    expect(getByText("+ 批量创建")).toBeInTheDocument();
+    render(<BulkCreateUsersButton accessToken="test-token" teams={[]} possibleUIRoles={null} />);
+    expect(screen.getByText("+ 批量创建")).toBeInTheDocument();
   });
 });

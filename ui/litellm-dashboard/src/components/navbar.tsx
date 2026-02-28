@@ -13,7 +13,6 @@ import { Switch } from "antd";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import UserDropdown from "./Navbar/UserDropdown/UserDropdown";
-import LanguageSelector from "@/components/common_components/LanguageSelector";
 
 interface NavbarProps {
   userID: string | null;
@@ -125,7 +124,6 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
             {!isPublicPage && (
               <>
-                <LanguageSelector />
                 <UserDropdown onLogout={handleLogout} />
               </>
             )}

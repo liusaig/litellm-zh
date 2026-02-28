@@ -1,0 +1,29 @@
+{
+  "models": {
+    "credentials": {
+      "addButton": "Add Credential",
+      "description": "Manage reusable provider credentials for models.",
+      "credentialName": "Credential Name",
+      "provider": "Provider",
+      "actions": "Actions",
+      "noCredentials": "No credentials configured",
+      "deleteTitle": "Delete Credential?",
+      "deleteMessage": "Are you sure you want to delete this credential? This action cannot be undone.",
+      "deleteInfoTitle": "Credential Information",
+      "updated": "Credential updated",
+      "added": "Credential added",
+      "deleted": "Credential deleted",
+      "deleteFailed": "Failed to delete credential",
+      "addModalTitle": "Add New Credential",
+      "credentialNameLabel": "Credential Name",
+      "credentialNameRequired": "Credential name is required",
+      "credentialNamePlaceholder": "Enter a friendly name for these credentials",
+      "providerLabel": "Provider",
+      "providerTooltip": "Helper to auto-populate provider specific fields",
+      "needHelp": "Need Help?",
+      "cancel": "Cancel",
+      "addCredential": "Add Credential"
+    }
+  },
+  "modelInfo": {}
+}

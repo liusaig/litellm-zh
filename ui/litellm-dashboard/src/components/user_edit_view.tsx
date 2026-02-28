@@ -6,6 +6,7 @@ import { all_admin_roles } from "../utils/roles";
 import BudgetDurationDropdown from "./common_components/budget_duration_dropdown";
 import { getModelDisplayName } from "./key_team_helpers/fetch_available_models_team_key";
 import NumericalInput from "./shared/numerical_input";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface UserEditViewProps {
   userData: any;
@@ -32,6 +33,7 @@ export function UserEditView({
   possibleUIRoles,
   isBulkEdit = false,
 }: UserEditViewProps) {
+  const { t } = useLanguage();
   const [form] = Form.useForm();
   const [unlimitedBudget, setUnlimitedBudget] = useState(false);
 
@@ -82,26 +84,26 @@ export function UserEditView({
   return (
     <Form form={form} onFinish={handleSubmit} layout="vertical">
       {!isBulkEdit && (
-        <Form.Item label="User ID" name="user_id">
+        <Form.Item label={t("users.userEdit.userId")} name="user_id">
           <TextInput disabled />
         </Form.Item>
       )}
 
       {!isBulkEdit && (
-        <Form.Item label="Email" name="user_email">
-          <TextInput />
+        <Form.Item label={t("users.userEdit.email")} name="user_email">
+          <TextInput placeholder={t("users.userEdit.inputPlaceholder")} />
         </Form.Item>
       )}
 
-      <Form.Item label="User Alias" name="user_alias">
-        <TextInput />
+      <Form.Item label={t("users.userEdit.userAlias")} name="user_alias">
+        <TextInput placeholder={t("users.userEdit.inputPlaceholder")} />
       </Form.Item>
 
       <Form.Item
         label={
           <span>
-            Global Proxy Role{" "}
-            <Tooltip title="This is the role that the user will globally on the proxy. This role is independent of any team/org specific roles.">
+            {t("users.userEdit.globalProxyRole")}{" "}
+            <Tooltip title={t("users.userEdit.globalProxyRoleTooltip")}>
               <InfoCircleOutlined />
             </Tooltip>
           </span>
@@ -126,8 +128,8 @@ export function UserEditView({
       <Form.Item
         label={
           <span>
-            Personal Models{" "}
-            <Tooltip title="Select which models this user can access outside of team-scope. Choose 'All Proxy Models' to grant access to all models available on the proxy.">
+            {t("users.userEdit.personalModels")}{" "}
+            <Tooltip title={t("users.userEdit.personalModelsTooltip")}>
               <InfoCircleOutlined style={{ marginLeft: "4px" }} />
             </Tooltip>
           </span>
@@ -136,15 +138,15 @@ export function UserEditView({
       >
         <Select
           mode="multiple"
-          placeholder="Select models"
+          placeholder={t("users.userEdit.personalModelsPlaceholder")}
           style={{ width: "100%" }}
           disabled={!all_admin_roles.includes(userRole || "")}
         >
           <Select.Option key="all-proxy-models" value="all-proxy-models">
-            All Proxy Models
+            {t("users.userEdit.allProxyModels")}
           </Select.Option>
           <Select.Option key="no-default-models" value="no-default-models">
-            No Default Models
+            {t("users.userEdit.noDefaultModels")}
           </Select.Option>
           {userModels.map((model) => (
             <Select.Option key={model} value={model}>
@@ -157,12 +159,12 @@ export function UserEditView({
       <Form.Item
         label={
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span>最大预算</span>
+            <span>{t("users.userEdit.maxBudget")}</span>
             <Checkbox
               checked={unlimitedBudget}
               onChange={handleUnlimitedBudgetChange}
             >
-              Unlimited Budget
+              {t("users.userEdit.unlimitedBudget")}
             </Checkbox>
           </div>
         }
@@ -171,7 +173,7 @@ export function UserEditView({
           {
             validator: (_, value) => {
               if (!unlimitedBudget && (value === "" || value === null || value === undefined)) {
-                return Promise.reject(new Error("Please enter a budget or select Unlimited Budget"));
+                return Promise.reject(new Error(t("users.userEdit.maxBudgetValidation")));
               }
               return Promise.resolve();
             },
@@ -186,19 +188,19 @@ export function UserEditView({
         />
       </Form.Item>
 
-      <Form.Item label="Reset Budget" name="budget_duration">
+      <Form.Item label={t("users.userEdit.resetBudget")} name="budget_duration">
         <BudgetDurationDropdown />
       </Form.Item>
 
-      <Form.Item label="Metadata" name="metadata">
-        <Textarea rows={4} placeholder="Enter metadata as JSON" />
+      <Form.Item label={t("users.userEdit.metadata")} name="metadata">
+        <Textarea rows={4} placeholder={t("users.userEdit.metadataPlaceholder")} />
       </Form.Item>
 
       <div className="flex justify-end space-x-2">
         <Button variant="secondary" type="button" onClick={onCancel}>
-          Cancel
+          {t("users.userEdit.cancel")}
         </Button>
-        <Button type="submit">Save Changes</Button>
+        <Button type="submit">{t("users.userEdit.saveChanges")}</Button>
       </div>
     </Form>
   );

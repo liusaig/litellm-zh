@@ -114,24 +114,32 @@ const ViewUserSpend: React.FC<ViewUserSpendProps> = ({ userSpend, userMaxBudget,
     modelsToDisplay = userModels;
   }
 
-  const displayMaxBudget = maxBudget !== null ? `$${formatNumberWithCommas(Number(maxBudget), 4)} limit` : "No limit";
+  const displayMaxBudget = maxBudget !== null ? `¥${formatNumberWithCommas(Number(maxBudget), 4)}` : "不限制";
 
   const roundedSpend = spend !== undefined ? formatNumberWithCommas(spend, 4) : null;
+  const remainingBalanceText =
+    maxBudget === null ? "无限" : `¥${formatNumberWithCommas(Number(maxBudget) - Number(spend || 0), 4)}`;
 
   console.log(`spend in view user spend: ${spend}`);
   return (
     <div className="flex items-center">
-      <div className="flex justify-between gap-x-6">
+      <div className="flex justify-between gap-x-10">
         <div>
-          <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Total Spend</p>
-          <p className="text-2xl text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">
-            ${roundedSpend}
+          <p className="text-xs text-slate-500 font-medium tracking-wide">总花费</p>
+          <p className="text-[26px] md:text-[30px] text-slate-900 font-semibold leading-tight mt-1.5">
+            ¥{roundedSpend}
           </p>
         </div>
         <div>
-          <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Max Budget</p>
-          <p className="text-2xl text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">
+          <p className="text-xs text-slate-500 font-medium tracking-wide">最大预算</p>
+          <p className="text-[26px] md:text-[30px] text-slate-900 font-semibold leading-tight mt-1.5">
             {displayMaxBudget}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-slate-500 font-medium tracking-wide">余额</p>
+          <p className="text-[26px] md:text-[30px] text-slate-900 font-semibold leading-tight mt-1.5">
+            {remainingBalanceText}
           </p>
         </div>
       </div>

@@ -3454,12 +3454,20 @@ class ProxyConfig:
             model.model_info["id"] = _id
             model.model_info["db_model"] = True
 
-        if premium_user is True:
-            # seeing "created_at", "updated_at", "created_by", "updated_by" is a LiteLLM Enterprise Feature
-            model.model_info["created_at"] = getattr(model, "created_at", None)
-            model.model_info["updated_at"] = getattr(model, "updated_at", None)
-            model.model_info["created_by"] = getattr(model, "created_by", None)
-            model.model_info["updated_by"] = getattr(model, "updated_by", None)
+        # Populate metadata fields when available so UI can render creator/update information.
+        # Preserve any values already present in model_info.
+        model.model_info["created_at"] = model.model_info.get(
+            "created_at", getattr(model, "created_at", None)
+        )
+        model.model_info["updated_at"] = model.model_info.get(
+            "updated_at", getattr(model, "updated_at", None)
+        )
+        model.model_info["created_by"] = model.model_info.get(
+            "created_by", getattr(model, "created_by", None)
+        )
+        model.model_info["updated_by"] = model.model_info.get(
+            "updated_by", getattr(model, "updated_by", None)
+        )
 
         if model.model_info is not None and isinstance(model.model_info, dict):
             if "id" not in model.model_info:

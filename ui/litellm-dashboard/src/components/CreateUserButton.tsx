@@ -50,6 +50,8 @@ interface UISettings {
 
 export const CreateUserButton: React.FC<CreateuserProps> = ({
   userID, accessToken, teams, possibleUIRoles, onUserCreated, isEmbedded = false }) => {
+  const FORM_ITEM_MARGIN = 28;
+  const FORM_ITEM_WITH_HELP_MARGIN = 44;
   const queryClient = useQueryClient();
   const [uiSettings, setUISettings] = useState<UISettings | null>(null);
   const [form] = Form.useForm();
@@ -240,10 +242,11 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           <Text>创建可管理密钥的用户</Text>
         </Space>
         <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
-          <Form.Item label="用户名" name="user_email">
+          <Form.Item label="用户名" name="user_email" style={{ marginBottom: FORM_ITEM_MARGIN }}>
             <Input placeholder="请输入用户名" />
           </Form.Item>
           <Form.Item
+            style={{ marginBottom: FORM_ITEM_MARGIN }}
             label={
               <span>
                 角色{" "}
@@ -271,14 +274,14 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
 
           <Form.Item
             label="分组"
-            style={{ marginBottom: 40 }}
             name="team_id"
             help="选择后，用户会以“user”角色加入该分组。"
+            style={{ marginBottom: FORM_ITEM_WITH_HELP_MARGIN }}
           >
             <TeamDropdown teams={teams} />
           </Form.Item>
           <Form.Item
-            style={{ marginTop: 28, marginBottom: 40 }}
+            style={{ marginBottom: FORM_ITEM_WITH_HELP_MARGIN }}
             label={
               <span>
                 模型{" "}
@@ -309,10 +312,16 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
             name="max_budget"
             tooltip="留空表示不限额"
             help="限制该用户的可用预算，留空表示无限制。"
+            style={{ marginBottom: FORM_ITEM_WITH_HELP_MARGIN }}
           >
             <InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="例如 100" />
           </Form.Item>
-          <Form.Item label="预算重置周期" name="budget_duration" help="可选。设置后按周期自动重置预算。">
+          <Form.Item
+            label="预算重置周期"
+            name="budget_duration"
+            help="可选。设置后按周期自动重置预算。"
+            style={{ marginBottom: FORM_ITEM_WITH_HELP_MARGIN }}
+          >
             <BudgetDurationDropdown onChange={(value) => form.setFieldValue("budget_duration", value)} />
           </Form.Item>
           <div style={{ textAlign: "right", marginTop: "10px" }}>

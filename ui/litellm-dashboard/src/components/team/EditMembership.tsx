@@ -3,6 +3,7 @@ import { Button as AntButton, Form, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import NumericalInput from "../shared/numerical_input";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamT } from "@/app/(dashboard)/teams/utils/teamI18n";
 
 interface BaseMember {
   user_email?: string;
@@ -133,7 +134,7 @@ const MemberModal = <T extends BaseMember>({
             step={field.step || 1}
             min={field.min || 0}
             style={{ width: "100%" }}
-            placeholder={field.placeholder || "Enter a numerical value"}
+            placeholder={field.placeholder || "请输入数值"}
           />
         );
       case "select":
@@ -153,7 +154,7 @@ const MemberModal = <T extends BaseMember>({
 
   return (
     <Modal
-      title={config.title || (mode === "add" ? t("teamDetail.memberPermissions.modal.addMember") : t("teamDetail.memberPermissions.modal.editMember"))}
+      title={config.title || (mode === "add" ? teamT(t, "teamDetail.memberPermissions.modal.addMember") : teamT(t, "teamDetail.memberPermissions.modal.editMember"))}
       open={visible}
       width={1000}
       footer={null}
@@ -162,39 +163,39 @@ const MemberModal = <T extends BaseMember>({
       <Form form={form} onFinish={handleSubmit} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
         {config.showEmail && (
           <Form.Item
-            label={t("teamDetail.memberPermissions.modal.userEmail")}
+            label={teamT(t, "teamDetail.memberPermissions.modal.userEmail")}
             name="user_email"
             className="mb-4"
-            rules={[{ type: "email", message: t("teamDetail.memberPermissions.modal.validEmail") }]}
+            rules={[{ type: "email", message: teamT(t, "teamDetail.memberPermissions.modal.validEmail") }]}
           >
-            <TextInput placeholder="user@example.com" />
+            <TextInput placeholder="请输入用户邮箱" />
           </Form.Item>
         )}
 
         {config.showEmail && config.showUserId && (
           <div className="text-center mb-4">
-            <Text>{t("teamDetail.memberPermissions.modal.or")}</Text>
+            <Text>{teamT(t, "teamDetail.memberPermissions.modal.or")}</Text>
           </div>
         )}
 
         {config.showUserId && (
-          <Form.Item label={t("teamDetail.memberPermissions.modal.userId")} name="user_id" className="mb-4">
-            <TextInput placeholder="user_123" />
+          <Form.Item label={teamT(t, "teamDetail.memberPermissions.modal.userId")} name="user_id" className="mb-4">
+            <TextInput placeholder="请输入用户 ID" />
           </Form.Item>
         )}
 
         <Form.Item
           label={
             <div className="flex items-center gap-2">
-              <span>{t("teamDetail.memberPermissions.modal.role")}</span>
+              <span>{teamT(t, "teamDetail.memberPermissions.modal.role")}</span>
               {mode === "edit" && initialData && (
-                <span className="text-gray-500 text-sm">({t("teamDetail.memberPermissions.modal.current")}{getRoleLabel(initialData.role)})</span>
+                <span className="text-gray-500 text-sm">({teamT(t, "teamDetail.memberPermissions.modal.current")}{getRoleLabel(initialData.role)})</span>
               )}
             </div>
           }
           name="role"
           className="mb-4"
-          rules={[{ required: true, message: t("teamDetail.memberPermissions.modal.roleRequired") }]}
+          rules={[{ required: true, message: teamT(t, "teamDetail.memberPermissions.modal.roleRequired") }]}
         >
           <Select>
             {mode === "edit" && initialData
@@ -224,16 +225,16 @@ const MemberModal = <T extends BaseMember>({
 
         <div className="text-right mt-6">
           <AntButton onClick={onCancel} className="mr-2" disabled={isSubmitting}>
-            {t("teamDetail.memberPermissions.modal.cancel")}
+            {teamT(t, "teamDetail.memberPermissions.modal.cancel")}
           </AntButton>
           <AntButton type="default" htmlType="submit" loading={isSubmitting}>
             {mode === "add"
               ? isSubmitting
-                ? t("teamDetail.memberPermissions.modal.adding")
-                : t("teamDetail.memberPermissions.modal.addMember")
+                ? teamT(t, "teamDetail.memberPermissions.modal.adding")
+                : teamT(t, "teamDetail.memberPermissions.modal.addMember")
               : isSubmitting
-                ? t("teamDetail.memberPermissions.modal.saving")
-                : t("teamDetail.memberPermissions.saveChanges")}
+                ? teamT(t, "teamDetail.memberPermissions.modal.saving")
+                : teamT(t, "teamDetail.memberPermissions.saveChanges")}
           </AntButton>
         </div>
       </Form>

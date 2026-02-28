@@ -319,11 +319,11 @@ const AddModelForm: React.FC<AddModelFormProps> = ({
                     label={t("models.addModel.selectTeam")}
                     name="team_id"
                     className="mb-4"
-                    tooltip="Only keys for this team will be able to call this model."
+                    tooltip={t("models.addModel.selectTeamByokTooltip")}
                     rules={[
                       {
                         required: isTeamOnly && !isAdmin,
-                        message: "Please select a team.",
+                        message: t("models.addModel.selectTeamRequired"),
                       },
                     ]}
                   >
@@ -333,15 +333,15 @@ const AddModelForm: React.FC<AddModelFormProps> = ({
                 {isAdmin && (
                   <>
                     <Form.Item
-                      label="Model Access Group"
+                      label={t("models.addModel.modelAccessGroup")}
                       name="model_access_group"
                       className="mb-4"
-                      tooltip="Use model access groups to give users access to select models, and add new ones to the group over time."
+                      tooltip={t("models.addModel.modelAccessGroupTooltip")}
                     >
                       <AntdSelect
                         mode="tags"
                         showSearch
-                        placeholder="Select existing groups or type to create new ones"
+                        placeholder={t("models.addModel.modelAccessGroupPlaceholder")}
                         optionFilterProp="children"
                         tokenSeparators={[","]}
                         options={modelAccessGroups.map((group) => ({
@@ -364,12 +364,12 @@ const AddModelForm: React.FC<AddModelFormProps> = ({
               </>
             )}
             <div className="flex justify-between items-center mb-4">
-              <Tooltip title="Get help on our github">
-                <Typography.Link href="https://github.com/BerriAI/litellm/issues">Need Help?</Typography.Link>
+              <Tooltip title={t("models.addModel.helpTooltip")}>
+                <Typography.Link href="https://github.com/BerriAI/litellm/issues">{t("models.addModel.needHelp")}</Typography.Link>
               </Tooltip>
               <div className="space-x-2">
                 <Button onClick={handleTestConnection} loading={isTestingConnection}>
-                  Test Connect
+                  {t("models.addModel.testConnect")}
                 </Button>
                 <Button htmlType="submit">{t("models.addModel.addModelButton")}</Button>
               </div>
@@ -380,7 +380,7 @@ const AddModelForm: React.FC<AddModelFormProps> = ({
 
       {/* Test Connection Results Modal */}
       <Modal
-        title="Connection Test Results"
+        title={t("models.addModel.connectionTestResults")}
         open={isResultModalVisible}
         onCancel={() => {
           setIsResultModalVisible(false);
@@ -394,7 +394,7 @@ const AddModelForm: React.FC<AddModelFormProps> = ({
               setIsTestingConnection(false);
             }}
           >
-            Close
+            {t("models.addModel.close")}
           </Button>,
         ]}
         width={700}

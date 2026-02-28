@@ -51,6 +51,16 @@ vi.mock("./guardrails/guardrail_info_helpers", () => ({
   })),
 }));
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    t: (key: string) =>
+      ({
+        "guardrailsPage.tabs.guardrails": "Guardrails",
+        "guardrailsPage.actions.addNewGuardrail": "+ Add New Guardrail",
+      }[key] || key),
+  }),
+}));
+
 beforeAll(() => {
   Object.defineProperty(window, "matchMedia", {
     writable: true,

@@ -9,6 +9,7 @@ import {
   DownOutlined,
   UpOutlined
 } from '@ant-design/icons';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 
@@ -22,6 +23,7 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ type, tokens, cost, onCopy, isCollapsed, onToggleCollapse }: SectionHeaderProps) {
+  const { t } = useLanguage();
   return (
     <div
       onClick={onToggleCollapse}
@@ -64,27 +66,27 @@ export function SectionHeader({ type, tokens, cost, onCopy, isCollapsed, onToggl
             <span style={{ fontSize: 14, filter: 'grayscale(1)', opacity: 0.6 }}>✨</span>
           )}
           <Text style={{ fontWeight: 500, fontSize: 14 }}>
-            {type === 'input' ? 'Input' : 'Output'}
+            {type === 'input' ? t("logs.details.input") : t("logs.details.output")}
           </Text>
         </div>
 
         {/* Tokens */}
         {tokens !== undefined && (
           <Text type="secondary" style={{ fontSize: 12 }}>
-            Tokens: {tokens.toLocaleString()}
+            {t("logs.details.tokens")}: {tokens.toLocaleString()}
           </Text>
         )}
 
         {/* Cost */}
         {cost !== undefined && (
           <Text type="secondary" style={{ fontSize: 12 }}>
-            Cost: ${cost.toFixed(6)}
+            {t("logs.details.cost")}: ${cost.toFixed(6)}
           </Text>
         )}
       </div>
 
       {/* Copy Button */}
-      <Tooltip title="Copy">
+      <Tooltip title={t("logs.details.copy")}>
         <Button 
           type="text" 
           size="small" 

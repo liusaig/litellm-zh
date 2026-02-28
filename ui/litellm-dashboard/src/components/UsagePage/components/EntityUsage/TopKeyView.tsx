@@ -203,7 +203,7 @@ const TopKeyView: React.FC<TopKeyViewProps> = ({ topKeys, teams, showTags = fals
             onClick={() => setViewMode("chart")}
             className={`px-3 py-1 text-sm rounded-md ${viewMode === "chart" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
           >
-            Chart View
+            {t("usagePage.topKeyView.chartView")}
           </button>
         </div>
       </div>

@@ -52,7 +52,7 @@ const TeamsTable = ({
           <TableHeaderCell>{teamT(t, "teams.table.budget")}</TableHeaderCell>
           <TableHeaderCell>{teamT(t, "teams.table.models")}</TableHeaderCell>
           <TableHeaderCell>{teamT(t, "teams.table.organization")}</TableHeaderCell>
-          <TableHeaderCell>{teamT(t, "teams.table.yourRole")}</TableHeaderCell>
+          <TableHeaderCell>角色</TableHeaderCell>
           <TableHeaderCell>{teamT(t, "teams.table.info")}</TableHeaderCell>
         </TableRow>
       </TableHead>

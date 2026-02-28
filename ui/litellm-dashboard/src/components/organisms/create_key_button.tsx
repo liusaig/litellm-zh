@@ -584,8 +584,8 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
             <Form.Item
               label={
                 <span>
-                  团队{" "}
-                  <Tooltip title="此密钥所属的团队，决定可用模型和预算限制">
+                  分组{" "}
+                  <Tooltip title="此密钥所属的分组，决定可用模型和预算限制">
                     <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                   </Tooltip>
                 </span>
@@ -608,8 +608,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
           {isFormDisabled && (
             <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-md">
               <Text className="text-blue-800 text-sm">
-                请选择团队以继续配置您的API密钥。如果您没有看到任何团队，请联系您的代理管理员为您提供模型访问权限或将您添加到团队中。
-                contact your Proxy Admin to either provide you with access to models or to add you to a team.
+                请选择分组以继续配置您的 API 密钥。如果您没有看到任何分组，请联系您的代理管理员为您提供模型访问权限或将您添加到分组中。
               </Text>
             </div>
           )}
@@ -644,7 +643,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                 label={
                   <span>
                     模型{" "}
-                    <Tooltip title="选择此密钥可以访问的模型。选择'所有团队模型'以授予对团队所有可用模型的访问权限">
+                    <Tooltip title="选择此密钥可以访问的模型。选择“所有分组模型”以授予对分组所有可用模型的访问权限">
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
                   </span>
@@ -674,7 +673,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                   }}
                 >
                   <Option key="all-team-models" value="all-team-models">
-                    {t("keyDetail.settings.messages.allTeamModels")}
+                    {t("keyDetail.settings.messages.allTeamModels").replace("团队", "分组")}
                   </Option>
                   {modelsToPick.map((model: string) => (
                     <Option key={model} value={model}>
@@ -730,7 +729,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     <div style={{ padding: "4px 0" }}>
                       <div style={{ fontWeight: 500 }}>管理</div>
                       <div style={{ fontSize: "11px", color: "#6b7280", marginTop: "2px" }}>
-                        仅可调用管理路由（用户/团队/密钥管理）
+                        仅可调用管理路由（用户/分组/密钥管理）
                       </div>
                     </div>
                   </Option>
@@ -750,7 +749,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                 name="max_budget"
                 help={
                   <div className="pb-2">
-                    {`预算不能超过团队最大预算：¥${team?.max_budget !== null && team?.max_budget !== undefined ? team.max_budget : '无限制'}`}
+                    {`预算不能超过分组最大预算：¥${team?.max_budget !== null && team?.max_budget !== undefined ? team.max_budget : '无限制'}`}
                   </div>
                 }
                 rules={[
@@ -758,7 +757,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                     validator: async (_, value) => {
                       if (value && team && team.max_budget !== null && value > team.max_budget) {
                         throw new Error(
-                          `预算不能超过团队最大预算：¥${formatNumberWithCommas(team.max_budget, 4)}`,
+                          `预算不能超过分组最大预算：¥${formatNumberWithCommas(team.max_budget, 4)}`,
                         );
                       }
                     },
@@ -786,7 +785,7 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                 name="budget_duration"
                 help={
                   <div className="pb-2">
-                    {`团队重置预算：${team?.budget_duration !== null && team?.budget_duration !== undefined ? team.budget_duration : '无'}`}
+                    {`分组重置预算：${team?.budget_duration !== null && team?.budget_duration !== undefined ? team.budget_duration : '无'}`}
                   </div>
                 }
               >
@@ -813,12 +812,12 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                       </span>
                     }
                     name="tpm_limit"
-                    help={`TPM 不能超过团队 TPM 限制：${team?.tpm_limit !== null && team?.tpm_limit !== undefined ? team?.tpm_limit : "无限制"}`}
+                    help={`TPM 不能超过分组 TPM 限制：${team?.tpm_limit !== null && team?.tpm_limit !== undefined ? team?.tpm_limit : "无限制"}`}
                     rules={[
                       {
                         validator: async (_, value) => {
                           if (value && team && team.tpm_limit !== null && value > team.tpm_limit) {
-                            throw new Error(`TPM 限制不能超过团队 TPM 限制：${team.tpm_limit}`);
+                            throw new Error(`TPM 限制不能超过分组 TPM 限制：${team.tpm_limit}`);
                           }
                         },
                       },
@@ -849,12 +848,12 @@ const CreateKey: React.FC<CreateKeyProps> = ({ team, teams, data, addKey }) => {
                       </span>
                     }
                     name="rpm_limit"
-                    help={`RPM 不能超过团队 RPM 限制：${team?.rpm_limit !== null && team?.rpm_limit !== undefined ? team?.rpm_limit : "无限制"}`}
+                    help={`RPM 不能超过分组 RPM 限制：${team?.rpm_limit !== null && team?.rpm_limit !== undefined ? team?.rpm_limit : "无限制"}`}
                     rules={[
                       {
                         validator: async (_, value) => {
                           if (value && team && team.rpm_limit !== null && value > team.rpm_limit) {
-                            throw new Error(`RPM 限制不能超过团队 RPM 限制：${team.rpm_limit}`);
+                            throw new Error(`RPM 限制不能超过分组 RPM 限制：${team.rpm_limit}`);
                           }
                         },
                       },

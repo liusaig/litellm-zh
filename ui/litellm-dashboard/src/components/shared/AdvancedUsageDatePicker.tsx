@@ -1,12 +1,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { DatePicker, Select, Space, Typography } from "antd";
+import zhCNPickerLocale from "antd/es/date-picker/locale/zh_CN";
+import enUSPickerLocale from "antd/es/date-picker/locale/en_US";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
 import "dayjs/locale/zh-cn";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
+dayjs.extend(weekOfYear);
 
 export type TimeRangeType = "day" | "week" | "month";
 
@@ -37,11 +41,18 @@ const getMonthRange = (date: Dayjs): DateRangeValue => {
 
 const AdvancedUsageDatePicker: React.FC<AdvancedUsageDatePickerProps> = ({ value, onValueChange, className }) => {
   const { t, locale } = useLanguage();
-  const [rangeType, setRangeType] = useState<TimeRangeType>("day");
+  const [rangeType, setRangeType] = useState<TimeRangeType>("week");
+  const pickerLocale = locale === "zh-CN" ? zhCNPickerLocale : enUSPickerLocale;
 
   useEffect(() => {
     dayjs.locale(locale === "zh-CN" ? "zh-cn" : "en");
   }, [locale]);
+
+  useEffect(() => {
+    // Default to current week on first load
+    onValueChange(getWeekRange(dayjs()), "week");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRangeTypeChange = useCallback(
     (newType: TimeRangeType) => {
@@ -110,6 +121,7 @@ const AdvancedUsageDatePicker: React.FC<AdvancedUsageDatePickerProps> = ({ value
 
         {rangeType === "day" && (
           <RangePicker
+            locale={pickerLocale}
             value={[value.from ? dayjs(value.from) : null, value.to ? dayjs(value.to) : null]}
             onChange={handleDayRangeChange}
             allowClear={false}
@@ -120,22 +132,26 @@ const AdvancedUsageDatePicker: React.FC<AdvancedUsageDatePickerProps> = ({ value
 
         {rangeType === "week" && (
           <DatePicker
+            locale={pickerLocale}
             picker="week"
             value={value.from ? dayjs(value.from) : null}
             onChange={handleWeekChange}
             allowClear={false}
             inputReadOnly
+            format={(date) => `${date.year()}年${date.week()}周`}
             placeholder={t("usagePage.datePicker.placeholder.week")}
           />
         )}
 
         {rangeType === "month" && (
           <DatePicker
+            locale={pickerLocale}
             picker="month"
             value={value.from ? dayjs(value.from) : null}
             onChange={handleMonthChange}
             allowClear={false}
             inputReadOnly
+            format={locale === "zh-CN" ? "YYYY年M月" : "YYYY-MM"}
             placeholder={t("usagePage.datePicker.placeholder.month")}
           />
         )}

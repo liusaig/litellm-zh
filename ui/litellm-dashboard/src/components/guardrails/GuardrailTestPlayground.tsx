@@ -5,6 +5,7 @@ import { ExperimentOutlined, SearchOutlined } from "@ant-design/icons";
 import GuardrailTestPanel from "./GuardrailTestPanel";
 import { applyGuardrail } from "../networking";
 import NotificationsManager from "../molecules/notifications_manager";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface GuardrailItem {
   guardrail_id?: string;
@@ -44,6 +45,11 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
   accessToken,
   onClose,
 }) => {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string) => {
+    const value = t(key);
+    return value === key && locale === "zh-CN" ? zh : value;
+  };
   const [selectedGuardrails, setSelectedGuardrails] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [testResults, setTestResults] = useState<TestResult[]>([]);
@@ -105,12 +111,18 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
 
     if (results.length > 0) {
       NotificationsManager.success(
-        `${results.length} guardrail${results.length > 1 ? "s" : ""} applied successfully`
+        tr("guardrailsPage.playground.notifications.appliedSuccess", "成功应用 {count} 个护栏").replace(
+          "{count}",
+          String(results.length)
+        )
       );
     }
     if (errors.length > 0) {
       NotificationsManager.fromBackend(
-        `${errors.length} guardrail${errors.length > 1 ? "s" : ""} failed`
+        tr("guardrailsPage.playground.notifications.failed", "{count} 个护栏执行失败").replace(
+          "{count}",
+          String(errors.length)
+        )
       );
     }
   };
@@ -123,10 +135,12 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
           <div className="w-1/4 border-r border-gray-200 flex flex-col overflow-hidden">
             <div className="p-4 border-b border-gray-200">
               <div className="mb-3">
-                <Title className="text-lg font-semibold mb-3">Guardrails</Title>
+                <Title className="text-lg font-semibold mb-3">
+                  {tr("guardrailsPage.playground.sidebar.title", "护栏")}
+                </Title>
                 <TextInput
                   icon={SearchOutlined}
-                  placeholder="Search guardrails..."
+                  placeholder={tr("guardrailsPage.playground.sidebar.searchPlaceholder", "搜索护栏...")}
                   value={searchQuery}
                   onValueChange={setSearchQuery}
                 />
@@ -142,7 +156,9 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
                 <div className="p-4">
                   <Empty
                     description={
-                      searchQuery ? "No guardrails match your search" : "No guardrails available"
+                      searchQuery
+                        ? tr("guardrailsPage.playground.sidebar.noMatch", "没有匹配搜索条件的护栏")
+                        : tr("guardrailsPage.playground.sidebar.noAvailable", "暂无可用护栏")
                     }
                   />
                 </div>
@@ -185,13 +201,17 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
                         description={
                           <div className="text-xs space-y-1 mt-1">
                             <div>
-                              <span className="font-medium">Type: </span>
+                              <span className="font-medium">
+                                {tr("guardrailsPage.playground.sidebar.typeLabel", "类型：")}{" "}
+                              </span>
                               <span className="text-gray-600">
                                 {guardrail.litellm_params.guardrail}
                               </span>
                             </div>
                             <div>
-                              <span className="font-medium">Mode: </span>
+                              <span className="font-medium">
+                                {tr("guardrailsPage.playground.sidebar.modeLabel", "模式：")}{" "}
+                              </span>
                               <span className="text-gray-600">
                                 {guardrail.litellm_params.mode}
                               </span>
@@ -207,7 +227,9 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
 
             <div className="p-3 border-t border-gray-200 bg-gray-50">
               <Text className="text-xs text-gray-600">
-                {selectedGuardrails.size} of {filteredGuardrails.length} selected
+                {tr("guardrailsPage.playground.sidebar.selectedCount", "已选择 {selected} / {total}")
+                  .replace("{selected}", String(selectedGuardrails.size))
+                  .replace("{total}", String(filteredGuardrails.length))}
               </Text>
             </div>
           </div>
@@ -215,7 +237,9 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
           {/* Right Panel - Test Area */}
           <div className="w-3/4 flex flex-col bg-white">
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <Title className="text-xl font-semibold mb-0">Guardrail Testing Playground</Title>
+              <Title className="text-xl font-semibold mb-0">
+                {tr("guardrailsPage.playground.main.title", "护栏测试操场")}
+              </Title>
             </div>
 
             <div className="flex-1 overflow-auto p-4">
@@ -223,11 +247,10 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
                 <div className="h-full flex flex-col items-center justify-center text-gray-400">
                   <ExperimentOutlined style={{ fontSize: "48px", marginBottom: "16px" }} />
                   <Text className="text-lg font-medium text-gray-600 mb-2">
-                    Select Guardrails to Test
+                    {tr("guardrailsPage.playground.empty.title", "选择要测试的护栏")}
                   </Text>
                   <Text className="text-center text-gray-500 max-w-md">
-                    Choose one or more guardrails from the left sidebar to start testing and
-                    comparing results.
+                    {tr("guardrailsPage.playground.empty.description", "从左侧选择一个或多个护栏，开始测试并对比结果。")}
                   </Text>
                 </div>
               ) : (
@@ -251,4 +274,3 @@ const GuardrailTestPlayground: React.FC<GuardrailTestPlaygroundProps> = ({
 };
 
 export default GuardrailTestPlayground;
-

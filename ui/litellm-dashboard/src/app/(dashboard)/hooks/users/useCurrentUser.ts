@@ -12,7 +12,8 @@ export const useCurrentUser = (): UseQueryResult<UserInfo> => {
     queryFn: async () => {
       const data = await userInfoCall(accessToken!, userId!, userRole!, false, null, null);
       console.log(`userInfo: ${JSON.stringify(data)}`);
-      return data.user_info;
+      // Some deployments return { user_info: {...} }, others return the user object directly.
+      return (data.user_info ?? data) as UserInfo;
     },
     enabled: Boolean(accessToken && userId && userRole),
   });

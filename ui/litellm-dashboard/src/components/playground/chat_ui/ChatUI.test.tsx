@@ -49,7 +49,7 @@ describe("ChatUI", () => {
         disabledPersonalKeyCreation={false}
       />,
     );
-    expect(getByText("Test Key")).toBeInTheDocument();
+    expect(getByText("测试密钥")).toBeInTheDocument();
   });
 
   it("should show the voice selector when the endpoint type is audio_speech", async () => {
@@ -65,11 +65,11 @@ describe("ChatUI", () => {
 
     // Wait for the component to render
     await waitFor(() => {
-      expect(getByText("Test Key")).toBeInTheDocument();
+      expect(getByText("测试密钥")).toBeInTheDocument();
     });
 
-    // Find the endpoint selector by looking for the "Endpoint Type:" text and its associated Select
-    const endpointTypeText = getByText("Endpoint Type");
+    // Find the endpoint selector by looking for the "端点类型" text and its associated Select
+    const endpointTypeText = getByText("端点类型");
     const selectContainer = endpointTypeText.parentElement;
     const selectElement = selectContainer?.querySelector(".ant-select-selector");
 
@@ -92,11 +92,11 @@ describe("ChatUI", () => {
 
     // Verify the voice selector appears
     await waitFor(() => {
-      expect(getByText("Voice")).toBeInTheDocument();
+      expect(getByText("语音")).toBeInTheDocument();
     });
 
     // Verify the voice select component is present
-    const voiceText = getByText("Voice");
+    const voiceText = getByText("语音");
     const voiceSelectContainer = voiceText.parentElement;
     const voiceSelectElement = voiceSelectContainer?.querySelector(".ant-select");
     expect(voiceSelectElement).toBeInTheDocument();
@@ -115,11 +115,11 @@ describe("ChatUI", () => {
 
     // Wait for the component to render
     await waitFor(() => {
-      expect(getByText("Test Key")).toBeInTheDocument();
+      expect(getByText("测试密钥")).toBeInTheDocument();
     });
 
     // Open the "Select Model" dropdown (AntD renders options in a portal)
-    const selectModelLabel = getByText("Select Model");
+    const selectModelLabel = getByText("选择模型");
     // The Select component is a sibling of the Text component, so we need to find it in the parent container
     const modelSelectContainer = selectModelLabel.closest("div");
     const modelSelect = modelSelectContainer?.querySelector(".ant-select-selector");
@@ -152,11 +152,11 @@ describe("ChatUI", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("Test Key")).toBeInTheDocument();
+      expect(getByText("测试密钥")).toBeInTheDocument();
     });
 
     // Open endpoint selector and explicitly select /v1/chat/completions
-    const endpointTypeText = getByText("Endpoint Type");
+    const endpointTypeText = getByText("端点类型");
     const endpointSelect = endpointTypeText.parentElement?.querySelector(".ant-select-selector");
     expect(endpointSelect).toBeTruthy();
     act(() => {
@@ -165,7 +165,7 @@ describe("ChatUI", () => {
     });
 
     // Open model selector
-    const selectModelLabel = getByText("Select Model");
+    const selectModelLabel = getByText("选择模型");
     // The Select component is a sibling of the Text component, so we need to find it in the parent container
     const modelSelectContainer = selectModelLabel.closest("div");
     const modelSelect = modelSelectContainer?.querySelector(".ant-select-selector");
@@ -187,7 +187,7 @@ describe("ChatUI", () => {
    * Tests that the 'Enter custom model' option is available in the model selector dropdown.
    * This ensures users can manually enter a model name if it's not in the list.
    */
-  it("should show 'Enter custom model' option in model selector", async () => {
+  it("should show '输入自定义模型' option in model selector", async () => {
     const { getByText } = render(
       <ChatUI
         accessToken="1234567890"
@@ -200,11 +200,11 @@ describe("ChatUI", () => {
 
     // Wait for the component to render
     await waitFor(() => {
-      expect(getByText("Test Key")).toBeInTheDocument();
+      expect(getByText("测试密钥")).toBeInTheDocument();
     });
 
     // Open the "Select Model" dropdown
-    const selectModelLabel = getByText("Select Model");
+    const selectModelLabel = getByText("选择模型");
     const modelSelectContainer = selectModelLabel.closest("div");
     const modelSelect = modelSelectContainer?.querySelector(".ant-select-selector");
 
@@ -214,8 +214,8 @@ describe("ChatUI", () => {
       // Get all options in the dropdown (Ant Design renders these in a portal)
       const options = document.querySelectorAll(".ant-select-item-option-content");
       expect(options.length).toBeGreaterThan(0);
-      // Check if the first option is 'Enter custom model'
-      expect(options[0]).toHaveTextContent("Enter custom model");
+      // Check if the first option is '输入自定义模型'
+      expect(options[0]).toHaveTextContent("输入自定义模型");
     });
   });
 
@@ -231,10 +231,10 @@ describe("ChatUI", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Test Key")).toBeInTheDocument();
+      expect(screen.getByText("测试密钥")).toBeInTheDocument();
     });
 
-    const endpointTypeText = screen.getByText("Endpoint Type");
+    const endpointTypeText = screen.getByText("端点类型");
     const endpointSelect = endpointTypeText.parentElement?.querySelector(".ant-select-selector") as HTMLElement | null;
     expect(endpointSelect).not.toBeNull();
 
@@ -253,7 +253,7 @@ describe("ChatUI", () => {
     };
 
     const getMcpSelect = () =>
-      screen.getByText("MCP Servers").closest("div")?.querySelector(".ant-select") as HTMLElement | null;
+      screen.getByText("MCP 服务").closest("div")?.querySelector(".ant-select") as HTMLElement | null;
 
     await selectEndpointOption("/v1/embeddings");
 
@@ -283,11 +283,11 @@ describe("ChatUI", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Test Key")).toBeInTheDocument();
+      expect(screen.getByText("测试密钥")).toBeInTheDocument();
     });
 
     // Model Settings button only appears when a chat model is selected; select "Model 1" first
-    const selectModelLabel = screen.getByText("Select Model");
+    const selectModelLabel = screen.getByText("选择模型");
     const modelSelectContainer = selectModelLabel.closest("div");
     const modelSelect = modelSelectContainer?.querySelector(".ant-select-selector");
     expect(modelSelect).toBeTruthy();
@@ -317,7 +317,7 @@ describe("ChatUI", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Model Settings")).toBeInTheDocument();
+      expect(screen.getByText("模型设置")).toBeInTheDocument();
       expect(screen.getByText(/Simulate failure to test fallbacks/i)).toBeInTheDocument();
     });
 
@@ -352,10 +352,10 @@ describe("ChatUI", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Test Key")).toBeInTheDocument();
+      expect(screen.getByText("测试密钥")).toBeInTheDocument();
     });
 
-    const fillButton = screen.getByText("Fill");
+    const fillButton = screen.getByText("填充");
     expect(fillButton).toBeInTheDocument();
 
     act(() => {
@@ -367,10 +367,10 @@ describe("ChatUI", () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByText("Fill")).toBeNull();
+      expect(screen.queryByText("填充")).toBeNull();
     });
 
-    const customProxyInput = screen.getByPlaceholderText("Optional: Enter custom proxy URL (e.g., http://localhost:5000)");
+    const customProxyInput = screen.getByPlaceholderText("可选：输入自定义代理 URL（例如：http://localhost:5000）");
     expect(customProxyInput).toHaveValue(testProxyUrl);
   });
 });

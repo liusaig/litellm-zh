@@ -2,6 +2,19 @@ import { act, fireEvent, render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import AdvancedSettings from "./advanced_settings";
 
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    t: (key: string) =>
+      (
+        {
+          "models.addModel.advancedSettingsTitle": "Advanced Settings",
+          "models.addModel.tagsLabel": "Tags",
+          "models.addModel.litellmParams": "Silinex Params",
+        } as Record<string, string>
+      )[key] ?? key,
+  }),
+}));
+
 describe("AdvancedSettings", () => {
   beforeEach(() => {
     vi.clearAllMocks();

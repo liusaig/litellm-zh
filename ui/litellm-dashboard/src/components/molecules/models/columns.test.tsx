@@ -119,6 +119,20 @@ describe("columns", () => {
     handleRefreshClick: vi.fn(),
     expandedRows: new Set<string>(),
     setExpandedRows: vi.fn(),
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "models.columns.modelId": "Model ID",
+        "models.columns.modelInformation": "Model Information",
+        "models.columns.credentials": "Credentials",
+        "models.columns.createdBy": "Created By",
+        "models.columns.updatedAt": "Updated At",
+        "models.columns.costs": "Costs",
+        "models.columns.teamId": "Team ID",
+        "models.columns.modelAccessGroup": "Model Access Group",
+        "models.columns.actions": "Actions",
+      };
+      return translations[key] || key;
+    },
   };
 
   it("should render columns with table structure", () => {
@@ -133,6 +147,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel();
@@ -146,7 +161,6 @@ describe("columns", () => {
     expect(screen.getByText("Costs")).toBeInTheDocument();
     expect(screen.getByText("Team ID")).toBeInTheDocument();
     expect(screen.getByText("Model Access Group")).toBeInTheDocument();
-    expect(screen.getByText("Status")).toBeInTheDocument();
     expect(screen.getByText("Actions")).toBeInTheDocument();
   });
 
@@ -162,6 +176,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -187,6 +202,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -212,6 +228,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -222,6 +239,34 @@ describe("columns", () => {
     render(<TestTable data={[model]} columns={cols} />);
 
     expect(screen.getByText("Manual")).toBeInTheDocument();
+  });
+
+  it("should call setSelectedModelId when model id is clicked", async () => {
+    const user = userEvent.setup();
+    const cols = columns(
+      defaultProps.userRole,
+      defaultProps.userID,
+      defaultProps.premiumUser,
+      defaultProps.setSelectedModelId,
+      defaultProps.setSelectedTeamId,
+      defaultProps.getDisplayModelName,
+      defaultProps.handleEditClick,
+      defaultProps.handleRefreshClick,
+      defaultProps.expandedRows,
+      defaultProps.setExpandedRows,
+      defaultProps.t,
+    );
+
+    const model = createMockModel({
+      model_info: {
+        ...createMockModel().model_info,
+        id: "model-id-123",
+      },
+    });
+    render(<TestTable data={[model]} columns={cols} />);
+
+    await user.click(screen.getByRole("button", { name: "Model ID: model-id-123" }));
+    expect(defaultProps.setSelectedModelId).toHaveBeenCalledWith("model-id-123");
   });
 
   describe("credentials column", () => {
@@ -237,7 +282,8 @@ describe("columns", () => {
         defaultProps.handleRefreshClick,
         defaultProps.expandedRows,
         defaultProps.setExpandedRows,
-      );
+      defaultProps.t,
+    );
 
       const model = createMockModel();
       render(<TestTable data={[model]} columns={cols} />);
@@ -260,7 +306,8 @@ describe("columns", () => {
         defaultProps.handleRefreshClick,
         defaultProps.expandedRows,
         defaultProps.setExpandedRows,
-      );
+      defaultProps.t,
+    );
 
       const model = createMockModel({
         litellm_params: {
@@ -288,7 +335,8 @@ describe("columns", () => {
         defaultProps.handleRefreshClick,
         defaultProps.expandedRows,
         defaultProps.setExpandedRows,
-      );
+      defaultProps.t,
+    );
 
       const model = createMockModel({
         litellm_params: {
@@ -313,7 +361,8 @@ describe("columns", () => {
         defaultProps.handleRefreshClick,
         defaultProps.expandedRows,
         defaultProps.setExpandedRows,
-      );
+      defaultProps.t,
+    );
 
       const model = createMockModel({
         litellm_params: undefined as any,
@@ -335,7 +384,8 @@ describe("columns", () => {
         defaultProps.handleRefreshClick,
         defaultProps.expandedRows,
         defaultProps.setExpandedRows,
-      );
+      defaultProps.t,
+    );
 
       const model = createMockModel({
         litellm_params: {
@@ -361,6 +411,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -376,7 +427,7 @@ describe("columns", () => {
     expect(screen.getByText("admin-user")).toBeInTheDocument();
   });
 
-  it("should display 'Defined in config' for config models", () => {
+  it("should display '配置文件' for config models", () => {
     const cols = columns(
       defaultProps.userRole,
       defaultProps.userID,
@@ -388,6 +439,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -398,7 +450,7 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("Defined in config")).toBeInTheDocument();
+    expect(screen.getByText("配置文件")).toBeInTheDocument();
   });
 
   it("should display costs when available", () => {
@@ -413,6 +465,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -421,8 +474,8 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("In: ¥0.01")).toBeInTheDocument();
-    expect(screen.getByText("Out: ¥0.03")).toBeInTheDocument();
+    expect(screen.getByText("输入: ¥0.01")).toBeInTheDocument();
+    expect(screen.getByText("输出: ¥0.03")).toBeInTheDocument();
   });
 
   it("should display '-' when costs are missing", () => {
@@ -437,6 +490,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -461,6 +515,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -487,6 +542,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -546,6 +602,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -558,56 +615,6 @@ describe("columns", () => {
 
     const emptyCells = screen.getAllByText("-");
     expect(emptyCells.length).toBeGreaterThan(0);
-  });
-
-  it("should display 'DB Model' status for DB models", () => {
-    const cols = columns(
-      defaultProps.userRole,
-      defaultProps.userID,
-      defaultProps.premiumUser,
-      defaultProps.setSelectedModelId,
-      defaultProps.setSelectedTeamId,
-      defaultProps.getDisplayModelName,
-      defaultProps.handleEditClick,
-      defaultProps.handleRefreshClick,
-      defaultProps.expandedRows,
-      defaultProps.setExpandedRows,
-    );
-
-    const model = createMockModel({
-      model_info: {
-        ...createMockModel().model_info,
-        db_model: true,
-      },
-    });
-    render(<TestTable data={[model]} columns={cols} />);
-
-    expect(screen.getByText("DB Model")).toBeInTheDocument();
-  });
-
-  it("should display 'Config Model' status for config models", () => {
-    const cols = columns(
-      defaultProps.userRole,
-      defaultProps.userID,
-      defaultProps.premiumUser,
-      defaultProps.setSelectedModelId,
-      defaultProps.setSelectedTeamId,
-      defaultProps.getDisplayModelName,
-      defaultProps.handleEditClick,
-      defaultProps.handleRefreshClick,
-      defaultProps.expandedRows,
-      defaultProps.setExpandedRows,
-    );
-
-    const model = createMockModel({
-      model_info: {
-        ...createMockModel().model_info,
-        db_model: false,
-      },
-    });
-    render(<TestTable data={[model]} columns={cols} />);
-
-    expect(screen.getByText("Config Model")).toBeInTheDocument();
   });
 
   it("should allow Admin to delete DB models", async () => {
@@ -624,6 +631,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -656,6 +664,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -688,6 +697,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -715,6 +725,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       new Set<string>(),
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -743,6 +754,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       new Set<string>(["test-model-id"]),
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -772,6 +784,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -800,6 +813,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel();
@@ -820,6 +834,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -830,7 +845,8 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("Unknown date")).toBeInTheDocument();
+    const dateCells = screen.getAllByText("-");
+    expect(dateCells.length).toBeGreaterThan(0);
   });
 
   it("should handle missing updated_at date", () => {
@@ -845,6 +861,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -855,8 +872,7 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    const updatedAtCells = screen.getAllByText("-");
-    expect(updatedAtCells.length).toBeGreaterThan(0);
+    expect(screen.getAllByText("2024/1/1").length).toBeGreaterThan(0);
   });
 
   it("should handle missing created_by for DB models", () => {
@@ -871,6 +887,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -882,7 +899,7 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("Unknown")).toBeInTheDocument();
+    expect(screen.getByText("-")).toBeInTheDocument();
   });
 
   it("should display only input cost when output cost is missing", () => {
@@ -897,6 +914,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -905,8 +923,8 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("In: ¥0.01")).toBeInTheDocument();
-    expect(screen.queryByText(/Out:/)).not.toBeInTheDocument();
+    expect(screen.getByText("输入: ¥0.01")).toBeInTheDocument();
+    expect(screen.queryByText(/输出:/)).not.toBeInTheDocument();
   });
 
   it("should display only output cost when input cost is missing", () => {
@@ -921,6 +939,7 @@ describe("columns", () => {
       defaultProps.handleRefreshClick,
       defaultProps.expandedRows,
       defaultProps.setExpandedRows,
+      defaultProps.t,
     );
 
     const model = createMockModel({
@@ -929,7 +948,7 @@ describe("columns", () => {
     });
     render(<TestTable data={[model]} columns={cols} />);
 
-    expect(screen.getByText("Out: ¥0.03")).toBeInTheDocument();
-    expect(screen.queryByText(/In:/)).not.toBeInTheDocument();
+    expect(screen.getByText("输出: ¥0.03")).toBeInTheDocument();
+    expect(screen.queryByText(/输入:/)).not.toBeInTheDocument();
   });
 });

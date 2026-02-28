@@ -2,6 +2,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import { Select as AntdSelect, Card, Divider, Space, Tooltip, Typography } from "antd";
 import React from "react";
 import { ModelGroup } from "../playground/llm_calls/fetch_models";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 
@@ -18,30 +19,30 @@ interface ComplexityRouterConfigProps {
   onChange: (tiers: ComplexityTiers) => void;
 }
 
-const TIER_DESCRIPTIONS: Record<keyof ComplexityTiers, { label: string; description: string; examples: string }> = {
-  SIMPLE: {
-    label: "Simple",
-    description: "Basic questions, greetings, simple factual queries",
-    examples: '"Hello!", "What is Python?", "Thanks!"',
-  },
-  MEDIUM: {
-    label: "Medium",
-    description: "Standard queries requiring some reasoning or explanation",
-    examples: '"Explain how REST APIs work", "Debug this error"',
-  },
-  COMPLEX: {
-    label: "Complex",
-    description: "Technical, multi-part requests requiring deep knowledge",
-    examples: '"Design a microservices architecture", "Implement a rate limiter"',
-  },
-  REASONING: {
-    label: "Reasoning",
-    description: "Chain-of-thought, analysis, explicit reasoning requests",
-    examples: '"Think step by step...", "Analyze the pros and cons..."',
-  },
-};
-
 const ComplexityRouterConfig: React.FC<ComplexityRouterConfigProps> = ({ modelInfo, value, onChange }) => {
+  const { t } = useLanguage();
+  const TIER_DESCRIPTIONS: Record<keyof ComplexityTiers, { label: string; description: string; examples: string }> = {
+    SIMPLE: {
+      label: t("models.addModel.simple"),
+      description: t("models.addModel.tierDescriptionSimple"),
+      examples: t("models.addModel.tierExamplesSimple"),
+    },
+    MEDIUM: {
+      label: t("models.addModel.medium"),
+      description: t("models.addModel.tierDescriptionMedium"),
+      examples: t("models.addModel.tierExamplesMedium"),
+    },
+    COMPLEX: {
+      label: t("models.addModel.complex"),
+      description: t("models.addModel.tierDescriptionComplex"),
+      examples: t("models.addModel.tierExamplesComplex"),
+    },
+    REASONING: {
+      label: t("models.addModel.reasoning"),
+      description: t("models.addModel.tierDescriptionReasoning"),
+      examples: t("models.addModel.tierExamplesReasoning"),
+    },
+  };
   // Prepare model options for dropdowns
   const modelOptions = modelInfo.map((model) => ({
     value: model.model_group,
@@ -59,16 +60,15 @@ const ComplexityRouterConfig: React.FC<ComplexityRouterConfigProps> = ({ modelIn
     <div className="w-full max-w-none">
       <Space align="center" style={{ marginBottom: 16 }}>
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Complexity Tier Configuration
+          {t("models.addModel.complexityTierConfiguration")}
         </Typography.Title>
-        <Tooltip title="Map each complexity tier to a model. Simple queries use cheaper/faster models, complex queries use more capable models.">
+        <Tooltip title={t("models.addModel.complexityTierConfigurationTooltip")}>
           <InfoCircleOutlined className="text-gray-400" />
         </Tooltip>
       </Space>
 
       <Text type="secondary" style={{ display: "block", marginBottom: 24 }}>
-        The complexity router automatically classifies requests by complexity using rule-based scoring (no API calls,
-        &lt;1ms latency). Configure which model handles each tier.
+        {t("models.addModel.complexityRouterLongDescription")}
       </Text>
 
       <Card>
@@ -80,19 +80,19 @@ const ComplexityRouterConfig: React.FC<ComplexityRouterConfigProps> = ({ modelIn
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Text strong style={{ fontSize: 16 }}>
-                    {tierInfo.label} Tier
+                    {tierInfo.label} {t("models.addModel.tier")}
                   </Text>
                   <Tooltip title={tierInfo.description}>
                     <InfoCircleOutlined className="text-gray-400" />
                   </Tooltip>
                 </div>
                 <Text type="secondary" style={{ display: "block", marginBottom: 8, fontSize: 12 }}>
-                  Examples: {tierInfo.examples}
+                  {t("models.addModel.examplesPrefix")} {tierInfo.examples}
                 </Text>
                 <AntdSelect
                   value={value[tier]}
                   onChange={(model) => handleTierChange(tier, model)}
-                  placeholder={`Select model for ${tierInfo.label.toLowerCase()} queries`}
+                  placeholder={t("models.addModel.selectModelForTierQueries").replace("{tier}", tierInfo.label.toLowerCase())}
                   showSearch
                   style={{ width: "100%" }}
                   options={modelOptions}
@@ -107,12 +107,10 @@ const ComplexityRouterConfig: React.FC<ComplexityRouterConfigProps> = ({ modelIn
 
       <Card className="bg-gray-50">
         <Text strong style={{ display: "block", marginBottom: 8 }}>
-          How Classification Works
+          {t("models.addModel.howClassificationWorks")}
         </Text>
         <Text type="secondary" style={{ fontSize: 13 }}>
-          The router scores each request across 7 dimensions: token count, code presence, reasoning markers, technical
-          terms, simple indicators, multi-step patterns, and question complexity. The weighted score determines the
-          tier:
+          {t("models.addModel.classificationDimensionsDescription")}
         </Text>
         <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 20, fontSize: 13, color: "rgba(0, 0, 0, 0.45)" }}>
           <li>

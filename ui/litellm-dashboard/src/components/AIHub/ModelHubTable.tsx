@@ -296,7 +296,7 @@ const ModelHubTable: React.FC<ModelHubTableProps> = ({ accessToken, publicPage, 
   };
 
   const formatCost = (cost: number) => {
-    return `$${(cost * 1_000_000).toFixed(2)}`;
+    return `¥${(cost * 1_000_000).toFixed(2)}`;
   };
 
   const handleMakePublicSuccess = () => {

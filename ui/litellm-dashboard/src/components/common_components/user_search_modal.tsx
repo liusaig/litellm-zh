@@ -44,11 +44,11 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   title = "添加成员",
   roles = [
     {
-      label: "admin",
+      label: "管理员",
       value: "admin",
-      description: "Admin role. Can create team keys, add members, and manage settings.",
+      description: "管理员角色：可创建分组密钥、添加成员并管理设置。",
     },
-    { label: "user", value: "user", description: "User role. Can view team info, but not manage it." },
+    { label: "成员", value: "user", description: "成员角色：可查看分组信息，但不能管理。" },
   ],
   defaultRole = "user",
 }) => {

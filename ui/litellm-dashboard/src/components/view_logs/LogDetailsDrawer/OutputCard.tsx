@@ -8,6 +8,7 @@ import { Typography, message as antdMessage } from 'antd';
 import { ParsedMessage } from './prettyMessagesTypes';
 import { SectionHeader } from './SectionHeader';
 import { SimpleMessageBlock } from './SimpleMessageBlock';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 
@@ -18,6 +19,7 @@ interface OutputCardProps {
 }
 
 export function OutputCard({ message, completionTokens, outputCost }: OutputCardProps) {
+  const { t } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCopy = () => {
@@ -25,7 +27,7 @@ export function OutputCard({ message, completionTokens, outputCost }: OutputCard
     
     const content = message.content || '';
     navigator.clipboard.writeText(content);
-    antdMessage.success('Output copied');
+    antdMessage.success(t("logs.details.outputCopied"));
   };
 
   if (!message) {
@@ -55,7 +57,7 @@ export function OutputCard({ message, completionTokens, outputCost }: OutputCard
         >
           <div style={{ padding: '12px 16px' }}>
             <Text type="secondary" style={{ fontSize: 13, fontStyle: 'italic' }}>
-              No response data available
+              {t("logs.details.responseDataNotAvailable")}
             </Text>
           </div>
         </div>
@@ -92,7 +94,7 @@ export function OutputCard({ message, completionTokens, outputCost }: OutputCard
       >
         <div style={{ padding: '12px 16px' }}>
           <SimpleMessageBlock
-            label="ASSISTANT"
+            label={t("logs.details.assistant").toUpperCase()}
             content={message.content}
             toolCalls={message.toolCalls}
           />
@@ -101,4 +103,3 @@ export function OutputCard({ message, completionTokens, outputCost }: OutputCard
     </div>
   );
 }
-

@@ -103,8 +103,8 @@ const SilinexModelNameField: React.FC<SilinexModelNameFieldProps> = ({
   return (
     <>
       <Form.Item
-        label={t("models.addModel.litellmModelName")}
-        tooltip={t("models.addModel.litellmModelNameTooltip")}
+        label="模型名称"
+        tooltip="网关发送到上游 LLM API 的模型名称。"
         className="mb-0"
       >
         <Form.Item
@@ -112,7 +112,7 @@ const SilinexModelNameField: React.FC<SilinexModelNameFieldProps> = ({
           rules={[
             {
               required: true,
-              message: `Please enter ${selectedProvider === Providers.Azure ? "a deployment name" : "at least one model"}.`,
+              message: selectedProvider === Providers.Azure ? "请输入部署名称。" : "请至少选择一个模型。",
             },
           ]}
           noStyle
@@ -185,8 +185,8 @@ const SilinexModelNameField: React.FC<SilinexModelNameFieldProps> = ({
         <Col span={14}>
           <Text className="mb-3 mt-1">
             {selectedProvider === Providers.Azure
-              ? "Your deployment name will be saved as the public model name, and Silinex will use 'azure/deployment-name' internally"
-              : "The model name Silinex will send to the LLM API"}
+              ? "部署名称将保存为公开模型名，网关内部会使用 `azure/部署名称`。"
+              : "这里填写的是网关发送给 LLM API 的模型名。"}
           </Text>
         </Col>
       </Row>

@@ -33,7 +33,7 @@ export function MessageInput({ value, onChange, onSend, disabled, hasAttachment,
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message... (Shift+Enter for new line)"
+          placeholder="输入你的消息...（Shift+Enter 换行）"
           disabled={disabled}
           className="flex-1"
           autoSize={{ minRows: 1, maxRows: 4 }}

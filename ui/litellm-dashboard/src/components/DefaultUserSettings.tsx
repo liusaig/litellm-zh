@@ -22,6 +22,20 @@ interface TeamEntry {
   user_role: "user" | "admin";
 }
 
+const ROLE_DESCRIPTION_ZH_MAP: Record<string, string> = {
+  "view/create/delete their own keys, view their own spend": "可查看/创建/删除自己的密钥，并查看自己的花费",
+  "view their own keys, view their own spend": "仅可查看自己的密钥和花费",
+};
+
+const FIELD_DESCRIPTION_I18N_BY_SCHEMA_TEXT: Record<string, string> = {
+  "Default role assigned to new users created": "users.defaultSettings.fieldDescriptions.userRole",
+  "Default maximum budget (in USD) for new users created": "users.defaultSettings.fieldDescriptions.maxBudget",
+  "Default budget duration for new users (e.g. 'daily', 'weekly', 'monthly')":
+    "users.defaultSettings.fieldDescriptions.budgetDuration",
+  "Default allowed models for new users": "users.defaultSettings.fieldDescriptions.models",
+  "Default team assignments for new users": "users.defaultSettings.fieldDescriptions.teams",
+};
+
 const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
   accessToken,
   possibleUIRoles,
@@ -202,8 +216,8 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
                   value={team.user_role}
                   onChange={(value) => updateTeam(index, "user_role", value)}
                 >
-                  <Option value="user">User</Option>
-                  <Option value="admin">Admin</Option>
+                  <Option value="user">{t("users.defaultSettings.userRoleUser")}</Option>
+                  <Option value="admin">{t("users.defaultSettings.userRoleAdmin")}</Option>
                 </Select>
               </div>
             </div>
@@ -236,7 +250,9 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
               <Option key={role} value={role}>
                 <div className="flex items-center">
                   <span>{ui_label}</span>
-                  <span className="ml-2 text-xs text-gray-500">{description}</span>
+                  <span className="ml-2 text-xs text-gray-500">
+                    {description ? ROLE_DESCRIPTION_ZH_MAP[description] || description : ""}
+                  </span>
                 </div>
               </Option>
             ))}
@@ -309,12 +325,28 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
           ))}
         </Select>
       );
+    } else if (type === "number" || type === "integer") {
+      return (
+        <InputNumber
+          style={{ width: "100%" }}
+          value={editedValues[key] === null || editedValues[key] === undefined ? undefined : editedValues[key]}
+          onChange={(value) => handleTextInputChange(key, value)}
+          placeholder={t("users.defaultSettings.notSpecified")}
+          className="mt-2"
+        />
+      );
     } else {
+      const description = property.description as string | undefined;
+      const localizedPlaceholder =
+        description && FIELD_DESCRIPTION_I18N_BY_SCHEMA_TEXT[description]
+          ? t(FIELD_DESCRIPTION_I18N_BY_SCHEMA_TEXT[description])
+          : description || "";
+
       return (
         <TextInput
-          value={editedValues[key] !== undefined ? String(editedValues[key]) : ""}
+          value={editedValues[key] === null || editedValues[key] === undefined ? "" : String(editedValues[key])}
           onChange={(e) => handleTextInputChange(key, e.target.value)}
-          placeholder={property.description || ""}
+          placeholder={localizedPlaceholder}
           className="mt-2"
         />
       );
@@ -362,7 +394,9 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
       return (
         <div>
           <span className="font-medium">{ui_label}</span>
-          {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
+          {description && (
+            <p className="text-xs text-gray-500 mt-1">{ROLE_DESCRIPTION_ZH_MAP[description] || description}</p>
+          )}
         </div>
       );
     }
@@ -426,6 +460,44 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
     );
   }
 
+  const getLocalizedSchemaDescription = (description?: string) => {
+    if (!description) return "";
+    if (description.includes("Default parameters to apply when a new user signs in via SSO")) {
+      return t("users.defaultSettings.schemaDescription");
+    }
+    return description;
+  };
+
+  const getFieldDisplayName = (key: string) => {
+    const fieldLabels: Record<string, string> = {
+      user_role: t("users.defaultSettings.fieldLabels.userRole"),
+      max_budget: t("users.defaultSettings.fieldLabels.maxBudget"),
+      budget_duration: t("users.defaultSettings.fieldLabels.budgetDuration"),
+      models: t("users.defaultSettings.fieldLabels.models"),
+      teams: t("users.defaultSettings.fieldLabels.teams"),
+    };
+    return fieldLabels[key] || key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
+  const getFieldDescription = (key: string, fallback?: string) => {
+    const fieldDescriptions: Record<string, string> = {
+      user_role: t("users.defaultSettings.fieldDescriptions.userRole"),
+      max_budget: t("users.defaultSettings.fieldDescriptions.maxBudget"),
+      budget_duration: t("users.defaultSettings.fieldDescriptions.budgetDuration"),
+      models: t("users.defaultSettings.fieldDescriptions.models"),
+      teams: t("users.defaultSettings.fieldDescriptions.teams"),
+    };
+    if (fieldDescriptions[key]) return fieldDescriptions[key];
+
+    if (fallback) {
+      const translationKey = FIELD_DESCRIPTION_I18N_BY_SCHEMA_TEXT[fallback];
+      if (translationKey) return t(translationKey);
+      return fallback;
+    }
+
+    return t("users.defaultSettings.noDescription");
+  };
+
   // Dynamically render settings based on the schema
   const renderSettings = () => {
     const { values, field_schema } = settings;
@@ -436,13 +508,14 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
 
     return Object.entries(field_schema.properties).map(([key, property]: [string, any]) => {
       const value = values[key];
-      const displayName = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+      const displayName = getFieldDisplayName(key);
+      const description = getFieldDescription(key, property.description);
 
       return (
         <div key={key} className="mb-6 pb-6 border-b border-gray-200 last:border-0">
           <Text className="font-medium text-lg">{displayName}</Text>
           <Paragraph className="text-sm text-gray-500 mt-1">
-            {property.description || t("users.defaultSettings.noDescription")}
+            {description}
           </Paragraph>
 
           {isEditing ? (
@@ -483,7 +556,7 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
       </div>
 
       {settings?.field_schema?.description && (
-        <Paragraph className="mb-4">{settings.field_schema.description}</Paragraph>
+        <Paragraph className="mb-4">{getLocalizedSchemaDescription(settings.field_schema.description)}</Paragraph>
       )}
       <Divider />
 

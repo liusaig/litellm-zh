@@ -4,6 +4,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import GuardrailTestPlayground from "./GuardrailTestPlayground";
 
 vi.mock("../networking");
+vi.mock("@/contexts/LanguageContext", () => ({
+  useLanguage: () => ({
+    t: (key: string) =>
+      ({
+        "guardrailsPage.playground.empty.title": "Select Guardrails to Test",
+        "guardrailsPage.testPanel.title": "Test Guardrails:",
+        "guardrailsPage.testPanel.input.placeholder": "Enter text to test with guardrails...",
+        "guardrailsPage.playground.sidebar.selectedCount": "{selected} of {total} selected",
+      }[key] || key),
+  }),
+}));
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,

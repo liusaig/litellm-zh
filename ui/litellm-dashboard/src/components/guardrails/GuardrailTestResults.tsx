@@ -3,6 +3,7 @@ import { Button, Card } from "@tremor/react";
 import { Typography } from "antd";
 import { CopyOutlined, CheckCircleOutlined, ClockCircleOutlined, DownOutlined, RightOutlined } from "@ant-design/icons";
 import NotificationsManager from "../molecules/notifications_manager";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { Text } = Typography;
 
@@ -24,6 +25,11 @@ interface GuardrailTestResultsProps {
 }
 
 export function GuardrailTestResults({ results, errors }: GuardrailTestResultsProps) {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string) => {
+    const value = t(key);
+    return value === key && locale === "zh-CN" ? zh : value;
+  };
   const [collapsedResults, setCollapsedResults] = useState<Set<string>>(new Set());
 
   const toggleResultCollapse = (guardrailName: string) => {
@@ -70,7 +76,9 @@ export function GuardrailTestResults({ results, errors }: GuardrailTestResultsPr
 
   return (
     <div className="space-y-3 pt-4 border-t border-gray-200">
-      <h3 className="text-sm font-semibold text-gray-900">Results</h3>
+      <h3 className="text-sm font-semibold text-gray-900">
+        {tr("guardrailsPage.testResults.title", "结果")}
+      </h3>
 
       {/* Success Results */}
       {results &&
@@ -107,13 +115,17 @@ export function GuardrailTestResults({ results, errors }: GuardrailTestResultsPr
                         onClick={async () => {
                           const success = await copyToClipboard(result.response_text);
                           if (success) {
-                            NotificationsManager.success("Result copied to clipboard");
+                            NotificationsManager.success(
+                              tr("guardrailsPage.testResults.notifications.resultCopied", "结果已复制到剪贴板")
+                            );
                           } else {
-                            NotificationsManager.fromBackend("Failed to copy result");
+                            NotificationsManager.fromBackend(
+                              tr("guardrailsPage.testResults.notifications.resultCopyFailed", "复制结果失败")
+                            );
                           }
                         }}
                       >
-                        Copy
+                        {tr("guardrailsPage.testResults.copyButton", "复制")}
                       </Button>
                     )}
                   </div>
@@ -122,14 +134,17 @@ export function GuardrailTestResults({ results, errors }: GuardrailTestResultsPr
                   <>
                     <div className="bg-white border border-green-200 rounded p-3">
                       <label className="text-xs font-medium text-gray-600 mb-2 block">
-                        Output Text
+                        {tr("guardrailsPage.testResults.outputText", "输出文本")}
                       </label>
                       <div className="font-mono text-sm text-gray-900 whitespace-pre-wrap break-words">
                         {result.response_text}
                       </div>
                     </div>
                     <div className="text-xs text-gray-600">
-                      <span className="font-medium">Characters:</span> {result.response_text.length}
+                      <span className="font-medium">
+                        {tr("guardrailsPage.testResults.charactersLabel", "字符数：")}
+                      </span>{" "}
+                      {result.response_text.length}
                     </div>
                   </>
                 )}
@@ -170,7 +185,7 @@ export function GuardrailTestResults({ results, errors }: GuardrailTestResultsPr
                       className="text-sm font-medium text-red-800 cursor-pointer"
                       onClick={() => toggleResultCollapse(errorItem.guardrailName)}
                     >
-                      {errorItem.guardrailName} - Error
+                      {errorItem.guardrailName} {tr("guardrailsPage.testResults.errorSuffix", "- 错误")}
                     </p>
                     <div className="flex items-center space-x-1 text-xs text-gray-600">
                       <ClockCircleOutlined />
@@ -190,4 +205,3 @@ export function GuardrailTestResults({ results, errors }: GuardrailTestResultsPr
 }
 
 export default GuardrailTestResults;
-

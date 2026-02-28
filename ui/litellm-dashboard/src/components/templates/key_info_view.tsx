@@ -51,7 +51,7 @@ export default function KeyInfoView({
   const { accessToken, userId: userID, userRole, premiumUser } = useAuthorized();
   const { t } = useLanguage();
   const getLocalizedModelLabel = (model: string): string => {
-    if (model === "all-team-models") return t("keyDetail.settings.messages.allTeamModels");
+    if (model === "all-team-models") return t("keyDetail.settings.messages.allTeamModels").replace("团队", "分组");
     if (model === "all-proxy-models") return t("teams.allProxyModels");
     return getModelDisplayName(model);
   };
@@ -131,6 +131,10 @@ export default function KeyInfoView({
       </div>
     );
   }
+
+  const allTeams = (teams && teams.length > 0 ? teams : teamsData) || [];
+  const matchedTeam = allTeams.find((team: any) => team?.team_id === currentKeyData.team_id);
+  const matchedTeamAlias = matchedTeam?.team_alias || matchedTeam?.team_name || matchedTeam?.alias;
 
   const handleKeyUpdate = async (formValues: Record<string, any>) => {
     try {
@@ -393,9 +397,13 @@ export default function KeyInfoView({
             code: true,
           },
           {
-            label: t("keyDetail.deleteModal.teamId"),
+            label: "分组 ID",
             value: currentKeyData?.team_id || "-",
             code: true,
+          },
+          {
+            label: "分组名称",
+            value: matchedTeamAlias || "-",
           },
           {
             label: t("keyDetail.deleteModal.spend"),
@@ -576,8 +584,13 @@ export default function KeyInfoView({
                   </div>
 
                   <div>
-                    <Text className="font-medium">{t("keyDetail.settings.teamId")}</Text>
+                    <Text className="font-medium">{t("keyDetail.settings.teamId").replace("团队", "分组")}</Text>
                     <Text>{currentKeyData.team_id || t("keyDetail.settings.notSet")}</Text>
+                  </div>
+
+                  <div>
+                    <Text className="font-medium">分组名称</Text>
+                    <Text>{matchedTeamAlias || t("keyDetail.settings.notSet")}</Text>
                   </div>
 
                   <div>

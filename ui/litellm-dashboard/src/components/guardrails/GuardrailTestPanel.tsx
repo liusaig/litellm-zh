@@ -4,6 +4,7 @@ import { Input, Typography, Tooltip } from "antd";
 import { CopyOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import NotificationsManager from "../molecules/notifications_manager";
 import GuardrailTestResults from "./GuardrailTestResults";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -25,11 +26,16 @@ export function GuardrailTestPanel({
   errors,
   onClose,
 }: GuardrailTestPanelProps) {
+  const { t, locale } = useLanguage();
+  const tr = (key: string, zh: string) => {
+    const value = t(key);
+    return value === key && locale === "zh-CN" ? zh : value;
+  };
   const [inputText, setInputText] = useState("");
 
   const handleSubmit = () => {
     if (!inputText.trim()) {
-      NotificationsManager.fromBackend("Please enter text to test");
+      NotificationsManager.fromBackend(tr("guardrailsPage.testPanel.notifications.enterText", "请输入要测试的文本"));
       return;
     }
 
@@ -74,9 +80,11 @@ export function GuardrailTestPanel({
   const handleCopyInput = async () => {
     const success = await copyToClipboard(inputText);
     if (success) {
-      NotificationsManager.success("Input copied to clipboard");
+      NotificationsManager.success(tr("guardrailsPage.testPanel.notifications.inputCopied", "输入已复制到剪贴板"));
     } else {
-      NotificationsManager.fromBackend("Failed to copy input");
+      NotificationsManager.fromBackend(
+        tr("guardrailsPage.testPanel.notifications.inputCopyFailed", "复制输入失败")
+      );
     }
   };
 
@@ -87,7 +95,9 @@ export function GuardrailTestPanel({
         <div className="flex items-center space-x-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
-              <h2 className="text-lg font-semibold text-gray-900">Test Guardrails:</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                {tr("guardrailsPage.testPanel.title", "测试护栏：")}
+              </h2>
               <div className="flex flex-wrap gap-2">
                 {guardrailNames.map((name) => (
                   <div
@@ -100,7 +110,10 @@ export function GuardrailTestPanel({
               </div>
             </div>
             <p className="text-sm text-gray-500">
-              Test {guardrailNames.length > 1 ? "guardrails" : "guardrail"} and compare results
+              {tr("guardrailsPage.testPanel.subtitle", "测试 {count} 个护栏并对比结果").replace(
+                "{count}",
+                String(guardrailNames.length)
+              )}
             </p>
           </div>
         </div>
@@ -113,7 +126,7 @@ export function GuardrailTestPanel({
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-gray-700">Input Text</label>
-                <Tooltip title="Press Enter to submit. Use Shift+Enter for new line.">
+                <Tooltip title={tr("guardrailsPage.testPanel.input.tooltip", "按 Enter 提交，Shift+Enter 换行。")}>
                   <InfoCircleOutlined className="text-gray-400 cursor-help" />
                 </Tooltip>
               </div>
@@ -124,7 +137,7 @@ export function GuardrailTestPanel({
                   icon={CopyOutlined}
                   onClick={handleCopyInput}
                 >
-                  Copy Input
+                  {tr("guardrailsPage.testPanel.input.copyButton", "复制输入")}
                 </Button>
               )}
             </div>
@@ -132,15 +145,28 @@ export function GuardrailTestPanel({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Enter text to test with guardrails..."
+              placeholder={tr("guardrailsPage.testPanel.input.placeholder", "输入要用护栏测试的文本...")}
               rows={8}
               className="font-mono text-sm"
             />
             <div className="flex justify-between items-center mt-1">
               <Text className="text-xs text-gray-500">
-                Press <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">Enter</kbd> to submit • <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">Shift+Enter</kbd> for new line
+                {tr("guardrailsPage.testPanel.input.shortcutPrefix", "按")}{" "}
+                <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">
+                  Enter
+                </kbd>{" "}
+                {tr("guardrailsPage.testPanel.input.shortcutMiddle", "提交 •")}{" "}
+                <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">
+                  Shift+Enter
+                </kbd>{" "}
+                {tr("guardrailsPage.testPanel.input.shortcutSuffix", "换行")}
               </Text>
-              <Text className="text-xs text-gray-500">Characters: {inputText.length}</Text>
+              <Text className="text-xs text-gray-500">
+                {tr("guardrailsPage.testPanel.input.characters", "字符数：{count}").replace(
+                  "{count}",
+                  String(inputText.length)
+                )}
+              </Text>
             </div>
           </div>
 
@@ -152,8 +178,14 @@ export function GuardrailTestPanel({
               className="w-full"
             >
               {isLoading
-                ? `Testing ${guardrailNames.length} guardrail${guardrailNames.length > 1 ? "s" : ""}...`
-                : `Test ${guardrailNames.length} guardrail${guardrailNames.length > 1 ? "s" : ""}`}
+                ? tr("guardrailsPage.testPanel.buttons.testing", "正在测试 {count} 个护栏...").replace(
+                    "{count}",
+                    String(guardrailNames.length)
+                  )
+                : tr("guardrailsPage.testPanel.buttons.test", "测试 {count} 个护栏").replace(
+                    "{count}",
+                    String(guardrailNames.length)
+                  )}
             </Button>
           </div>
         </div>
@@ -166,4 +198,3 @@ export function GuardrailTestPanel({
 }
 
 export default GuardrailTestPanel;
-

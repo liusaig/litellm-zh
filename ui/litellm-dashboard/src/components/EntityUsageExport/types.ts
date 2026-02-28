@@ -4,6 +4,7 @@ import type { Team } from "@/components/key_team_helpers/key_list";
 export type ExportFormat = "csv" | "json";
 export type ExportScope = "daily" | "daily_with_keys" | "daily_with_models";
 export type EntityType = "tag" | "team" | "organization" | "customer" | "agent";
+export type UsageTimeRangeType = "day" | "week" | "month";
 
 export interface EntitySpendData {
   results: any[];
@@ -22,6 +23,7 @@ export interface EntityUsageExportModalProps {
   entityType: EntityType;
   spendData: EntitySpendData;
   dateRange: DateRangePickerValue;
+  timeRangeType?: UsageTimeRangeType;
   selectedFilters: string[];
   customTitle?: string;
   teams?: Team[];
